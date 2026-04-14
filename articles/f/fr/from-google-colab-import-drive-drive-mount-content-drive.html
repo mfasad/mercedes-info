@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Как подключить Google Drive к Colab: Полный гайд по drive.mount — Мерседес Инфо</title>
+    <meta name="description" content="Подробная инструкция по подключению Google Drive в Google Colab. Решаем ошибки монтирования, настраиваем доступ к файлам и ускоряем работу с данными.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/f/fr/from-google-colab-import-drive-drive-mount-content-drive.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Как подключить Google Drive к Colab: Полный гайд по drive.mount">
+    <meta property="og:description" content="Подробная инструкция по подключению Google Drive в Google Colab. Решаем ошибки монтирования, настраиваем доступ к файлам и ускоряем работу с данными.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Как подключить Google Drive к Colab: Полный гайд по drive.mount</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Как подключить Google Drive к Colab: drive.mount(&#x27;/content/drive&#x27;)</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#базовый-синтаксис-и-механизм-работы-команды">Базовый синтаксис и механизм работы команды</a></li><li><a href="#пошаговая-инструкция-подключения-хранилища">Пошаговая инструкция подключения хранилища</a></li><li><a href="#работа-с-путями-и-файловой-системой-linux">Работа с путями и файловой системой Linux</a></li><li><a href="#типичные-ошибки-и-методы-их-устранения">Типичные ошибки и методы их устранения</a></li><li><a href="#оптимизация-скорости-и-производительности">Оптимизация скорости и производительности</a></li><li><a href="#альтернативные-способы-передачи-данных">Альтернативные способы передачи данных</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Работа с большими массивами данных в облачных средах требует эффективного управления хранилищем, и связка <strong>Google Colab</strong> с <em>Google Drive</em> является стандартом индустрии для исследователей и разработчиков. Когда вы вводите команду <code>from google.colab import drive</code>, вы инициируете процесс, позволяющий виртуальной машине напрямую взаимодействовать с вашим облачным диском. Это не просто копирование файлов, а создание полноценного моста между вычислительными мощностями GPU/TPU и вашим личным хранилищем.</p>
+
+<p>Многие новички сталкиваются с трудностями при первом запуске, не понимая, почему после ввода <code>drive.mount('/content/drive')</code> требуется авторизация через браузер. <strong>Безопасность</strong> здесь стоит на первом месте: Google использует OAuth2 для предоставления временного токена доступа, который позволяет Colab читать и записывать данные от вашего имени. Понимание этого механизма поможет избежать распространенных ошибок доступа и потери данных в ходе длительных сессий обучения нейросетей.</p>
+
+<p>В этой статье мы детально разберем все нюансы интеграции, от базового синтаксиса до решения сложных проблем с переполнением буфера или обрывом соединения. Вы научитесь оптимизировать пути к файлам, правильно структурировать каталоги в среде <em>Linux</em> и использовать продвинутые методы работы с файловой системой. <mark>Корректное монтирование диска в папку /content/drive является критическим шагом для стабной работы любых пайплайнов машинного обучения.</mark></p>
+
+<h2 id="базовый-синтаксис-и-механизм-работы-команды">Базовый синтаксис и механизм работы команды</h2>
+
+<p>Процесс интеграции начинается с импорта модуля, который содержит необходимые функции для взаимодействия с API Google. Команда <code>from google.colab import drive</code> загружает библиотеку, но не выполняет никаких действий с файлами сама по себе. Это лишь подготовка окружения, аналогичная подключению библиотеки в любом другом языке программирования, например, <em>Python</em>.</p>
+
+<p>Непосредственное подключение происходит при вызове функции <code>drive.mount()</code> с указанием пути. Стандартным и наиболее безопасным путем является <code>/content/drive</code>, так как папка <code>/content</code> является корневой директорией временного хранилища виртуальной машины. Использование других путей может привести к ошибкам прав доступа или конфликтам с системными файлами рантайма.</p>
+
+<p>После выполнения кода в ячейке появится ссылка для авторизации. Вам необходимо перейти по ней, выбрать аккаунт Google, скопировать предоставленный код подтверждения и вставить его в появившееся поле ввода в ноутбуке. Этот <strong>токен доступа</strong> действителен в течение всей сессии или до момента разрыва соединения с рантаймом.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Токен доступа, который вы вводите, дает полный доступ к вашему Google Drive. Никогда не копируйте код из подозрительных источников и не передавайте его третьим лицам, даже если они утверждают, что это поможет ускорить работу.</p>
+</blockquote>
+
+<p>Для автоматизации процесса в некоторых сценариях можно использовать параметр <code>force_remount=True</code>, который принудительно переподключит диск, даже если он уже был смонтирован ранее. Это полезно, если вы сменили аккаунт или изменили структуру папок на диске, но текущая сессия "запомнила" старые пути.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте force_remount=True, если вы меняете аккаунты Google в одной и той же сессии Colab, чтобы избежать конфликтов путей.</p></div>
+
+<h2 id="пошаговая-инструкция-подключения-хранилища">Пошаговая инструкция подключения хранилища</h2>
+
+<p>Чтобы гарантировать успешное подключение без лишних ошибок, следуйте проверенному алгоритму действий. Сначала убедитесь, что ваш ноутбук запущен в среде <strong>Python 3</strong>, так как старые версии могут не поддерживать актуальные библиотеки Google. Затем создайте новую ячейку кода и введите следующую конструкцию:</p>
+
+<pre><code>from google.colab import drive
+<p>drive.mount('/content/drive')</code></pre></p>
+
+<p>После запуска ячейки система запросит разрешение. В открывшемся окне выберите нужный аккаунт и нажмите "Разрешить". Скопированный код вставьте в поле ввода. Если все прошло успешно, вы увидите сообщение "Mounted at /content/drive". Теперь ваш диск доступен как обычная папка в файловой системе.</p>
+
+
+<p>Импортировать модуль drive из google.colab</p>
+<p>Вызвать функцию mount с путем /content/drive</p>
+<p>Пройти авторизацию по ссылке</p>
+<p>Вставить код подтверждения в поле ввода</p>
+<p>Проверить появление папки drive в файловом браузере слева--></p>
+
+<p>Важно учитывать, что путь <code>/content/drive</code> теперь является корневым для ваших данных. Внутри него обычно находится папка <code>MyDrive</code>, которая соответствует корню вашего диска. Полный путь к файлу будет выглядеть как <code>/content/drive/MyDrive/имя_файла.ipynb</code>. Игнорирование папки <em>MyDrive</em> — частая ошибка, приводящая к <code>FileNotFoundError</code>.</p>
+
+<p>Для проверки содержимого можно использовать магические команды <em>IPython</em>, такие как <code>%ls /content/drive/MyDrive</code>. Это позволит быстро убедиться, что файлы видны системе и права доступа настроены корректно. Если список файлов пуст, хотя вы уверены, что они там есть, попробуйте обновить страницу браузера или переподключить диск.</p>
+
+<table>
+<thead>
+<tr>
+<th>Параметр команды</th>
+<th>Значение по умолчанию</th>
+<th>Описание функции</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mount_point</td>
+<td>None (обязателен)</td>
+<td>Путь в файловой системе Linux, куда будет смонтирован диск</td>
+</tr>
+<tr>
+<td>force_remount</td>
+<td>False</td>
+<td>Принудительное переподключение, если диск уже смонтирован</td>
+</tr>
+<tr>
+<td>timeout_ms</td>
+<td>120000</td>
+<td>Время ожидания ввода кода пользователем (в миллисекундах)</td>
+</tr>
+<tr>
+<td>use_auth_html</td>
+<td>True</td>
+<td>Использовать HTML-виджет для ввода кода вместо input()</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="работа-с-путями-и-файловой-системой-linux">Работа с путями и файловой системой Linux</h2>
+
+<p>Google Colab работает на базе операционной системы <strong>Ubuntu Linux</strong>, что означает использование специфической структуры путей. В отличие от Windows, где пути строятся через обратные слеши (<code>\</code>), здесь используется прямой слэш (<code>/</code>). Понимание этой разницы критически важно для корректного указания местоположения датасетов.</p>
+
+<p>После монтирования ваша структура файлов выглядит иерархически. Корень диска находится по адресу <code>/content/drive/MyDrive</code>. Если вы храните данные в папке "Datasets" внутри "ProjectA", полный путь будет: <code>/content/drive/MyDrive/ProjectA/Datasets</code>. Ошибка даже в одном символе или регистре буквы (Linux чувствителен к регистру) приведет к сбою при чтении файлов.</p>
+
+<p>Для навигации и управления файлами удобно использовать библиотеку <em>os</em> или <em>pathlib</em>. Они позволяют программно проверять существование файлов, создавать новые директории и переименовывать объекты. Например, функция <code>os.path.exists()</code> поможет избежать ошибок перед загрузкой тяжелой модели.</p>
+
+<details class="faq-item"><summary>Скрытые файлы в Linux</summary><div class="faq-answer"><p>В Linux файлы, начинающиеся с точки (например, .config), считаются скрытыми. В Google Drive таких файлов обычно нет, но при работе с системными настройками Colab вы можете с ними столкнуться. Они не видны в стандартном интерфейсе Drive, но доступны через терминал.</p></div></details>
+
+<p>Использование относительных путей может запутать, поэтому всегда рекомендуется использовать <strong>абсолютные пути</strong>, начиная от корня <code>/content</code>. Это делает код более читаемым и переносимым между разными ячейками ноутбука. Вы также можете использовать переменные для хранения базового пути, чтобы не переписывать длинную строку каждый раз.</p>
+
+<h2 id="типичные-ошибки-и-методы-их-устранения">Типичные ошибки и методы их устранения</h2>
+
+<p>Одной из самых распространенных проблем является ошибка <code>MessageError: Error: credential retrieval failed</code>. Она возникает, если процесс авторизации был прерван или если браузер заблокировал всплывающее окно. В этом случае помогает очистка кэша браузера или попытка запуска в режиме инкогнито.</p>
+
+<p>Другая частая ситуация — диск монтируется, но файлы не видны или доступ запрещен. Это может быть связано с тем, что вы подключили не тот аккаунт Google, на котором лежат данные. Проверьте email в правом верхнем углу интерфейса Colab и в окне авторизации Drive. Также убедитесь, что у вас есть права на чтение этих файлов.</p>
+
+<ul>
+<li>🚫 Ошибка "Disk full": Временное хранилище Colab ограничено, проверяйте свободное место командой <code>!df -h</code>.</li>
+<li>🚫 Ошибка таймаута: Если вы долго не вводили код подтверждения, сессия истекает. Просто перезапустите ячейку с <code>drive.mount</code>.</li>
+<li>🚫 Проблемы с кодировкой: Имена файлов с кириллицей или спецсимволами могут вызывать ошибки в некоторых библиотеках. Лучше переименовать их в латиницу.</li>
+</ul>
+
+<p>Если вы используете библиотеку <em>Pandas</em> для чтения CSV файлов, убедитесь, что путь передан как строка. Иногда помогает явное указание кодировки <code>encoding='utf-8'</code>. Также стоит помнить, что скорость чтения с Google Drive не является мгновенной и зависит от размера файла и нагрузки на серверы.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 С какой проблемой вы сталкивались чаще всего?</strong><ul><li>Ошибка авторизации</li><li>Файлы не видны после подключения</li><li>Медленная скорость загрузки</li><li>Диск переполняется</li><li>Все работало идеально</li></ul></div></div>
+
+<h2 id="оптимизация-скорости-и-производительности">Оптимизация скорости и производительности</h2>
+
+<p>Скорость чтения данных с Google Drive в Colab часто становится узким местом, особенно при обучении больших моделей на тысячах изображений. Прямое чтение мелких файлов может занимать значительное время из-за накладных расходов на сетевые запросы. Для ускорения процесса рекомендуется использовать <strong>кеширование</strong> или предварительную загрузку данных в локальное хранилище рантайма.</p>
+
+<p>Один из эффективных методов — копирование архива с данными из Drive в локальную папку <code>/content</code> перед началом обучения. Команда <code>!cp -r /content/drive/MyDrive/data.zip /content/</code> выполнит это действие. После распаковки (<code>!unzip data.zip</code>) скорость доступа к файлам возрастет в разы, так как они будут находиться на локальном SSD виртуальной машины.</p>
+
+<p>Также стоит учитывать лимиты API Google Drive. При слишком частых запросах (тысячи мелких файлов в секунду) ваш IP может быть временно заблокирован с ошибкой 429 Too Many Requests. Использование архивов или форматов данных, оптимизированных для машинного обучения, таких как <em>TFRecord</em> или <em>HDF5</em>, помогает снизить количество запросов.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Не хранитеSensitive данные (пароли, API-ключи) в текстовых файлах на Google Drive, к которому подключен Colab. В случае компрометации аккаунта злоумышленники получат доступ ко всем вашим проектам.</p>
+</blockquote>
+
+<p>Для мониторинга скорости можно использовать утилиты командной строки, такие как <code>hdparm</code> или простые скрипты на Python, замеряющие время чтения. Это поможет понять, является ли диск bottleneck'ом в вашем пайплайне. Если скорость критически низкая, рассмотрите альтернативные способы передачи данных, например, через <code>gcloud</code> или прямую загрузку из bucket'ов.</p>
+
+<h2 id="альтернативные-способы-передачи-данных">Альтернативные способы передачи данных</h2>
+
+<p>Хотя <code>drive.mount</code> является самым популярным методом, он не всегда оптимален. Для разовых загрузок больших файлов быстрее будет использовать прямую ссылку на скачивание или команду <code>wget</code>. Это особенно актуально, если данные публичны или размещены на внешнем ресурсе с высокой скоростью отдачи.</p>
+
+<p>Профессиональные пользователи часто используют <strong>Google Cloud Storage (GCS)</strong>. Интеграция Colab с GCS через библиотеку <code>gcsfs</code> или утилиту <code>gsutil</code> обеспечивает гораздо более высокую пропускную способность и надежность. Кроме того, GCS позволяет гибко управлять правами доступа и версиями файлов, что важно для командной работы.</p>
+
+<p>Еще один вариант — использование <em>Git</em>. Если ваш код и небольшие датасеты находятся в репозитории GitHub или GitLab, вы можете клонировать их прямо в среду Colab командой <code>!git clone</code>. Это обеспечивает версионность и быстрый доступ к коду, хотя для больших бинарных файлов Git не подходит.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для больших проектов переходите на Google Cloud Storage, а drive.mount оставляйте для быстрой отладки и прототипирования.</p></div>
+
+<p>Выбор метода зависит от конкретной задачи. Для обучения студента или быстрого эксперимента <code>drive.mount</code> идеален благодаря простоте. Для промышленного обучения моделей, где важны каждая секунда и стабильность, лучше использовать специализированные облачные хранилища с оптимизированным доступом.</p>
+
+<details>
+<summary>Можно ли подключить несколько Google Drive аккаунтов одновременно?</summary>
+<p>Да, это возможно, но требует использования разных точек монтирования. Вы можете смонтировать первый диск в <code>/content/drive1</code>, а второй в <code>/content/drive2</code>, используя параметр <code>force_remount=True</code> при переключении контекста. Однако это может усложнить навигацию по файлам.</p>
+</details>
+
+<details>
+<summary>Что происходит с файлами после завершения сессии Colab?</summary>
+<p>Виртуальная машина полностью очищается. Все файлы, которые вы создали или скачали в папку <code>/content</code> (кроме тех, что явно сохранены на Drive), будут безвозвратно удалены. Всегда сохраняйте результаты в <code>/content/drive/MyDrive</code>.</p>
+</details>
+
+<details>
+<summary>Почему команда drive.mount зависает на этапе ввода кода?</summary>
+<p>Часто это связано с блокировщиками рекламы в браузере или нестабильным интернет-соединением. Попробуйте отключить расширения браузера, проверить соединение или использовать другой браузер. Также убедитесь, что в системе установлено актуальное время.</p>
+</details>
+
+<details>
+<summary>Как увеличить лимит памяти при работе с большими файлами?</summary>
+<p>Лимиты зависят от типа рантайма. Переключение на GPU или TPU иногда дает больше доступной RAM. Также можно использовать библиотеки, работающие с данными по частям (chunking), например, <em>Pandas</em> с параметром <code>chunksize</code> или <em>Dask</em>.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#базовый-синтаксис-и-механизм-работы-команды">Базовый синтаксис и механизм работы команды</a></li><li><a href="#пошаговая-инструкция-подключения-хранилища">Пошаговая инструкция подключения хранилища</a></li><li><a href="#работа-с-путями-и-файловой-системой-linux">Работа с путями и файловой системой Linux</a></li><li><a href="#типичные-ошибки-и-методы-их-устранения">Типичные ошибки и методы их устранения</a></li><li><a href="#оптимизация-скорости-и-производительности">Оптимизация скорости и производительности</a></li><li><a href="#альтернативные-способы-передачи-данных">Альтернативные способы передачи данных</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/b/bm/bmv-kruche-ili-mersedes.html" class="related-card">BMW vs Mercedes: кто круче в 2026? Сравнение по 7 критериям</a></li><li><a href="/articles/n/no/note-e12-club.html" class="related-card">Note E12 Club: Обзор, характеристики и тюнинг Samsung</a></li><li><a href="/articles/s/sa/samostoyatelnoe-podrazdelenie-v-sostave-chrysler-corporation-sushchestvovavshaya-s-1928-po-2001-krossvord.html" class="related-card">Подразделение Chrysler Corporation: разгадка кроссворда</a></li><li><a href="/articles/w/wo/wolf-75w90-gl-5.html" class="related-card">Wolf 75W90 GL-5: Характеристики, допуски и отзывы</a></li><li><a href="/articles/s/si/sirio-ml-145.html" class="related-card">Sirio ML 145: Обзор антенны, характеристики и настройка</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/b/bm/bmv-kruche-ili-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">BMW vs Mercedes: кто круче в 2026? Сравнение по 7 критериям</span><span class="related-bottom-desc">Объективное сравнение BMW и Mercedes-Benz: дизайн, динамика, комфорт, надёжность и стоимость владени</span></a><a href="/articles/n/no/note-e12-club.html" class="related-bottom-card"><span class="related-bottom-title">Note E12 Club: Обзор, характеристики и тюнинг Samsung</span><span class="related-bottom-desc">Полный разбор Note E12 Club. Характеристики, сравнение с конкурентами, скрытые возможности S Pen и с</span></a><a href="/articles/s/sa/samostoyatelnoe-podrazdelenie-v-sostave-chrysler-corporation-sushchestvovavshaya-s-1928-po-2001-krossvord.html" class="related-bottom-card"><span class="related-bottom-title">Подразделение Chrysler Corporation: разгадка кроссворда</span><span class="related-bottom-desc">Подробный ответ на вопрос кроссворда о подразделении Chrysler (1928–2001). История, факты и ключевые</span></a><a href="/articles/w/wo/wolf-75w90-gl-5.html" class="related-bottom-card"><span class="related-bottom-title">Wolf 75W90 GL-5: Характеристики, допуски и отзывы</span><span class="related-bottom-desc">Полный обзор трансмиссионного масла Wolf 75W90 GL-5. Разбор допусков, состава, интервалов замены и с</span></a><a href="/articles/s/si/sirio-ml-145.html" class="related-bottom-card"><span class="related-bottom-title">Sirio ML 145: Обзор антенны, характеристики и настройка</span><span class="related-bottom-desc">Полный обзор антенны Sirio ML 145. Технические характеристики, инструкция по сборке, настройке КСВ и</span></a><a href="/articles/b/bm/bmv-i-mersedes-bratya.html" class="related-bottom-card"><span class="related-bottom-title">БМВ и Мерседес братья: правда о родстве брендов</span><span class="related-bottom-desc">Анализ схожести BMW и Mercedes: общие корни, технологии и различия. Узнайте, являются ли конкуренты </span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

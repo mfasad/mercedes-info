@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Oracle VM VirtualBox: как создать виртуальную машину с нуля — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговая инструкция: как создать виртуальную машину в Oracle VM VirtualBox. Настройка параметров, установка ОС и оптимизация производительности.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/o/or/oracle-vm-virtualbox-kak-sozdat-virtualnuyu-mashinu.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Oracle VM VirtualBox: как создать виртуальную машину с нуля">
+    <meta property="og:description" content="Пошаговая инструкция: как создать виртуальную машину в Oracle VM VirtualBox. Настройка параметров, установка ОС и оптимизация производительности.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Oracle VM VirtualBox: как создать виртуальную машину с нуля</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Как создать виртуальную машину в Oracle VM VirtualBox: полное руководство</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#подготовка-хост-системы-и-установка-эмулятора">Подготовка хост-системы и установка эмулятора</a></li><li><a href="#запуск-мастера-создания-новой-виртуальной-машины">Запуск мастера создания новой виртуальной машины</a></li><li><a href="#конфигурирование-параметров-виртуального-оборудования">Конфигурирование параметров виртуального оборудования</a></li><li><a href="#настройка-сетевого-взаимодействия-и-общих-папок">Настройка сетевого взаимодействия и общих папок</a></li><li><a href="#процесс-установки-операционной-системы">Процесс установки операционной системы</a></li><li><a href="#оптимизация-и-создание-снимков-состояния">Оптимизация и создание снимков состояния</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Современные IT-специалисты и энтузиасты часто сталкиваются с необходимостью тестирования программного обеспечения в изолированной среде или запуска операционных систем, отличных от основной. Решением этой задачи становится использование технологий виртуализации, среди которых <strong>Oracle VM VirtualBox</strong> занимает лидирующие позиции благодаря своей бесплатности и кроссплатформенности. Создание собственного виртуального окружения позволяет экспериментировать с настройками, изучать новые ОС и запускать старые приложения без риска для основной системы.</p>
+
+<p>Процесс развёртывания гостевой системы может показаться сложным новичку, однако последовательное выполнение шагов сводит все трудности к минимуму. В этой статье мы подробно разберем, как правильно настроить параметры <em>гипервизора</em>, распределить ресурсы хоста и инсталлировать операционную систему. Грамотная подготовка на начальном этапе обеспечит стабильную работу виртуального компьютера в будущем.</p>
+
+<p>Прежде чем приступать к техническим манипуляциям, необходимо убедиться, что на вашем компьютере включена поддержка виртуализации в BIOS/UEFI. Без активации функций <code>Intel VT-x</code> или <code>AMD-V</code> запустить 64-битные гостевые системы не получится, и эмулятор просто выдаст ошибку при старте. Проверка этого параметра является первым и критически важным шагом перед установкой любого ПО для виртуализации.</p>
+
+<h2 id="подготовка-хост-системы-и-установка-эмулятора">Подготовка хост-системы и установка эмулятора</h2>
+
+<p>Первым шагом является загрузка актуальной версии программного обеспечения с официального сайта разработчика. Важно скачать не только основной установочный пакет, но и <strong>Extension Pack</strong>, который добавляет поддержку USB 2.0/3.0, шифрование дисков и другие полезные функции. Установка должна производиться от имени администратора, чтобы драйверы сетевого интерфейса могли корректно интегрироваться в систему.</p>
+
+<p>После инсталляции рекомендуется сразу же добавить пакет расширений через меню <code>Файл → Инструменты → Менеджер пакетов</code>. Это действие расширит функциональные возможности программы, позволив подключать внешние накопители и использовать проброс <code>USB</code>-устройств. Игнорирование этого этапа может привести к ограниченной функциональности создаваемых виртуальных машин.</p>
+
+<blockquote>
+<p>⚠️ Внимание: При установке сетевого драйвера экран может на секунду погаснуть или появиться запрос на разрешение изменений. Это нормальное поведение, прерывание процесса может привести к отсутствию сетевого подключения в виртуальной среде.</p>
+</blockquote>
+
+<p>Интерфейс программы интуитивно понятен, но насыщен различными настройками, которые могут сбить с толку. Основное окно управления содержит список всех созданных машин и панель инструментов для запуска, настройки и удаления объектов. Здесь же отображается текущий статус каждой виртуальной системы, что упрощает мониторинг ресурсов.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Рекомендуется создать отдельную папку на диске с большим объемом свободного места специально для хранения образов виртуальных машин, чтобы не переполнять системный раздел.</p></div>
+
+<h2 id="запуск-мастера-создания-новой-виртуальной-машины">Запуск мастера создания новой виртуальной машины</h2>
+
+<p>Для начала работы нажмите кнопку <strong>Создать</strong> на верхней панели инструментов. Откроется окно мастера, где потребуется ввести имя новой системы. Программа автоматически предложит тип и версию операционной системы на основе введенного названия, но эти параметры можно изменить вручную в соответствующих выпада <strong>списках</strong>.</p>
+
+<p>Выбор правильной версии ОС критически важен, так как от этого зависит набор доступных настроек и эмулируемого оборудования. Например, при выборе <em>Windows 10</em> будут доступны одни параметры чипсета, а для <em>Ubuntu</em> — другие. Если вы планируете устанавливать современную систему, убедитесь, что выбрано соответствующее поколение (например, Windows 8/10/11 или Linux 5.x/6.x).</p>
+
+<p>На следующем этапе мастер предложит определить объем оперативной памяти. Ползунок памяти показывает «зеленую зону» — рекомендуемый диапазон, выход за пределы которого может негативно сказаться на производительности основного компьютера. Выделение слишком малого объема приведет к торможению гостевой ОС, а слишком большого — к свопингу на хосте.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой объем ОЗУ вы обычно выделяете для тестовой виртуальной машины?</strong><ul><li>512 МБ - 1 ГБ</li><li>2 ГБ - 4 ГБ</li><li>8 ГБ и более</li><li>Половину всей памяти ПК</li></ul></div></div>
+
+<p>Далее следует этап создания виртуального жесткого диска. Здесь можно выбрать создание нового диска или использование существующего файла образа. Для большинства пользователей оптимален вариант создания нового диска, формат которого по умолчанию будет <code>VDI</code> (VirtualBox Disk Image).</p>
+
+<h2 id="конфигурирование-параметров-виртуального-оборудования">Конфигурирование параметров виртуального оборудования</h2>
+
+<p>После первичной настройки необходимо детально проработать конфигурацию созданного объекта. Выберите машину в списке и нажмите <strong>Настроить</strong>, чтобы открыть окно с вкладками. В разделе «Система» можно изменить порядок загрузки, количество процессоров и чипсет. Увеличение количества ядер процессора часто необходимо для комфортной работы современных ОС, но не стоит выделять более половины доступных ядер хоста.</p>
+
+<p>Вкладка «Дисплей» отвечает за графическую подсистему. Здесь следует увеличить объем видеопамяти до максимального значения (обычно 128 МБ) и включить 3D-ускорение. Эти действия значительно улучшат отзывчивость интерфейса гостевой операционной системы и позволят корректно отображать графические элементы.</p>
+
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Рекомендуемое значение</th>
+<th>Влияние на систему</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Видеопамять</td>
+<td>128 МБ</td>
+<td>Плавность интерфейса, поддержка разрешений</td>
+</tr>
+<tr>
+<td>3D-ускорение</td>
+<td>Включено</td>
+<td>Работа графических приложений и игр</td>
+</tr>
+<tr>
+<td>Количество CPU</td>
+<td>2 ядра (минимум)</td>
+<td>Скорость обработки данных в гостевой ОС</td>
+</tr>
+<tr>
+<td>Точка восстановления</td>
+<td>Включено</td>
+<td>Возможность отката состояния системы</td>
+</tr>
+</tbody>
+</table>
+
+<p>Особое внимание стоит уделить разделу «Носители», где подключаются образы дисков. Именно сюда монтируется <code>ISO</code>-файл с дистрибутивом операционной системы для последующей установки. Без подключения загрузочного образа запуск виртуальной машины будет невозможен, так как ей негде будет взять установочные файлы.</p>
+
+<details class="faq-item"><summary>Что такое контроллер SATA и IDE?</summary><div class="faq-answer"><p>Контроллер SATA используется для подключения современных жестких дисков и обеспечивает более высокую скорость передачи данных. IDE эмулирует старые стандарты и может потребоваться для установки очень древних операционных систем, таких как Windows 98 или DOS.</p></div></details>
+
+<h2 id="настройка-сетевого-взаимодействия-и-общих-папок">Настройка сетевого взаимодействия и общих папок</h2>
+
+<p>Для обеспечения доступа в интернет виртуальной машине необходимо правильно настроить сетевой адаптер. По умолчанию используется режим <strong>NAT</strong>, при котором гостевая ОС получает доступ во внешнюю сеть через IP-адрес хоста. Это наиболее безопасный и простой вариант, скрывающий виртуальную машину от других устройств в локальной сети.</p>
+
+<p>Если же требуется, чтобы виртуальный компьютер был виден другим устройствам в сети или имел свой собственный IP-адрес, следует переключить режим на «Сетевой мост» (Bridged Adapter). В этом режиме эмулятор будет использовать физический сетевой карта компьютера напрямую, транслируя MAC-адрес виртуального адаптера.</p>
+
+<blockquote>
+<p>⚠️ Внимание: При использовании режима «Сетевой мост» в корпоративных сетях могут возникнуть конфликты адресов или блокировка со стороны администратора безопасности, так как в сети появится новое неизвестное устройство.</p>
+</blockquote>
+
+<p>Для обмена файлами между основной и виртуальной системой удобно использовать механизм «Общих папок». В настройках машины перейдите в раздел «Общие папки», добавьте новый ресурс и укажите путь к директории на хосте. После установки <strong>Guest Additions</strong> эта папка станет доступна внутри гостевой ОС как сетевой диск.</p>
+
+<p>Настройка проброса портов в режиме NAT позволяет открывать доступ к сервисам, запущенным внутри виртуальной машины, извне. Например, можно пробросить порт 8080 хоста на порт 80 гостя, чтобы тестировать веб-сервер. Это делается через дополнительные параметры сети в настройках адаптера.</p>
+
+<div class="checklist-block"><h4>☑️ Проверка сетевых настроек</h4><label class="check-item"><input type="checkbox"><span>Режим NAT активирован</span></label><label class="check-item"><input type="checkbox"><span>Кабель подключен (галочка)</span></label><label class="check-item"><input type="checkbox"><span>Драйверы сети установлены</span></label><label class="check-item"><input type="checkbox"><span>Доступ к интернету проверен</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<h2 id="процесс-установки-операционной-системы">Процесс установки операционной системы</h2>
+
+<p>После завершения конфигурирования нажмите кнопку <strong>Запустить</strong>. Если все настройки верны, откроется окно виртуального компьютера, и начнется процесс загрузки с подключенного ISO-образа. Экран приветствия установщика операционной системы свидетельствует об успешном старте.</p>
+
+<p>Дальнейший процесс мало чем отличается от установки ОС на физический компьютер. Необходимо выбрать язык, разметить виртуальный диск (обычно предлагается создать новый раздел на всем доступном пространстве) и скопировать файлы. Виртуальный диск воспринимается гостевой системой как обычный физический накопитель.</p>
+
+<p>Во время установки система может несколько раз перезагрузиться. Не пугайтесь, если курсор мыши «застрянет» внутри окна виртуальной машины. Для освобождения курсора и возврата управления хосту используется специальная клавиша-модификатор, по умолчанию это правый <code>Ctrl</code>.</p>
+
+<mark>Критически важным моментом является установка пакета Guest Additions сразу после первой загрузки ОС, так как без него не будут работать общее буфер обмена, проброс папок и правильное разрешение экрана.</mark>
+
+<p>Установка дополнений гостя производится через меню окна эмулятора: <code>Устройства → Подключить образ диска Дополнений гостя</code>. Внутри виртуальной системы откройте этот диск и запустите установочный скрипт. После перезагрузки разрешение экрана должно автоматически подстроиться под размер окна.</p>
+
+<h2 id="оптимизация-и-создание-снимков-состояния">Оптимизация и создание снимков состояния</h2>
+
+<p>После успешной установки и настройки всех драйверов рекомендуется создать <strong>Снимок</strong> (Snapshot) системы. Это сохраненное состояние виртуальной машины в определенный момент времени, к которому можно вернуться в случае сбоя или неудачных экспериментов. Снимки занимают минимум места, если в системе не происходило изменений.</p>
+
+<p>Управление снимками осуществляется через меню <code>Машина → Сделать снимок</code> или через менеджер снимков. Вы можете создавать цепочки снимков, возвращаться к предыдущим состояниям и удалять ненужные точки восстановления. Это мощный инструмент для тестирования ПО, позволяющий мгновенно откатывать изменения.</p>
+
+<p>Для повышения производительности можно отключить ненужные службы хоста, такие как аудио-контроллер, если звук не требуется, или снизить количество USB-портов. Также стоит проверить, не используется ли антивирусом хоста постоянное сканирование папки с виртуальным диском, что может сильно замедлить работу.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Регулярное создание снимков перед установкой нового софта — лучшая стратегия безопасности при работе с неизвестными или подозрительными программами.</p></div>
+
+<p>Не забывайте периодически обновлять сам VirtualBox и Extension Pack до актуальных версий. Новые версии часто содержат исправления безопасности и улучшения совместимости с новыми версиями гостевых операци--онных систем. Однако перед обновлением всегда делайте резервные копии важных виртуальных машин.</p>
+
+<h2 id="часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</h2>
+
+<details>
+<summary>Почему виртуальная машина работает медленно даже на мощном ПК?</summary>
+<p>Скорее всего, не включена аппаратная виртуализация в BIOS (VT-x/AMD-V) или выделено недостаточное количество оперативной памяти. Также проверьте, не работает ли антивирус хоста в фоне, сканируя файлы виртуального диска.</p>
+</details>
+
+<details>
+<summary>Как передать большой файл с основного компьютера на виртуальный?</summary>
+<p>Самый быстрый способ — настроить «Общие папки» в настройках машины и установить Guest Additions. Альтернативно можно использовать сетевое окружение или создать ISO-образ с данными и подключить его как виртуальный CD/DVD.</p>
+</details>
+
+<details>
+<summary>Можно ли запустить VirtualBox на компьютере без прав администратора?</summary>
+<p>Полноценная работа требует прав администратора для установки сетевых драйверов и создания виртуальных адаптеров. Однако существует портативная версия VirtualBox, которая может запускать уже созданные машины, но функционал сети в ней будет ограничен.</p>
+</details>
+
+<details>
+<summary>Что делать, если пропал звук в виртуальной машине?</summary>
+<p>Проверьте настройки звука в окне виртуальной машины (меню Машина → Настройки → Звук). Убедитесь, что включен аудио-контроллер (обычно Intel HD Audio) и выбран правильный аудио-драйвер хоста.</p>
+</details>
+
+<details>
+<summary>Как полностью удалить виртуальную машину и освободить место?</summary>
+<p>Простое удаление из списка в интерфейсе не стирает файлы диска. Необходимо в менеджере виртуальных машин выбрать машину, нажать правую кнопку мыши и выбрать «Удалить», затем в появившемся окне выбрать опцию «Удалить все файлы».</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#подготовка-хост-системы-и-установка-эмулятора">Подготовка хост-системы и установка эмулятора</a></li><li><a href="#запуск-мастера-создания-новой-виртуальной-машины">Запуск мастера создания новой виртуальной машины</a></li><li><a href="#конфигурирование-параметров-виртуального-оборудования">Конфигурирование параметров виртуального оборудования</a></li><li><a href="#настройка-сетевого-взаимодействия-и-общих-папок">Настройка сетевого взаимодействия и общих папок</a></li><li><a href="#процесс-установки-операционной-системы">Процесс установки операционной системы</a></li><li><a href="#оптимизация-и-создание-снимков-состояния">Оптимизация и создание снимков состояния</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/me/mersedes-iz-ligi-spravedlivosti.html" class="related-card">Мерседес из Лиги Справедливости: какой автомобиль у Бэтмена?</a></li><li><a href="/articles/k/ka/kakoj-strane-prinadlezhit-mersedes.html" class="related-card">Какой стране принадлежит Мерседес: история бренда</a></li><li><a href="/articles/e/eg/egs-blok-mersedes.html" class="related-card">EGS блок Мерседес: симптомы неисправностей и ремонт</a></li><li><a href="/articles/c/cd/cd-proigryvatel-technics-sl-ps770a.html" class="related-card">Technics SL-PS770A: Обзор, характеристики и ремонт CD-проигрывателя</a></li><li><a href="/articles/l/lu/lukojl-gl-5-75w-90.html" class="related-card">Лукойл GL-5 75W-90: характеристики, отзывы, аналоги и применение</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/me/mersedes-iz-ligi-spravedlivosti.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес из Лиги Справедливости: какой автомобиль у Бэтмена?</span><span class="related-bottom-desc">Какой Мерседес водит Бэтмен? Разбираем автомобили из Лиги Справедливости: от Mercedes-AMG GT до Batm</span></a><a href="/articles/k/ka/kakoj-strane-prinadlezhit-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Какой стране принадлежит Мерседес: история бренда</span><span class="related-bottom-desc">Узнайте, какой стране принадлежит Мерседес. Подробный разбор истории, штаб-квартиры в Штутгарте и гл</span></a><a href="/articles/e/eg/egs-blok-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">EGS блок Мерседес: симптомы неисправностей и ремонт</span><span class="related-bottom-desc">Полный гид по EGS блоку Мерседес: диагностика ошибок, коды неисправностей, ремонт и замена селектора</span></a><a href="/articles/c/cd/cd-proigryvatel-technics-sl-ps770a.html" class="related-bottom-card"><span class="related-bottom-title">Technics SL-PS770A: Обзор, характеристики и ремонт CD-проигрывателя</span><span class="related-bottom-desc">Полный обзор легендарного CD-проигрывателя Technics SL-PS770A. Технические характеристики, особеннос</span></a><a href="/articles/l/lu/lukojl-gl-5-75w-90.html" class="related-bottom-card"><span class="related-bottom-title">Лукойл GL-5 75W-90: характеристики, отзывы, аналоги и применение</span><span class="related-bottom-desc">Подробный обзор трансмиссионного масла Лукойл GL-5 75W-90: технические параметры, совместимость с КП</span></a><a href="/articles/a/av/avtoservis-profiserviceclub-bmw-mini-aviatsionnaya-ul-24-str-1-otzyvy.html" class="related-bottom-card"><span class="related-bottom-title">Profiserviceclub BMW Mini Авиационная: честные отзывы клиентов</span><span class="related-bottom-desc">Подробный обзор автосервиса Profiserviceclub на Авиационной 24 стр 1. Реальные отзывы, анализ цен и </span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

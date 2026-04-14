@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>VLC DLNA Client: Полная настройка стриминга видео — Мерседес Инфо</title>
+    <meta name="description" content="Как превратить VLC в DLNA-клиент для трансляции медиа с ПК, NAS или телефона на телевизор. Пошаговая инструкция и устранение ошибок.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/v/vl/vlc-dlna-client.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="VLC DLNA Client: Полная настройка стриминга видео">
+    <meta property="og:description" content="Как превратить VLC в DLNA-клиент для трансляции медиа с ПК, NAS или телефона на телевизор. Пошаговая инструкция и устранение ошибок.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">VLC DLNA Client: Полная настройка стриминга видео</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>VLC DLNA Client: Профессиональная настройка домашней медиатеки</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#принципы-работы-dlna-клиента-в-среде-vlc">Принципы работы DLNA-клиента в среде VLC</a></li><li><a href="#настройка-сети-и-обнаружение-устройств">Настройка сети и обнаружение устройств</a></li><li><a href="#запуск-воспроизведения-через-меню-рендеринга">Запуск воспроизведения через меню рендеринга</a></li><li><a href="#использование-протокола-upnp-для-доступа-к-медиатекам">Использование протокола UPnP для доступа к медиатекам</a></li><li><a href="#трансляция-экрана-и-рабочего-стола-chromecast-и-другие">Трансляция экрана и рабочего стола (Chromecast и другие)</a></li><li><a href="#диагностика-проблем-и-оптимизация-буфера">Диагностика проблем и оптимизация буфера</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Современные пользователи часто сталкиваются с необходимостью воспроизведения медиаконтента с одного устройства на другом, будь то запуск фильма с ноутбука на большом экране телевизора или трансляция музыки со смартфона на домашнюю аудиосистему. В этом контексте <strong>VLC media player</strong> выступает не просто как видеоплеер, но и как мощный универсальный инструмент, способный работать в качестве DLNA-клиента. Эта функция позволяет обходить ограничения встроенных Smart TV и воспроизводить практически любые форматы файлов, которые «родные» приложения телевизора могут не поддерживать.</p>
+
+<p>Использование связки <em>VLC</em> и технологии <strong>Digital Living Network Alliance</strong> открывает доступ к файлам, хранящимся на сетевом хранилище или компьютере, без необходимости предварительного копирования на флеш-накопитель. Это особенно актуально для владельцев 4K-контента, где скорость передачи данных по Wi-Fi или кабелю играет критическую роль. Понимание принципов работы рендеринга в <code>View → Renderer</code> поможет вам создать единую мультимедийную экосистему в доме.</p>
+
+<p>Однако, несмотря на простоту концепции, настройка часто вызывает вопросы у новичков. Почему телевизор не видит компьютер? Почему видео тормозит или воспроизводится без звука? В этой статье мы разберем технические аспекты работы протокола UPnP/DLNA внутри плеера, методы ручной настройки и способы решения наиболее распространенных проблем совместимости устройств в локальной сети.</p>
+
+<h2 id="принципы-работы-dlna-клиента-в-среде-vlc">Принципы работы DLNA-клиента в среде VLC</h2>
+
+<p>Технология DLNA базируется на протоколе UPnP (Universal Plug and Play), который позволяет устройствам автоматически обнаруживать друг друга в локальной сети и обмениваться данными. Когда вы используете <strong>VLC</strong> как клиент, программа сканирует сеть на наличие серверов (DMS — Digital Media Server), которыми могут выступать другие компьютеры, NAS-системы или даже смартфоны. После обнаружения сервера VLC получает доступ к структуре папок и списку медиафайлов, предоставляя интерфейс для их выбора и воспроизведения.</p>
+
+<p>Ключевым моментом является процесс транскодирования. Если принимающее устройство (рендерер) не поддерживает формат исходного файла, <em>VLC media player</em> может взять на себя функцию перекодирования потока на лету. Это требует достаточной вычислительной мощности компьютера, на котором запущен плеер. В настройках кодеков можно задать параметры, чтобы минимизировать нагрузку на процессор или, наоборот, обеспечить максимальное качество изображения.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Для стабильной работы DLNA-клиента все устройства должны находиться в одной подсети. Если ваш роутер раздает адреса через разные диапазоны (например, гостевая сеть и основная сеть), устройства могут не «видеть» друг друга.</p>
+</blockquote>
+
+<p>Важно различать два режима работы: когда VLC выступает в роли сервера (отдает файлы) и когда он является клиентом (принимает или управляет воспроизведением). В контексте нашей темы нас интересует именно клиентская часть, где плеер инициирует запрос на получение потока данных. Протокол позволяет управлять воспроизведением (пауза, перемотка) непосредственно с устройства-источника, если рендерер поддерживает соответствующие команды.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой тип контента вы чаще всего транслируете через DLNA?</strong><ul><li>Фильмы в 4K HDR</li><li>Музыкальные альбомы FLAC</li><li>Фотографии с отпуска</li><li>Онлайн-транляции IPTV</li><li>Другое</li></ul></div></div>
+
+<h2 id="настройка-сети-и-обнаружение-устройств">Настройка сети и обнаружение устройств</h2>
+
+<p>Первым шагом перед запуском стриминга является правильная конфигурация сетевых параметров. Windows, macOS и Linux имеют различные настройки брандмауэров, которые по умолчанию могут блокировать входящие и исходящие соединения для протокола UPnP. Вам необходимо убедиться, что сеть помечена как «Частная» или «Домашняя», а не «Общественная», чтобы разрешить обнаружение устройств.</p>
+
+<p>В интерфейсе VLC доступ к сетевым функциям осуществляется через меню <code>Сеть</code> или боковую панель. Если список устройств пуст, попробуйте обновить его или проверить настройки общего доступа. Часто проблема кроется в отсутствии разрешений для службы <strong>SSDP</strong> (Simple Service Discovery Protocol), которая отвечает за рассылку уведомлений о наличии устройств.</p>
+
+<ul>
+<li>🔍 Убедитесь, что на всех устройствах включена функция «Сетевое обнаружение».</li>
+<li>🔌 Проверьте, что антивирус или брандмауэр не блокирует порты 1900 (UDP) и 2869 (TCP).</li>
+<li>🔄 Перезагрузите роутер, если список устройств не обновляется в течение минуты.</li>
+<li>📁 Убедитесь, что папки с медиафайлами добавлены в библиотеки общего доступа ОС.</li>
+</ul>
+
+<p>Для продвинутых пользователей доступна возможность ручной настройки интерфейсов прослушивания. В меню <code>Инструменты → Настройки</code> (в режиме «Все») можно указать конкретный сетевой интерфейс, если у вас их несколько (например, Wi-Fi и Ethernet одновременно). Это поможет избежать ситуаций, когда VLC слушает не ту сеть.</p>
+
+<div class="checklist-block"><h4>☑️ Диагностика сети</h4><label class="check-item"><input type="checkbox"><span>Все устройства в одной сети</span></label><label class="check-item"><input type="checkbox"><span>Брандмауэр настроен</span></label><label class="check-item"><input type="checkbox"><span>Сетевой профиль «Частный»</span></label><label class="check-item"><input type="checkbox"><span>Служба SSDP активна</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<h2 id="запуск-воспроизведения-через-меню-рендеринга">Запуск воспроизведения через меню рендеринга</h2>
+
+<p>Самый простой способ запустить трансляцию — использовать встроенное меню рендеринга. После того как VLC обнаружит DLNA-совместимое устройство (телевизор, приставку или умную колонку), оно появится в списке доступных рендереров. Этот метод идеален для быстрой передачи изображения без сложной настройки путей к файлам.</p>
+
+<p>Чтобы воспользоваться этой функцией, откройте видеофайл локально, затем перейдите в меню <code>Воспроизведение → Рендеринг</code> (или нажмите комбинацию клавиш, если назначена). В выпадающем списке выберите целевое устройство. Плеер автоматически перенаправит видеопоток, а управление воспроизведением останется в окне VLC на компьютере.</p>
+
+<p>Стоит отметить, что качество соединения напрямую зависит от пропускной способности канала. При передаче тяжелого 4K-контента предпочтительнее использовать проводное соединение <strong>Ethernet</strong>, так как беспроводные сети могут не обеспечить стабильный битрейт, что приведет к буферизации.</p>
+
+<details class="faq-item"><summary>Что делать, если устройство найдено, но не подключается?</summary><div class="faq-answer"><p>Если VLC видит телевизор, но при выборе рендерера происходит тайм-аут, попробуйте принудительно сменить кодек видео на совместимый (например, H.264) в настройках транскодирования или обновите прошивку телевизора. Также помогает временное отключение антивируса для проверки блокировки портов.</p></div></details>
+
+<p>В некоторых случаях может потребоваться ручная активация функции. Убедитесь, что в настройках интерфейса включена опция «Показывать значок в системном трее», так как управление рендерингом часто удобнее осуществлять оттуда, особенно если основное окно плеера свернуто.</p>
+
+<h2 id="использование-протокола-upnp-для-доступа-к-медиатекам">Использование протокола UPnP для доступа к медиатекам</h2>
+
+<p>Более гибким методом является использование универсального клиента UPnP, встроенного в VLC. Этот подход позволяет не просто «кинуть» картинку на экран, а полноценно browsить файловую систему удаленного сервера. Это особенно удобно, если ваш телевизор имеет слабый процессор и не может самостоятельно декодировать сложные форматы, а VLC выступает в роли мощного декодера.</p>
+
+<p>Для доступа к медиатеке перейдите в раздел <code>Сеть → Универсальный контроль UPnP</code>. Здесь отобразится дерево устройств. Раскрыв нужное устройство, вы увидите структуру папок. Навигация осуществляется так же, как в обычном файловом менеджере. Двойной клик по файлу initiates streaming.</p>
+
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Описание</th>
+<th>Рекомендуемое значение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Протокол</td>
+<td>Метод передачи данных</td>
+<td>HTTP / RTP</td>
+</tr>
+<tr>
+<td>Порт</td>
+<td>Сетевой порт для стрима</td>
+<td>8080 (по умолчанию)</td>
+</tr>
+<tr>
+<td>Кодек</td>
+<td>Формат сжатия потока</td>
+<td>H.264 / AAC</td>
+</tr>
+<tr>
+<td>Буфер</td>
+<td>Размер кэша сети</td>
+<td>1000 мс</td>
+</tr>
+</tbody>
+</table>
+
+<p>Если стандартный браузер файлов не отображает контент корректно (например, не видно русских букв в названиях), попробуйте изменить кодировку в настройках интерфейса или использовать IP-адрес сервера для прямого подключения. Прямой ввод адреса часто решает проблемы с автообнаружением в сложных корпоративных сетях.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте статический IP-адрес для вашего медиа-сервера (ПК или NAS). Это предотвратит ситуации, когда после перезагрузки роутера VLC перестанет находить устройства из-за смены адреса.</p></div>
+
+<h2 id="трансляция-экрана-и-рабочего-стола-chromecast-и-другие">Трансляция экрана и рабочего стола (Chromecast и другие)</h2>
+
+<p>Хотя классический DLNA ориентирован на файлы, современные версии VLC поддерживают трансляцию всего рабочего стола или отдельных окон через протоколы, подобные Chromecast. Это уже не совсем чистый DLNA, но функционально решает ту же задачу — вывод изображения на большой экран. Эта функция полезна для демонстрации презентаций или просмотра контента с сайтов, не имеющих приложения для ТВ.</p>
+
+<p>Для запуска трансляции экрана выберите в меню рендеринга опцию «Рабочий стол» или соответствующее устройство Chromecast. VLC захватит изображение, закодирует его в реальном времени и отправит на приемник. Обратите внимание, что этот процесс очень ресурсоемок и может вызывать задержку (lag) между действиями на мышке и изображением на экране.</p>
+
+<p>При трансляции рабочего стола критически важно закрыть лишние приложения, чтобы не перегружать CPU. Также рекомендуется снизить разрешение выводимого изображения в настройках VLC, если наблюдается «дерганое» видео. Для офисных задач и статичных изображений это не критично, но для динамичных сцен может потребоваться снижение качества.</p>
+
+<blockquote>
+<p>⚠️ Внимание: При трансляции рабочего стола через VLC звук с компьютера по умолчанию может не передаваться. Необходимо в настройках аудио-выхода выбрать виртуальный кабель или стерео-микшер, чтобы захватить системный звук.</p>
+</blockquote>
+
+<h2 id="диагностика-проблем-и-оптимизация-буфера">Диагностика проблем и оптимизация буфера</h2>
+
+<p>Наиболее частая проблема при использовании VLC в качестве DLNA-клиента — рассинхронизация аудио и видео или постоянная буферизация. Это обычно указывает на нехватку сетевой полосы пропускания или неправильный размер сетевого кэша. По умолчанию VLC устанавливает conservative значения, которые могут не подходить для высокоскоростных 4K-потоков.</p>
+
+<p>Для оптимизации перейдите в <code>Инструменты → Настройки → Все → Входные/Кодеки</code>. Найдите поле «Кэш сети (мс)» и увеличьте его значение. Для Full HD контента достаточно 300-500 мс, для 4K HDR может потребоваться 1000-2000 мс. Это создаст буфер, который сгладит скачки скорости Wi-Fi.</p>
+
+<ul>
+<li>📉 Снижение качества: Если лаги продолжаются, попробуйте транслировать в 1080p вместо 4K.</li>
+<li>🔌 Кабель вместо Wi-Fi: Всегда优先考虑 проводное соединение для стационарных устройств.</li>
+<li>🚫 Отключение аппаратного ускорения: В некоторых драйверах видеокарт аппаратное декодирование конфликтует с сетевым стримингом.</li>
+</ul>
+
+<p>Также стоит проверить логи VLC (<code>Инструменты → Сообщения</code>, уровень отладки 2). Там можно увидеть ошибки декодирования или потери пакетов, что поможет точно диагностировать узкое место: сеть, диск или процессор.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Оптимальная настройка сетевого кэша — ключ к плавному воспроизведению. Не бойтесь увеличивать значение буфера до 2000 мс, если ваш интернет-канал нестабилен.</p></div>
+
+<h2 id="часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</h2>
+
+<details>
+<summary>Почему VLC не видит мой телевизор в списке рендереров?</summary>
+<p>Чаще всего проблема в настройках брандмауэра Windows или антивируса, которые блокируют протокол UPnP. Убедитесь, что сеть имеет статус «Частная», а службы обнаружения включены. Также проверьте, что оба устройства подключены к одной Wi-Fi сети (не к гостевой).</p>
+</details>
+
+<details>
+<summary>Можно ли передавать звук отдельно на внешнюю акустику через DLNA?</summary>
+<p>Да, если ваша акустическая система поддерживает DLNA/UPnP. В меню рендеринга выберите аудио-устройство. Однако, для раздельной передачи видео на ТВ и аудио на ресивер могут потребоваться дополнительные настройки маршрутизации звука в самой операционной системе.</p>
+</details>
+
+<details>
+<summary>Тормозит видео при трансляции с телефона на TV через VLC, в чем дело?</summary>
+<p>Скорее всего, не хватает скорости Wi-Fi канала. Попробуйте переключиться на диапазон 5 ГГц, если роутер поддерживает двухдиапазонную работу. Также убедитесь, что телефон не находится слишком далеко от роутера и между ними нет толстых стен.</p>
+</details>
+
+<details>
+<summary>Поддерживает ли VLC транскодирование на лету для DLNA?</summary>
+<p>Да, VLC может транслировать файлы в форматах, не поддерживаемых телевизором, перекодируя их на лету. Однако это создает высокую нагрузку на процессор компьютера. Для тяжелых форматов вроде HEVC 10-bit лучше использовать аппаратное ускорение или предварительно конвертировать файл.</p>
+</details>
+
+<details>
+<summary>Как добавить пароль на доступ к медиатеке в VLC?</summary>
+<p>Сам VLC как клиент не управляет паролями сервера. Защита осуществляется на уровне операционной системы (расширенный общий доступ в Windows) или настроек DLNA-сервера (например, в настройках Samba или специализированного софта типа Plex/Emby).</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#принципы-работы-dlna-клиента-в-среде-vlc">Принципы работы DLNA-клиента в среде VLC</a></li><li><a href="#настройка-сети-и-обнаружение-устройств">Настройка сети и обнаружение устройств</a></li><li><a href="#запуск-воспроизведения-через-меню-рендеринга">Запуск воспроизведения через меню рендеринга</a></li><li><a href="#использование-протокола-upnp-для-доступа-к-медиатекам">Использование протокола UPnP для доступа к медиатекам</a></li><li><a href="#трансляция-экрана-и-рабочего-стола-chromecast-и-другие">Трансляция экрана и рабочего стола (Chromecast и другие)</a></li><li><a href="#диагностика-проблем-и-оптимизация-буфера">Диагностика проблем и оптимизация буфера</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/y/ya/yandeks-karty-ili-google-karty.html" class="related-card">Яндекс Карты или Google Карты: экспертное сравнение навигаторов</a></li><li><a href="/articles/b/b-/b-u-mersedes.html" class="related-card">Б/У Mercedes: как выбрать надежный автомобиль без рисков</a></li><li><a href="/articles/c/cl/clutch-lining-v-my-summer-car.html" class="related-card">Clutch Lining в My Summer Car: замена и настройка</a></li><li><a href="/articles/m/me/mercedes-benz-tourismo.html" class="related-card">Mercedes-Benz Tourismo: обзор, цены, технические характеристики 2026</a></li><li><a href="/articles/z/zo/zolotoj-brelok-mersedes.html" class="related-card">Золотой брелок Мерседес: виды, стоимость и где купить оригинал</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/y/ya/yandeks-karty-ili-google-karty.html" class="related-bottom-card"><span class="related-bottom-title">Яндекс Карты или Google Карты: экспертное сравнение навигаторов</span><span class="related-bottom-desc">Подробный разбор: что лучше, Яндекс Карты или Google Карты? Сравнение офлайн-режима, пробок, интерфе</span></a><a href="/articles/b/b-/b-u-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Б/У Mercedes: как выбрать надежный автомобиль без рисков</span><span class="related-bottom-desc">Полное руководство по покупке подержанного Мерседес: проверка истории, диагностика, модели с лучшим </span></a><a href="/articles/c/cl/clutch-lining-v-my-summer-car.html" class="related-bottom-card"><span class="related-bottom-title">Clutch Lining в My Summer Car: замена и настройка</span><span class="related-bottom-desc">Полный гайд по замене clutch lining в My Summer Car. Разбор износа, установка на Satsuma и настройки</span></a><a href="/articles/m/me/mercedes-benz-tourismo.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz Tourismo: обзор, цены, технические характеристики 2026</span><span class="related-bottom-desc">Подробный разбор туристического автобуса Mercedes-Benz Tourismo: двигатели, салон, комплектации, рас</span></a><a href="/articles/z/zo/zolotoj-brelok-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Золотой брелок Мерседес: виды, стоимость и где купить оригинал</span><span class="related-bottom-desc">Полный гид по золотым брелокам Mercedes-Benz. Отличия оригинала от подделки, цены, материалы и совет</span></a><a href="/articles/c/cw/cworks-0w30-oil-club.html" class="related-bottom-card"><span class="related-bottom-title">Масло Cworks 0W-30: характеристики, отзывы и где купить</span><span class="related-bottom-desc">Полный обзор синтетического масла Cworks 0W-30. Характеристики, допуски, совместимость и рекомендаци</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

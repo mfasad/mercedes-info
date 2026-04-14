@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Clonezilla: как перенести HDD на SSD без потери данных (2026) — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговая инструкция по клонированию жесткого диска на SSD через Clonezilla с учетом выравнивания разделов и оптимизации для Windows/Linux. Сравнение методов и решение типичных ошибок.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/c/cl/clonezilla-perenos-hdd-na-ssd.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Clonezilla: как перенести HDD на SSD без потери данных (2026)">
+    <meta property="og:description" content="Пошаговая инструкция по клонированию жесткого диска на SSD через Clonezilla с учетом выравнивания разделов и оптимизации для Windows/Linux. Сравнение методов и решение типичных ошибок.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Clonezilla: как перенести HDD на SSD без потери данных (2026)</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Перенос системы с HDD на SSD через Clonezilla: полное руководство с нюансами</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#почему-clonezilla-а-не-альтернативы">Почему Clonezilla, а не альтернативы?</a></li><li><a href="#подготовка-к-клонированию-что-нужно-сделать-до-запуска-clonezilla">Подготовка к клонированию: что нужно сделать ДО запуска Clonezilla</a></li><li><a href="#создание-загрузочного-носителя-с-clonezilla">Создание загрузочного носителя с Clonezilla</a></li><li><a href="#пошаговая-инструкция-клонирование-hdd-на-ssd">Пошаговая инструкция: клонирование HDD на SSD</a></li><li><a href="#оптимизация-ssd-после-клонирования">Оптимизация SSD после клонирования</a></li><li><a href="#типичные-ошибки-и-их-решения">Типичные ошибки и их решения</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Переход с традиционного <strong>HDD</strong> на скоростной <em>SSD</em> — один из самых эффективных апгрейдов для старого компьютера или ноутбука. Однако простой перенос данных через копирование файлов не сработает: нужна <strong>побитовая копия</strong> с сохранением загрузочных записей, таблиц разделов и скрытых системных файлов. Здесь на помощь приходит <em>Clonezilla</em> — бесплатный инструмент с открытым исходным кодом, который умеет клонировать диски на уровне секторов, но требует аккуратности в настройках.</p>
+
+<p>В этой статье мы разберём не только базовый процесс клонирования, но и <mark>критические нюансы, которые 90% пользователей упускают: выравнивание разделов для SSD, обработку несоответствия размеров дисков, а также оптимизацию системы после переноса</mark>. Вы узнаете, как избежать типичных ошибок (например, "синий экран" после замены диска в Windows) и какие параметры Clonezilla выбрать для максимальной производительности нового накопителя.</p>
+
+<h2 id="почему-clonezilla-а-не-альтернативы">Почему Clonezilla, а не альтернативы?</h2>
+
+<p>На рынке существует множество программ для клонирования дисков — от платных (<em>Acronis True Image</em>, <em>Macrium Reflect</em>) до встроенных утилит (<code>dd</code> в Linux или <code>diskpart</code> в Windows). Однако <em>Clonezilla</em> выделяется несколькими ключевыми преимуществами:</p>
+
+<ul>
+  <li>🔹 <strong>Поддержка всех файловых систем</strong>: работает с <code>NTFS</code>, <code>ext4</code>, <code>FAT32</code>, <code>Btrfs</code> и даже редкими вариантами вроде <code>ReFS</code> или <code>ZFS</code>.</li>
+  <li>🔹 <strong>Гибкость настроек</strong>: позволяет клонировать отдельные разделы, весь диск или только используемые сектора (опция <code>-rescue</code> для повреждённых носителей).</li>
+  <li>🔹 <strong>Минимальные требования</strong>: запускается с Live-CD/USB (подходит даже для старых ПК с 1 ГБ ОЗУ) и не устанавливается в систему.</li>
+  <li>🔹 <strong>Проверка целостности</strong>: после клонирования автоматически сверяет контрольные суммы (<code>SHA-1</code> или <code>MD5</code>).</li>
+</ul>
+
+<p>Главный недостаток Clonezilla — <strong>отсутствие графического интерфейса</strong> в базовой версии (только текстовый режим). Это пугает новичков, но на практике процесс сводится к выбору 5-6 пунктов меню. Для сравнения: в <em>Acronis</em> аналогичная операция занимает столько же времени, но требует покупки лицензии.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой инструмент вы использовали для клонирования дисков ранее?</strong><ul><li>Clonezilla</li><li>Acronis True Image</li><li>Macrium Reflect</li><li>Встроенные средства Windows/Linux</li><li>Никогда не клонировал</li></ul></div></div>
+
+<h2 id="подготовка-к-клонированию-что-нужно-сделать-до-запуска-clonezilla">Подготовка к клонированию: что нужно сделать ДО запуска Clonezilla</h2>
+
+<p>Ошибки на этапе подготовки — основная причина неудач при переносе системы. Перед тем как создавать загрузочный носитель с Clonezilla, выполните следующие шаги:</p>
+
+
+<p>Очистить SSD от существующих разделов (через <code>Disk Management</code> или <code>gparted</code>)</p>
+<p>Проверить здоровье HDD утилитой <em>CrystalDiskInfo</em> (показатель <code>Reallocated Sectors</code> должен быть 0)</p>
+<p>Отключить гибернацию в Windows (<code>powercfg /h off</code> в CMD от админа)</p>
+<p>Дефрагментировать HDD (только для Windows! Для Linux — optional)</p>
+<p>Подключить SSD по <code>SATA</code> или через <code>USB-SATA адаптер</code> (NVMe требует M.2-слота)</p>
+<p>--></p>
+
+<p><strong>Критически важный момент</strong>: если ваш <em>SSD меньше по объёму, чем HDD</em>, необходимо <strong>уменьшить размер раздела</strong> на исходном диске. Clonezilla не умеет автоматически сжимать данные! Для этого:</p>
+<ol>
+  <li>В Windows: используйте <code>Управление дисками</code> → "Сжать том".</li>
+  <li>В Linux: <code>gparted</code> или <code>resize2fs</code> (для <code>ext4</code>).</li>
+</ol>
+
+<p>Для <em>NVMe-накопителей</em> (например, <em>Samsung 980 Pro</em> или <em>WD Black SN850X</em>) убедитесь, что ваша материнская плата поддерживает <code>PCIe 3.0/4.0</code>. В противном случае SSD будет работать на пониженной скорости. Проверить это можно в <code>BIOS</code> (раздел <code>Advanced → Storage Configuration</code>).</p>
+
+<details class="faq-item"><summary>Что будет если не уменьшить раздел перед клонированием?</summary><div class="faq-answer"><p>
+<p>Если исходный HDD имеет раздел размером 500 ГБ, а SSD — 250 ГБ, Clonezilla завершит процесс с ошибкой <code>"Not enough space on target disk"</code>. Принудительное клонирование (опция <code>-icds</code>) приведёт к потере данных на SSD и невозможности загрузки системы. Восстановление в этом случае потребует ручного редактирования таблицы разделов через <code>testdisk</code> или переустановки ОС.</p>
+<p></p></div></details></p>
+
+<h2 id="создание-загрузочного-носителя-с-clonezilla">Создание загрузочного носителя с Clonezilla</h2>
+
+<p>Clonezilla распространяется в виде <strong>Live-образа</strong>, который нужно записать на USB-накопитель или DVD. Официальный сайт предлагает три варианта:</p>
+<ul>
+  <li>🔸 <strong>Clonezilla Live</strong> (рекомендуется) — полнофункциональная версия с поддержкой большинства файловых систем.</li>
+  <li>🔸 <strong>Clonezilla SE</strong> — серверное решение для массового развёртывания (не нужно для домашнего использования).</li>
+  <li>🔸 <strong>Alternate</strong> — версия для старых ПК (ядро Linux 3.x).</li>
+</ul>
+
+<p>Для записи образа на USB используйте:</p>
+<ul>
+  <li>📌 В Windows: <em>Rufus</em> (выберите схему раздела <code>MBR</code> для BIOS или <code>GPT</code> для UEFI).</li>
+  <li>📌 В Linux: <code>dd if=clonezilla-live.iso of=/dev/sdX bs=4M status=progress</code> (замените <code>sdX</code> на ваш USB-накопитель!).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание</strong>: Если ваш ПК поддерживает <code>UEFI</code>, но в настоящий момент работает в режиме <code>Legacy BIOS</code>, после клонирования система может не загрузиться. Проверьте текущий режим в <code>BIOS</code> (раздел <code>Boot Mode</code>) и при необходимости переключитесь на <code>UEFI</code> <strong>до</strong> начала процесса.</blockquote>
+
+<p>После записи загрузитесь с созданного носителя. На большинстве ПК для этого нужно нажать <code>F12</code>, <code>Esc</code> или <code>Del</code> при старте и выбрать USB в меню загрузки. В <em>Clonezilla</em> выберите язык (<code>Russian</code> доступен), раскладку клавиатуры и дождитесь загрузки основного меню.</p>
+
+<h2 id="пошаговая-инструкция-клонирование-hdd-на-ssd">Пошаговая инструкция: клонирование HDD на SSD</h2>
+
+<p>Теперь переходим к самому процессу. Следуйте инструкции внимательно — порядок действий важен!</p>
+
+<ol>
+  <li><strong>Выбор режима</strong>: в главном меню выберите <code>Clonezilla live</code> → <code>Start Clonezilla</code>.</li>
+  <li><strong>Тип клонирования</strong>: <code>device-device</code> (диск-диск) или <code>device-image</code> (создание образа). Для прямого переноса выбираем первый вариант.</li>
+  <li><strong>Режим для новичков</strong>: <code>Beginner mode</code> (достаточно для 99% задач).</li>
+  <li><strong>Выбор действия</strong>: <code>disk_to_local_disk</code> (клонировать локальный диск на другой локальный диск).</li>
+  <li><strong>Выбор исходного диска</strong>: укажите ваш <strong>HDD</strong> (например, <code>/dev/sda</code>). <strong>Будьте внимательны!</strong> Ошибка здесь приведёт к потере данных.</li>
+  <li><strong>Выбор целевого диска</strong>: укажите <strong>SSD</strong> (например, <code>/dev/sdb</code>).</li>
+  <li><strong>Параметры клонирования</strong>:
+    <ul>
+      <li>🔘 <code>-k1</code> — проверять исходный диск на ошибки.</li>
+      <li>🔘 <code>-r</code> — изменять размер раздела под целевой диск (обязательно для SSD меньшего объёма!).</li>
+      <li>🔘 <code>-icds</code> — игнорировать ошибки чтения (только если HDD повреждён).</li>
+    </ol>
+  </li>
+  <li><strong>Подтверждение</strong>: введите <code>y</code> для начала процесса. Клонирование займёт от 20 минут до нескольких часов (зависит от объёма данных и скорости дисков).</li>
+</ol>
+
+<p>После завершения Clonezilla предложит:</p>
+<ul>
+  <li>🔄 Перезагрузить ПК (<code>reboot</code>).</li>
+  <li>🛑 Выключить компьютер (<code>poweroff</code>).</li>
+  <li>🔙 Вернуться в меню (<code>enter_shell</code>).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание</strong>: Если после клонирования вы планируете оставить оба диска подключёнными, <strong>отключите исходный HDD в BIOS</strong> (или физически отсоедините его). В противном случае система может запуститься с него, а не с нового SSD, что приведёт к путанице с загрузочными записями.</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если Clonezilla "зависает" на этапе проверки файловой системы, попробуйте отключить опцию <code>-k1</code> или используйте параметр <code>-fsck-src skip</code> для пропуска проверки. Это ускорит процесс, но увеличивает риск переноса повреждённых данных.</p></div>
+
+<h2 id="оптимизация-ssd-после-клонирования">Оптимизация SSD после клонирования</h2>
+
+<p>Простое клонирование — это только половина дела. Чтобы <em>SSD</em> работал на полной скорости и прослужил дольше, необходимо выполнить несколько дополнительных шагов:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Действие</th>
+      <th>Для Windows</th>
+      <th>Для Linux</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Включить TRIM</strong></td>
+      <td><code>fsutil behavior set DisableDeleteNotify 0</code> (в CMD от админа)</td>
+      <td><code>sudo systemctl enable fstrim.timer</code></td>
+    </tr>
+    <tr>
+      <td><strong>Отключить дефрагментацию</strong></td>
+      <td>Отключить службу <code>SysMain</code> (<code>services.msc</code>)</td>
+      <td>Не требуется (Linux не дефрагментирует SSD)</td>
+    </tr>
+    <tr>
+      <td><strong>Выровнять разделы</strong></td>
+      <td>Использовать <em>MiniTool Partition Wizard</em> для смещения на 1 МБ</td>
+      <td><code>sudo parted /dev/sdX align-check optimal 1</code></td>
+    </tr>
+    <tr>
+      <td><strong>Отключить индексирование</strong></td>
+      <td>Снять галочку в свойствах диска (<code>Общие → Разрешить индексирование</code>)</td>
+      <td>Добавить <code>noatime,nodiratime</code> в <code>/etc/fstab</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Для <em>Windows 10/11</em> также рекомендуется:</p>
+<ol>
+  <li>Отключить <strong>Superfetch</strong> (<code>SysMain</code>): <code>sc stop SysMain & sc config SysMain start=disabled</code>.</li>
+  <li>Установить <strong>AHCI-режим</strong> для SATA (если ранее использовался <code>IDE</code>).</li>
+  <li>Обновить драйверы контроллера хранилища (через <em>Диспетчер устройств</em>).</li>
+</ol>
+
+<p>В <em>Linux</em> проверьте, что используется <strong>filesystem mount options</strong> для SSD:
+<pre><code>/dev/sda1 / ext4 noatime,nodiratime,discard,errors=remount-ro 0 1</code></pre>
+<p>Опция <code>discard</code> включает <strong>онлайн-TRIM</strong>, а <code>noatime</code> уменьшает количество записей.</p></p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Не игнорируйте выравнивание разделов! Неправильное смещение (например, 63 сектора вместо 2048) может снизить скорость SSD на 20-30%. Проверьте выравнивание утилитой <em>AS SSD Benchmark</em> (вкладка "Align").</p></div>
+
+<h2 id="типичные-ошибки-и-их-решения">Типичные ошибки и их решения</h2>
+
+<p>Даже при точном следовании инструкции могут возникнуть проблемы. Вот самые распространённые и способы их устранения:</p>
+
+<ul>
+  <li>🚨 <strong>"No operating system found"</strong> после замены диска:
+    <p>Причина: неверная запись <strong>MBR</strong> или <strong>GPT</strong>. Решение: загрузитесь с Live-CD Linux и выполните:
+    <pre><code>sudo grub-install /dev/sdX
+<p>sudo update-grub</code></pre></p>
+<p>Для Windows: <code>bootrec /fixmbr</code> и <code>bootrec /fixboot</code> в <em>командной строке восстановления</em>.</p></p>
+  </li>
+  <li>🚨 <strong>SSD определяется как HDD в BIOS</strong>:
+    <p>Причина: устаревшая прошивка материнской платы. Решение: обновите BIOS (скачайте последнюю версию с сайта производителя). Для <em>NVMe</em> может потребоваться включить поддержку в настройках (<code>NVMe Boot Support</code>).</p>
+  </li>
+  <li>🚨 <strong>Синий экран (<code>INACCESSIBLE_BOOT_DEVICE</code>)</strong> в Windows:
+    <p>Причина: конфликт драйверов контроллера. Решение: перед клонированием обновите драйвер <em>Standard SATA AHCI Controller</em> в <em>Диспетчере устройств</em>.</p>
+  </li>
+  <li>🚨 <strong>Clonezilla не видит NVMe-диск</strong>:
+    <p>Причина: отсутствие драйверов в ядре Live-образа. Решение: используйте <em>Clonezilla Alternate</em> или добавьте драйвер вручную через <code>modprobe nvme</code>.</p>
+  </li>
+</ul>
+
+<p>Если после всех манипуляций система всё равно не загружается, проверьте:</p>
+<ol>
+  <li>Порядок загрузки в BIOS (SSD должен быть на первом месте).</li>
+  <li>Режим загрузки (<code>UEFI</code> или <code>Legacy</code>) — он должен совпадать с тем, что был на HDD.</li>
+  <li>Целостность файловой системы на SSD (<code>chkdsk /f</code> для Windows или <code>fsck /dev/sdX</code> для Linux).</li>
+</ol>
+
+<h2 id="faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</h2>
+
+<details>
+  <summary>Можно ли клонировать диск с <em>BitLocker</em> через Clonezilla?</summary>
+  <p>Да, но <strong>только если разблокировать его перед клонированием</strong>. Clonezilla не умеет работать с зашифрованными разделами "на лету". Отключите <em>BitLocker</em> в <code>Панели управления → Шифрование диска BitLocker</code>, выполните клонирование, а затем включите шифрование заново на SSD.</p>
+</details>
+
+<details>
+  <summary>Как перенести только систему, а не весь диск?</summary>
+  <p>В Clonezilla выберите режим <code>part_to_local_part</code> (раздел-раздел) и укажите только системный раздел (обычно <code>C:</code> в Windows или <code>/</code> в Linux). Однако помните, что для загрузки также потребуется перенести:</p>
+  <ul>
+    <li>📌 Загрузочный раздел (<code>EFI</code> для UEFI или <code>MBR</code> для Legacy).</li>
+    <li>📌 Раздел восстановления (<code>Recovery</code> в Windows).</li>
+  </ul>
+  <p>Для упрощения задачи используйте опцию <code>-k</code> (клонировать только используемые блоки).</p>
+</details>
+
+<details>
+  <summary>Сколько времени занимает клонирование 1 ТБ HDD на SSD?</summary>
+  <p>Время зависит от:</p>
+  <ul>
+    <li>🔹 <strong>Интерфейса подключения</strong>: <code>SATA III</code> (6 Гбит/с) — ~1.5-2 часа; <code>USB 3.0</code> — до 3 часов.</li>
+    <li>🔹 <strong>Заполненности HDD</strong>: клонирование 500 ГБ данных займёт меньше времени, чем 1 ТБ.</li>
+    <li>🔹 <strong>Опций Clonezilla</strong>: с проверкой (<code>-k1</code>) дольше, чем без неё.</li>
+  </ul>
+  <p>Для ускорения процесса подключите оба диска напрямую к <code>SATA</code>-портам материнской платы (без USB-адаптеров).</p>
+</details>
+
+<details>
+  <summary>Можно ли использовать Clonezilla для клонирования RAID-массива?</summary>
+  <p>Технически да, но <strong>не рекомендуется</strong>. Clonezilla увидит RAID как единый диск, но:</p>
+  <ul>
+    <li>🚫 Если целевой SSD не входит в RAID, система не загрузится (отсутствует драйвер массива).</li>
+    <li>🚫 При клонировании <em>аппаратного RAID</em> (например, на контроллере <em>LSI MegaRAID</em>) Clonezilla может не корректно обработать метаданные.</li>
+  </ul>
+  <p>Лучшее решение: разобрать RAID, клонировать диски по отдельности, а затем собрать массив заново на SSD.</p>
+</details>
+
+<details>
+  <summary>Как проверить, что клонирование прошло успешно?</summary>
+  <p>Выполните следующие проверки:</p>
+  <ol>
+    <li><strong>Сравнение контрольных сумм</strong>: в Clonezilla после завершения клонирования выберите опцию <code>Check cloned partitions</code>.</li>
+    <li><strong>Тест загрузки</strong>: отключите HDD и попробуйте загрузиться с SSD.</li>
+    <li><strong>Проверка файлов</strong>: сравните размеры и содержимое ключевых папок (<code>Windows\System32</code>, <code>/etc</code>, <code>/home</code>).</li>
+    <li><strong>Бенчмарк</strong>: запустите <em>CrystalDiskMark</em> (Windows) или <code>hdparm -tT /dev/sdX</code> (Linux) для проверки скорости.</li>
+  </ol>
+  <p>Если всё работает, но скорость SSD ниже ожидаемой, проверьте <strong>выравнивание разделов</strong> и <strong>режим работы контроллера</strong> (<code>AHCI</code> вместо <code>IDE</code>).</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#почему-clonezilla-а-не-альтернативы">Почему Clonezilla, а не альтернативы?</a></li><li><a href="#подготовка-к-клонированию-что-нужно-сделать-до-запуска-clonezilla">Подготовка к клонированию: что нужно сделать ДО запуска Clonezilla</a></li><li><a href="#создание-загрузочного-носителя-с-clonezilla">Создание загрузочного носителя с Clonezilla</a></li><li><a href="#пошаговая-инструкция-клонирование-hdd-на-ssd">Пошаговая инструкция: клонирование HDD на SSD</a></li><li><a href="#оптимизация-ssd-после-клонирования">Оптимизация SSD после клонирования</a></li><li><a href="#типичные-ошибки-и-их-решения">Типичные ошибки и их решения</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/a/az/azlk-2140-sl.html" class="related-card">АЗЛК 2140 SL: История и характеристики советского люкса</a></li><li><a href="/articles/s/sk/skachat-prilozhenie-s-google-play-apk.html" class="related-card">Как скачать приложение с Google Play APK: безопасная инструкция</a></li><li><a href="/articles/5/5w/5w30-klassa-sl-gf-3.html" class="related-card">Масло 5W30 SL/GF-3: характеристики, совместимость и выбор для авто</a></li><li><a href="/articles/t/te/tesla-model-s.html" class="related-card">Tesla Model S: Характеристики, запас хода и особенности 2026</a></li><li><a href="/articles/m/me/mersedes-samye-dorogie-modeli.html" class="related-card">Самые дорогие модели Mercedes: ТОП-5 эксклюзивов</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/a/az/azlk-2140-sl.html" class="related-bottom-card"><span class="related-bottom-title">АЗЛК 2140 SL: История и характеристики советского люкса</span><span class="related-bottom-desc">Полный обзор легендарного АЗЛК 2140 SL. Узнайте, чем люксовая версия отличалась от обычной «сороковк</span></a><a href="/articles/s/sk/skachat-prilozhenie-s-google-play-apk.html" class="related-bottom-card"><span class="related-bottom-title">Как скачать приложение с Google Play APK: безопасная инструкция</span><span class="related-bottom-desc">Узнайте, как скачать файл APK из Google Play. Проверенные способы установки приложений на Android бе</span></a><a href="/articles/5/5w/5w30-klassa-sl-gf-3.html" class="related-bottom-card"><span class="related-bottom-title">Масло 5W30 SL/GF-3: характеристики, совместимость и выбор для авто</span><span class="related-bottom-desc">Разбираемся в спецификациях масла 5W30 SL/GF-3: для каких двигателей подходит, как отличить от подде</span></a><a href="/articles/t/te/tesla-model-s.html" class="related-bottom-card"><span class="related-bottom-title">Tesla Model S: Характеристики, запас хода и особенности 2026</span><span class="related-bottom-desc">Полный обзор Tesla Model S: разгон, запас хода, автопилот и отличия версий Plaid. Стоит ли покупать </span></a><a href="/articles/m/me/mersedes-samye-dorogie-modeli.html" class="related-bottom-card"><span class="related-bottom-title">Самые дорогие модели Mercedes: ТОП-5 эксклюзивов</span><span class="related-bottom-desc">Обзор самых дорогих автомобилей Mercedes-Benz в мире. Цены, характеристики Maybach, AMG и редчайших </span></a><a href="/articles/c/ch/chrysler-voyager-24.html" class="related-bottom-card"><span class="related-bottom-title">Chrysler Voyager 2.4: Расход, Ресурс Двигателя и Отзывы Владельцев</span><span class="related-bottom-desc">Полный обзор Chrysler Voyager 2.4. Разбор надежности двигателя, реального расхода топлива, проблем с</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

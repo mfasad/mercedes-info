@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>GLCD Font Creator: как создать шрифт для графических дисплеев — Мерседес Инфо</title>
+    <meta name="description" content="Подробное руководство по работе с GLCD Font Creator: настройка символов, экспорт в микроконтроллеры (Arduino, STM32), оптимизация памяти и совместимость с LCD-дисплеями.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/g/gl/glcd-font-creator.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="GLCD Font Creator: как создать шрифт для графических дисплеев">
+    <meta property="og:description" content="Подробное руководство по работе с GLCD Font Creator: настройка символов, экспорт в микроконтроллеры (Arduino, STM32), оптимизация памяти и совместимость с LCD-дисплеями.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/e-class/">E Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">GLCD Font Creator: как создать шрифт для графических дисплеев</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>GLCD Font Creator: полное руководство по созданию кастомных шрифтов для графических дисплеев</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-glcd-font-creator-и-зачем-он-нужен">Что такое GLCD Font Creator и зачем он нужен</a></li><li><a href="#установка-и-первый-запуск">Установка и первый запуск</a></li><li><a href="#создание-и-редактирование-шрифта">Создание и редактирование шрифта</a></li><li><a href="#экспорт-шрифта-для-микроконтроллеров">Экспорт шрифта для микроконтроллеров</a></li><li><a href="#интеграция-шрифта-в-проект">Интеграция шрифта в проект</a></li><li><a href="#оптимизация-памяти-и-производительности">Оптимизация памяти и производительности</a></li><li><a href="#типичные-ошибки-и-их-решения">Типичные ошибки и их решения</a></li><li><a href="#альтернативы-glcd-font-creator">Альтернативы GLCD Font Creator</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Работа с графическими дисплеями (<em>GLCD</em>, <em>TFT</em>, <em>OLED</em>) часто требует нестандартных шрифтов — будь то кириллица, специальные символы или оптимизированные под маленький экран значки. <strong>GLCD Font Creator</strong> (или <em>GLCDFontCreator</em>) становится незаменимым инструментом для инженеров, радиолюбителей и разработчиков встраиваемых систем, позволяя создавать шрифты в бинарном или графическом формате, совместимом с большинством микроконтроллеров. Однако без понимания нюансов работы с программой даже простая задача — например, добавление русского алфавита — может превратиться в часовую головоломку.</p>
+
+<p>В этой статье мы разберём <strong>все этапы работы</strong> — от установки и базовой настройки до экспорта шрифтов для <em>Arduino</em>, <em>STM32</em>, <em>ESP32</em> и других платформ. Особое внимание уделим <mark>оптимизации памяти</mark> (критичной для устройств с ограниченными ресурсами) и обходу типичных ошибок, из-за которых шрифт отображается иероглифами или вообще не загружается. Если вы когда-нибудь сталкивались с проблемами вроде "<code>avr-gcc: error: undefined reference to 'font'</code>", здесь вы найдёте решения.</p>
+
+<h2 id="что-такое-glcd-font-creator-и-зачем-он-нужен">Что такое GLCD Font Creator и зачем он нужен</h2>
+
+<p><strong>GLCD Font Creator</strong> — это бесплатная утилита с открытым исходным кодом, предназначенная для генерации шрифтов в форматах, совместимых с графическими дисплеями. Программа позволяет:</p>
+<ul>
+  <li>🎨 <strong>Рисовать символы вручную</strong> (пиксель за пикселем) или импортировать их из изображений (<code>.bmp</code>, <code>.png</code>).</li>
+  <li>📏 <strong>Настраивать размеры шрифта</strong> (ширина × высота в пикселях, межсимвольный интервал).</li>
+  <li>🖥️ <strong>Экспортировать в форматы</strong> для <em>C/C++</em> (массивы байт), <em>Python</em>, или бинарные файлы.</li>
+  <li>🔄 <strong>Поддерживать кодировки</strong>, включая <code>UTF-8</code>, <code>Windows-1251</code>, <code>KOI8-R</code> (актуально для кириллицы).</li>
+</ul>
+
+<p>Главное преимущество программы — <strong>гибкость</strong>. Например, вы можете создать шрифт высотой <code>8 пикселей</code> для <em>Nokia 5110</em> или <code>32 пикселя</code> для <em>ILI9341</em>, при этом оптимизировав его под конкретный контроллер. Без такого инструмента пришлось бы вручную прописывать каждый символ в виде массива байт, что занимает часы и чревато ошибками.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> GLCD Font Creator не поддерживает антиалиасинг (сглаживание краёв). Если вам нужны плавные шрифты, рассмотрите альтернативы вроде <em>LVGL Font Tool</em> или <em>Bitmap Font Generator</em>.</blockquote>
+
+<p>Программа особенно востребована в проектах на:</p>
+<ul>
+  <li>🤖 <em>Arduino</em> (библиотеки <code>U8g2</code>, <code>Adafruit_GFX</code>).</li>
+  <li>🔧 <em>STM32</em> (с использованием <code>STM32CubeIDE</code> или <code>Keil</code>).</li>
+  <li>📡 <em>ESP8266/ESP32</em> (для дисплеев по <code>SPI</code> или <code>I2C</code>).</li>
+  <li>🖥️ Промышленных ПЛК (где требуются кастомные символы для интерфейса оператора).</li>
+</ul>
+
+<div class="attention-box attention-info"><div><strong>📊 Для какой платформы вы создаёте шрифты?</strong><ul><li>Arduino (AVR/ESP)</li><li>STM32 (ARM Cortex)</li><li>ESP32/ESP8266</li><li>Рaspberry Pi Pico</li><li>Другая</li></ul></div></div>
+
+<h2 id="установка-и-первый-запуск">Установка и первый запуск</h2>
+
+<p>Программа <strong>GLCD Font Creator</strong> не требует установки — достаточно скачать архив с официального репозитория на <a href="https://github.com/olikraus/glcdfontcreator" target="_blank">GitHub</a> (автор — <em>Olikraus</em>, тот же, кто разработал библиотеку <code>U8g2</code>). Актуальная версия на момент написания статьи — <code>1.2.1</code>.</p>
+
+<p>После распаковки архива:</p>
+<ol>
+  <li>Запустите файл <code>GLCDFontCreator.jar</code> (требуется установленная <em>Java 8+</em>).</li>
+  <li>Если Java отсутствует, скачайте её с <a href="https://adoptium.net/" target="_blank">Adoptium</a> (рекомендуется <em>OpenJDK 11</em>).</li>
+  <li>При первом запуске программа создаст конфигурационный файл <code>config.properties</code> в той же папке.</li>
+</ol>
+
+<p>Интерфейс программы интуитивно понятен, но имеет особенности:</p>
+<ul>
+  <li>🖼️ <strong>Панель символов</strong> (слева) — здесь отображаются все доступные glyphs (по умолчанию — латиница и цифры).</li>
+  <li>📝 <strong>Редактор символа</strong> (справа) — сетка для рисования пикселей.</li>
+  <li>⚙️ <strong>Панель настроек</strong> (внизу) — параметры шрифта, кодировка, экспорт.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если при запуске появляется ошибка "<code>Unable to access jarfile</code>", проверьте, что путь к файлу не содержит кириллических символов или пробелов. Перенесите папку в корень диска (например, <code>C:\GLCDFontCreator\</code>).</blockquote>
+
+<p>Для проверки работоспособности:</p>
+<ol>
+  <li>Выберите символ <code>A</code> в панели слева.</li>
+  <li>В редакторе (справа) нарисуйте произвольный узор.</li>
+  <li>Нажмите <code>File → Export → C Source File</code> и сохраните файл как <code>test_font.c</code>.</li>
+</ol>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если программа не запускается на Windows 10/11, попробуйте запустить её от имени администратора или установите переменную окружения <code>JAVA_HOME</code>, указав путь к папке с Java.</p></div>
+
+<h2 id="создание-и-редактирование-шрифта">Создание и редактирование шрифта</h2>
+
+<p>Прежде чем приступать к рисованию, определитесь с <strong>параметрами шрифта</strong>:</p>
+<ul>
+  <li>📏 <strong>Размер</strong>: стандартные значения — <code>5×7</code>, <code>8×8</code>, <code>16×16</code>. Для <em>OLED-дисплеев</em> (например, <em>SSD1306</em>) часто используют <code>6×8</code>.</li>
+  <li>🔤 <strong>Кодировка</strong>: для кириллицы выберите <code>Windows-1251</code> или <code>UTF-8</code> (последняя поддерживает больше символов, но требует больше памяти).</li>
+  <li>🎯 <strong>Межсимвольный интервал</strong> (<code>Spacing</code>): по умолчанию <code>1 пиксель</code>. Увеличьте до <code>2–3</code> для лучшей читаемости.</li>
+</ul>
+
+<p>Процесс создания шрифта:</p>
+<ol>
+  <li>В меню <code>File → New</code> укажите имя проекта (например, <code>MyFont_8x16</code>).</li>
+  <li>В панели <code>Font Properties</code> установите:
+    <pre><code>Width: 8
+<p>Height: 16</p>
+<p>Spacing: 2</p>
+<p>Encoding: Windows-1251 (для русского)</code></pre></p>
+  </li>
+  <li>Добавьте нужные символы:
+    <ul>
+      <li>🔤 Для латиницы: диапазон <code>32–126</code> (ASCII).</li>
+      <li>🇷🇺 Для кириллицы: диапазон <code>192–255</code> (<code>Windows-1251</code>) или <code>1024–1103</code> (<code>UTF-8</code>).</li>
+    </ol>
+  </li>
+  <li>Нарисуйте символы вручную или импортируйте из <code>.bmp</code> (меню <code>File → Import → Bitmap</code>).</li>
+</ol>
+
+<p>При ручном рисовании используйте горячие клавиши:</p>
+<ul>
+  <li><code>ЛКМ</code> — установить пиксель.</li>
+  <li><code>ПКМ</code> — стереть пиксель.</li>
+  <li><code>Shift + ЛКМ</code> — заливка области.</li>
+  <li><code>Пробел</code> — переключить цвет (черный/белый).</li>
+</ul>
+
+
+<p>Добавлены все нужные символы (включая кириллицу, если требуется)|</p>
+<p>Правильно установлена кодировка (Windows-1251 для русского)|</p>
+<p>Межсимвольный интервал не сливает символы|</p>
+<p>Шрифт читаем на целевом дисплее (проверьте в симуляторе)--></p>
+
+<h2 id="экспорт-шрифта-для-микроконтроллеров">Экспорт шрифта для микроконтроллеров</h2>
+
+<p>После создания шрифта его нужно экспортировать в формат, понятный вашему микроконтроллеру. Программа поддерживает несколько вариантов:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Формат экспорта</th>
+      <th>Описание</th>
+      <th>Пример использования</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>C Source File</code></td>
+      <td>Массив байт в виде <code>.c</code>/<code>.h</code> файлов. Подходит для <em>Arduino</em>, <em>STM32</em>.</td>
+      <td><pre><code>const uint8_t myFont[] PROGMEM = {
+<p>0x00, 0x00, 0x00, ... };</code></pre></td></p>
+    </tr>
+    <tr>
+      <td><code>Binary File</code></td>
+      <td>Бинарный файл (<code>.bin</code>), который можно прошить во flash-память.</td>
+      <td>Промышленные ПЛК, где шрифт хранится в отдельном чипе.</td>
+    </tr>
+    <tr>
+      <td><code>Python List</code></td>
+      <td>Список байт для скриптов на <em>Python</em> (например, для <em>Raspberry Pi</em>).</td>
+      <td><pre><code>font = [
+<p>[0x00, 0x00, 0x00],</p>
+<p>... ]</code></pre></td></p>
+    </tr>
+    <tr>
+      <td><code>U8g2 Format</code></td>
+      <td>Специальный формат для библиотеки <code>U8g2</code> (оптимизирован под <em>Arduino</em>).</td>
+      <td>Дисплеи <em>SSD1306</em>, <em>SH1106</em>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Для большинства проектов подходит <code>C Source File</code>. Алгоритм экспорта:</p>
+<ol>
+  <li>Выберите <code>File → Export → C Source File</code>.</li>
+  <li>Укажите имя файла (например, <code>my_font.h</code>).</li>
+  <li>В поле <code>Variable Name</code> введите имя массива (например, <code>customFont</code>).</li>
+  <li>Отметьте галочку <code>PROGMEM</code> (если шрифт будет храниться во flash-памяти <em>Arduino</em>).</li>
+  <li>Нажмите <code>Export</code>.</li>
+</ol>
+
+<p>Пример сгенерированного кода:</p>
+<pre><code>#include <avr/pgmspace.h>
+
+<p>const uint8_t customFont[] PROGMEM = {</p>
+<p>// Символ 'A' (код 65)</p>
+<p>0x00, 0x1C, 0x22, 0x22, 0x22, 0x3E, 0x22, 0x22, 0x22, 0x00,</p>
+<p>// Символ 'Б' (код 194 в Windows-1251)</p>
+<p>0x00, 0x1C, 0x22, 0x22, 0x3E, 0x22, 0x22, 0x22, 0x3E, 0x00,</p>
+<p>...</p>
+<p>};</code></pre></p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы экспортируете шрифт для <em>STM32</em> с использованием <code>STM32CubeIDE</code>, удалите директиву <code>#include <avr/pgmspace.h></code> — она предназначена только для <em>AVR</em> (Arduino). Вместо неё используйте <code>#include "stm32fxxx_hal.h"</code> и разместите массив в секции <code>FLASH</code>:</p>
+<pre><code>const uint8_t customFont[] __attribute__((section(".rodata"))) = { ... };</code></pre>
+
+<h2 id="интеграция-шрифта-в-проект">Интеграция шрифта в проект</h2>
+
+<p>После экспорта шрифт нужно подключить к вашему проекту. Рассмотрим два популярных сценария: <em>Arduino</em> и <em>STM32</em>.</p>
+
+<h3>Для Arduino (с библиотекой U8g2)</h3>
+<p>Если вы использовали формат <code>U8g2</code>:</p>
+<ol>
+  <li>Скопируйте сгенерированный файл <code>my_font.h</code> в папку проекта.</li>
+  <li>В основном скетче подключите библиотеку и шрифт:
+    <pre><code>#include <U8g2lib.h>
+<p>#include "my_font.h"</p>
+
+<p>U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);</p>
+
+<p>void setup() {</p>
+<p>u8g2.begin();</p>
+<p>u8g2.setFont(customFont); // Используем наш шрифт</p>
+<p>u8g2.drawStr(0, 20, "Привет, мир!");</p>
+<p>u8g2.sendBuffer();</p>
+<p>}</code></pre></p>
+  </li>
+</ol>
+
+<h3>Для STM32 (с использованием HAL)</h3>
+<p>Для <em>STM32</em> процесс сложнее из-за ручной работы с дисплеем:</p>
+<ol>
+  <li>Добавьте файл <code>my_font.h</code> в проект <code>STM32CubeIDE</code>.</li>
+  <li>В функции отображения текста используйте массив шрифта:
+    <pre><code>void LCD_DrawChar(uint16_t x, uint16_t y, char ch) {
+<p>uint8_t *char_data = (uint8_t *)&customFont[ch * FONT_HEIGHT];</p>
+<p>for (uint8_t i = 0; i < FONT_HEIGHT; i++) {</p>
+<p>uint8_t line = char_data[i];</p>
+<p>for (uint8_t j = 0; j < FONT_WIDTH; j++) {</p>
+<p>if (line & (1 << (7 - j))) {</p>
+<p>LCD_DrawPixel(x + j, y + i, WHITE);</p>
+<p>}</p>
+<p>}</p>
+<p>}</p>
+<p>}</code></pre></p>
+  </li>
+</ol>
+
+<p>Для <em>ESP32</em> с библиотекой <code>Adafruit_GFX</code> процесс аналогичен <em>Arduino</em>, но вместо <code>PROGMEM</code> используйте <code>const</code>:</p>
+<pre><code>const uint8_t customFont[] = { ... };</code></pre>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Всегда проверяйте, что размер массива шрифта не превышает доступную память микроконтроллера. Для <em>Arduino Uno</em> (2 КБ SRAM) шрифт размером <code>16×16</code> с 256 символами займёт ~8 КБ flash-памяти!</p></div>
+
+<h2 id="оптимизация-памяти-и-производительности">Оптимизация памяти и производительности</h2>
+
+<p>Шрифты могут занимать значительную часть памяти микроконтроллера. Например, шрифт <code>16×16</code> с 256 символами требует:</p>
+<pre><code>(16 пикселей высота × 2 байта на строку × 256 символов) = 8192 байт (~8 КБ).</code></pre>
+
+<p>Чтобы сократить расход памяти:</p>
+<ul>
+  <li>🧹 <strong>Удалите ненужные символы</strong>. Например, если вам нужна только кириллица и цифры, экспортируйте диапазон <code>48–57</code> (цифры) и <code>192–255</code> (<code>Windows-1251</code>).</li>
+  <li>🔍 <strong>Используйте сжатие</strong>. В настройках экспорта выберите <code>RLE Compression</code> (Run-Length Encoding). Это сокращает размер на 30–50%, но увеличивает время рендеринга.</li>
+  <li>📉 <strong>Уменьшите высоту шрифта</strong>. Например, вместо <code>16×16</code> используйте <code>8×16</code> (ширина в 2 раза меньше).</li>
+  <li>🔄 <strong>Храните шрифт во flash</strong> (не в SRAM). Для этого используйте <code>PROGMEM</code> (<em>Arduino</em>) или секцию <code>.rodata</code> (<em>STM32</em>).</li>
+</ul>
+
+<p>Пример оптимизированного экспорта для <em>Arduino</em>:</p>
+<pre><code>// В файле my_font.h
+<p>#include <avr/pgmspace.h></p>
+
+<p>const uint8_t customFont[] PROGMEM = {</p>
+<p>// Только символы '0'–'9' и 'А'–'Я' (кириллица)</p>
+<p>// Размер: 10 (цифры) + 32 (кириллица) = 42 символа × 16 байт = 672 байт</p>
+<p>...</p>
+<p>};</code></pre></p>
+
+<p>Для <em>STM32</em> можно пойти дальше и хранить шрифт в <strong>внешней flash-памяти</strong> (например, <em>W25Q128</em>), загружая его по мере необходимости. Это актуально для проектов с дисплеями высокого разрешения (например, <em>ILI9341</em> <code>320×240</code>).</p>
+
+<details class="faq-item"><summary>Как проверить занятую память в Arduino IDE?</summary><div class="faq-answer"><p>
+<p>Откройте <code>Инструменты → Анализ использования памяти</code> (<code>Tools → Get Board Info</code> в новых версиях). В выводе найдите строки:</p>
+<pre><code>Global variables use 1234 bytes (60%) of dynamic memory
+<p>Program storage space used: 23456 bytes (71%)</code></pre></p>
+<p>Если <code>Program storage</code> близко к 100%, уменьшите размер шрифта или удалите ненужные символы.</p></div></details></p>
+
+<h2 id="типичные-ошибки-и-их-решения">Типичные ошибки и их решения</h2>
+
+<p>Даже опытные разработчики сталкиваются с проблемами при работе с <strong>GLCD Font Creator</strong>. Вот самые распространённые:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Шрифт отображается иероглифами</td>
+      <td>Неверная кодировка (например, выбрана <code>UTF-8</code>, а нужен <code>Windows-1251</code>).</td>
+      <td>Проверьте настройки кодировки в <code>Font Properties → Encoding</code>.</td>
+    </tr>
+    <tr>
+      <td><code>undefined reference to 'font'</code></td>
+      <td>Файл со шрифтом не подключён к проекту или неправильное имя массива.</td>
+      <td>Убедитесь, что:
+      <ul>
+        <li>Файл <code>my_font.h</code> лежит в папке проекта.</li>
+        <li>Имя массива в коде совпадает с экспортированным.</li>
+        <li>В <code>Arduino IDE</code> файл подключён через <code>#include "my_font.h"</code>.</li>
+      </ul></td>
+    </tr>
+    <tr>
+      <td>Символы слипаются или обрезаются</td>
+      <td>Неправильный <code>Spacing</code> или <code>Width</code>.</td>
+      <td>Увеличьте <code>Spacing</code> до <code>2–3</code> или проверьте ширину символов в настройках.</td>
+    </tr>
+    <tr>
+      <td>Программа не запускается на macOS/Linux</td>
+      <td>Проблемы с Java или правами доступа.</td>
+      <td>Запустите из терминала:
+      <pre><code>chmod +x GLCDFontCreator.jar
+<p>java -jar GLCDFontCreator.jar</code></pre></td></p>
+    </tr>
+  </tbody>
+</table>
+
+<p>Ещё одна частая проблема — <strong>несовместимость с библиотеками</strong>. Например, если вы используете <code>U8g2</code>, но шрифт экспортировали в обычном <code>C</code>-формате, символы могут отображаться со сдвигом. Решение:</p>
+<ol>
+  <li>Экспортируйте шрифт в формате <code>U8g2</code> (опция в меню экспорта).</li>
+  <li>Или вручную отредактируйте сгенерированный файл, добавив заголовок:
+    <pre><code>#define FONT_WIDTH 8
+<p>#define FONT_HEIGHT 16</p>
+<p>const uint8_t customFont[256][FONT_HEIGHT] PROGMEM = { ... };</code></pre></p>
+  </li>
+</ol>
+
+<p>Если шрифт отображается "лесенкой" (неровные края), проверьте:</p>
+<ul>
+  <li>🔍 Соответствие высоты шрифта разрешению дисплея (например, для <em>SSD1306</em> <code>128×64</code> лучше использовать шрифт высотой <code>8</code> или <code>16</code>).</li>
+  <li>🖼️ Правильность экспортированных данных (иногда биты в байтах перевёрнуты; попробуйте инвертировать их вручную).</li>
+</ul>
+
+<h2 id="альтернативы-glcd-font-creator">Альтернативы GLCD Font Creator</h2>
+
+<p>Если <strong>GLCD Font Creator</strong> не подходит для вашей задачи, рассмотрите альтернативы:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Программа</th>
+      <th>Плюсы</th>
+      <th>Минусы</th>
+      <th>Лучше подходит для</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>LVGL Font Tool</em></td>
+      <td>
+        <ul>
+          <li>Поддержка сглаживания (антиалиасинг).</li>
+          <li>Экспорт в форматы для <em>LVGL</em> (популярная библиотека для GUI).</li>
+        </ul>
+      </td>
+      <td>Сложнее в освоении, требует настройки.</td>
+      <td>Проекты с графическим интерфейсом на <em>STM32</em>, <em>Raspberry Pi</em>.</td>
+    </tr>
+    <tr>
+      <td><em>Bitmap Font Generator</em> (BFG)</td>
+      <td>
+        <ul>
+          <li>Поддержка <code>TrueType</code> шрифтов (конвертация в растр).</li>
+          <li>Больше опций для кернинга и интерлиньяжа.</li>
+        </ul>
+      </td>
+      <td>Платная версия имеет больше функций.</td>
+      <td>Профессиональные проекты с высокими требованиями к типографике.</td>
+    </tr>
+    <tr>
+      <td><em>MicroFont</em></td>
+      <td>
+        <ul>
+          <li>Простой веб-интерфейс (работает в браузере).</li>
+          <li>Поддержка кириллицы "из коробки".</li>
+        </ul>
+      </td>
+      <td>Ограниченные настройки экспорта.</td>
+      <td>Быстрое создание шрифтов для <em>Arduino</em>.</td>
+    </tr>
+    <tr>
+      <td><em>FontForge</em> + скрипты</td>
+      <td>
+        <ul>
+          <li>Максимальная гибкость (можно редактировать векторы).</li>
+          <li>Поддержка всех кодировок.</li>
+        </ul>
+      </td>
+      <td>Сложный для новичков, требует знания <em>Python</em> для автоматизации.</td>
+      <td>Кастомные шрифты для промышленных дисплеев.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Если вам нужна <strong>кириллица</strong>, обратите внимание на <em>MicroFont</em> или <em>LVGL Font Tool</em> — они лучше справляются с кодировками, чем <strong>GLCD Font Creator</strong>. Для <em>ESP32</em> с дисплеями <em>TFT</em> (например, <em>ILI9341</em>) часто используют <em>LVGL</em>, поэтому <em>LVGL Font Tool</em> станет оптимальным выбором.</p>
+
+<p>Пример конвертации шрифта из <code>.ttf</code> в растр с помощью <em>FontForge</em>:</p>
+<ol>
+  <li>Откройте <code>.ttf</code>-файл в <em>FontForge</em>.</li>
+  <li>Выделите нужные символы (например, кириллицу).</li>
+  <li>Экспортируйте в <code>.bmp</code> через <code>File → Export → Bitmap</code>.</li>
+  <li>Импортируйте <code>.bmp</code> в <strong>GLCD Font Creator</strong> для финальной доводки.</li>
+</ol>
+
+<h2 id="faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</h2>
+
+<details>
+  <summary>Как добавить кириллицу в GLCD Font Creator?</summary>
+  <p>Чтобы добавить русские буквы:</p>
+  <ol>
+    <li>В настройках шрифта (<code>Font Properties</code>) выберите кодировку <code>Windows-1251</code>.</li>
+    <li>Вручную добавьте символы с кодами <code>192–255</code> (соответствуют кириллице в <code>Windows-1251</code>).</li>
+    <li>Нарисуйте каждый символ или импортируйте из <code>.bmp</code>.</li>
+    <li>При экспорте убедитесь, что в коде указан правильный диапазон:
+      <pre><code>// В файле my_font.h
+<p>#define FONT_FIRST_CHAR 32   // Пробел</p>
+<p>#define FONT_LAST_CHAR 255   // Последний символ (включает кириллицу)</code></pre></p>
+    </li>
+  </ol>
+  <p>Если буквы отображаются неверно, проверьте кодировку терминала/дисплея — она должна совпадать с <code>Windows-1251</code>.</p>
+</details>
+
+<details>
+  <summary>Можно ли использовать GLCD Font Creator для OLED-дисплеев (SSD1306, SH1106)?</summary>
+  <p>Да, программа подходит для любых графических дисплеев, включая <em>OLED</em>. Главное — правильно настроить размер шрифта:</p>
+  <ul>
+    <li>Для <em>SSD1306</em> (<code>128×64</code>) оптимальный размер — <code>6×8</code> или <code>8×16</code>.</li>
+    <li>Для <em>SH1106</em> (<code>128×64</code>) — аналогично.</li>
+    <li>Экспортируйте шрифт в формате <code>U8g2</code>, если используете библиотеку <code>U8g2</code>.</li>
+  </ul>
+  <p>Пример кода для <em>SSD1306</em>:</p>
+  <pre><code>#include <U8g2lib.h>
+<p>#include "my_font.h"</p>
+
+<p>U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);</p>
+
+<p>void setup() {</p>
+<p>u8g2.begin();</p>
+<p>u8g2.setFont(my_font_8x16); // Подключаем шрифт</p>
+<p>u8g2.drawStr(0, 20, "Тест кириллицы");</p>
+<p>u8g2.sendBuffer();</p>
+<p>}</code></pre></p>
+</details>
+
+<details>
+  <summary>Как уменьшить размер шрифта для Arduino Uno (ограничение 32 КБ flash)?</summary>
+  <p>Для <em>Arduino Uno</em> (ATmega328P) с 32 КБ flash-памяти:</p>
+  <ul>
+    <li>🧹 <strong>Удалите ненужные символы</strong>. Оставьте только цифры (<code>48–57</code>) и нужные буквы.</li>
+    <li>📉 <strong>Уменьшите высоту</strong>. Вместо <code>16×16</code> используйте <code>8×8</code>.</li>
+    <li>🔄 <strong>Используйте сжатие RLE</strong> (в настройках экспорта).</li>
+    <li>🗑️ <strong>Храните</div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-glcd-font-creator-и-зачем-он-нужен">Что такое GLCD Font Creator и зачем он нужен</a></li><li><a href="#установка-и-первый-запуск">Установка и первый запуск</a></li><li><a href="#создание-и-редактирование-шрифта">Создание и редактирование шрифта</a></li><li><a href="#экспорт-шрифта-для-микроконтроллеров">Экспорт шрифта для микроконтроллеров</a></li><li><a href="#интеграция-шрифта-в-проект">Интеграция шрифта в проект</a></li><li><a href="#оптимизация-памяти-и-производительности">Оптимизация памяти и производительности</a></li><li><a href="#типичные-ошибки-и-их-решения">Типичные ошибки и их решения</a></li><li><a href="#альтернативы-glcd-font-creator">Альтернативы GLCD Font Creator</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/mo/modeli-mersedes-e-klass.html" class="related-card">Mercedes E-Class: все модели, характеристики и выбор поколений</a></li><li><a href="/articles/k/ku/kupit-mersedes-eshka.html" class="related-card">Купить Mercedes E-Class: цены, комплектации, советы по выбору 2026</a></li><li><a href="/articles/t/to/tormoznaya-zhidkost-tcl.html" class="related-card">Тормозная жидкость TCL: характеристики, замена и выбор для Mercedes-Benz</a></li><li><a href="/articles/m/me/mersedes-e200-zamena-termostata.html" class="related-card">Замена термостата Мерседес Е200: пошаговая инструкция</a></li><li><a href="/articles/b/bl/blok-n47-5-mersedes.html" class="related-card">Блок n47 5 Мерседес: Адаптация дизельного двигателя BMW на E-Class</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/mo/modeli-mersedes-e-klass.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes E-Class: все модели, характеристики и выбор поколений</span><span class="related-bottom-desc">Подробный обзор всех поколений Mercedes-Benz E-Class: технические особенности, сравнение кузовов, со</span></a><a href="/articles/k/ku/kupit-mersedes-eshka.html" class="related-bottom-card"><span class="related-bottom-title">Купить Mercedes E-Class: цены, комплектации, советы по выбору 2026</span><span class="related-bottom-desc">Где выгодно купить Mercedes-Benz E-Class (W213/S213/C238/A238) в 2026? Сравнение цен, проверка авто </span></a><a href="/articles/t/to/tormoznaya-zhidkost-tcl.html" class="related-bottom-card"><span class="related-bottom-title">Тормозная жидкость TCL: характеристики, замена и выбор для Mercedes-Benz</span><span class="related-bottom-desc">Подробный гайд по тормозной жидкости TCL: совместимость с Mercedes, сроки замены, технические параме</span></a><a href="/articles/m/me/mersedes-e200-zamena-termostata.html" class="related-bottom-card"><span class="related-bottom-title">Замена термостата Мерседес Е200: пошаговая инструкция</span><span class="related-bottom-desc">Полное руководство по замене термостата на Mercedes E200 (W212/W213). Признаки поломки, выбор оригин</span></a><a href="/articles/b/bl/blok-n47-5-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Блок n47 5 Мерседес: Адаптация дизельного двигателя BMW на E-Class</span><span class="related-bottom-desc">Подробный разбор установки двигателя BMW N47 на Mercedes W211. Технические нюансы, проблемы, стоимос</span></a><a href="/articles/m/me/mersedes-211-dvigateli.html" class="related-bottom-card"><span class="related-bottom-title">Двигатели Mercedes E211: обзор, характеристики, проблемы и ресурс</span><span class="related-bottom-desc">Полный гид по двигателям Mercedes E-Class 211 кузов. Разбор моторов 1.8, 2.6, 3.0, 3.2, 5.0. Типичны</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

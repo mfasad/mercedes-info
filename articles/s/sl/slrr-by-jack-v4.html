@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>SLRR by Jack V4: обзор, прошивка и настройка робота-пылесоса — Мерседес Инфо</title>
+    <meta name="description" content="Полный гид по SLRR by Jack V4: как подключить, обновить прошивку, настроить карту и устранить ошибки. Инструкция для роботов-пылесосов серии V4.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/s/sl/slrr-by-jack-v4.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="SLRR by Jack V4: обзор, прошивка и настройка робота-пылесоса">
+    <meta property="og:description" content="Полный гид по SLRR by Jack V4: как подключить, обновить прошивку, настроить карту и устранить ошибки. Инструкция для роботов-пылесосов серии V4.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">SLRR by Jack V4: обзор, прошивка и настройка робота-пылесоса</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>SLRR by Jack V4: полное руководство по эксплуатации и настройке</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#технические-характеристики-и-особенности-модели-v4">Технические характеристики и особенности модели V4</a></li><li><a href="#первоначальная-настройка-и-подключение-к-сети">Первоначальная настройка и подключение к сети</a></li><li><a href="#работа-с-картой-помещения-и-зонирование">Работа с картой помещения и зонирование</a></li><li><a href="#обновление-прошивки-и-программное-обеспечение">Обновление прошивки и программное обеспечение</a></li><li><a href="#диагностика-и-устранение-распространенных-ошибок">Диагностика и устранение распространенных ошибок</a></li><li><a href="#техническое-обслуживание-и-продление-срока-службы">Техническое обслуживание и продление срока службы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Современные системы уборки жилища претпевают революционные изменения, и модель <strong>SLRR by Jack V4</strong> занимает в этом сегменте особое место. Этот робот-пылесос сочетает в себе передовые алгоритмы навигации и мощную систему всасывания, что делает его одним из лидеров на рынке умной бытовой техники. Пользователи часто ищут способы максимально эффективно использовать потенциал устройства, выходя за рамки базовой инструкции.</p>
+
+<p>Устройство оснащено сложным программным обеспечением, которое требует правильного подхода к первоначальной конфигурации. <em>SLRR by Jack V4</em> способен самостоятельно строить карту помещения, обходить препятствия и даже мыть полы, если модель поддерживает функцию влажной уборки. Однако без грамотной настройки многие функции остаются недоступными или работают некорректно.</p>
+
+<p>В этой статье мы детально разберем все аспекты работы с данным устройством. Вы узнаете о скрытых функциях, методах устранения распространенных ошибок и нюансах обслуживания, которые продлят срок службы вашего гаджета. <strong>Интеллектуальная навигация</strong> и модульная конструкция делают этот аппарат интересным объектом для технического изучения.</p>
+
+<h2 id="технические-характеристики-и-особенности-модели-v4">Технические характеристики и особенности модели V4</h2>
+
+<p>Рассматриваемая версия устройства базируется на обновленной платформе, которая обеспечивает более точное позиционирование в пространстве. <em>SLRR by Jack V4</em> использует лазерный дальномер (LDS) для сканирования помещения с высокой частотой обновления данных. Это позволяет строить карту быстрее и точнее, чем модели предыдущих поколений, использующие только гироскопы.</p>
+
+<p>Система фильтрации воздуха также претерпела изменения. В четвертой версии установлен <strong>HEPA-фильтр</strong> повышенной плотности, который задерживает мельчайшие частицы пыли и аллергены. Мотор щетки работает в широком диапазоне оборотов, автоматически увеличивая мощность на коврах благодаря датчику давления.</p>
+
+<ul>
+<li>🚀 Увеличенная емкость аккумулятора позволяет убирать до 250 квадратных метров на одном заряде.</li>
+<li>🧠 Улучшенный процессор обрабатывает данные с датчиков в реальном времени, минимизируя столкновения.</li>
+<li>🔇 Система шумоподавления снизилась до 55 дБ в тихом режиме, что делает работу почти незаметной.</li>
+</ul>
+
+<p>Важно отметить, что аппаратное обеспечение <em>SLRR by Jack V4</em> совместимо с более широким спектром аксессуаров. Это дает возможность устанавливать баки для влажной уборки увеличенного объема или специализированные турбощетки для шерсти животных. Такая гибкость делает устройство универсальным инструментом для поддержания чистоты.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Не используйте устройство на мокрых поверхностях, если в спецификации вашей конкретной модификации не указана поддержка функции мокрой уборки. Попадание воды в отсек электроники приведет к необратимым повреждениям.</p>
+</blockquote>
+
+<p>Конструктивные особенности корпуса позволяют легко разбирать основные узлы для чистки без использования специальных инструментов. Инженеры предусмотрели магнитные крепления для боковых щеток и бака, что упрощает обслуживание. <strong>Износостойкие материалы</strong> бампера защищают мебель и сам прибор при случайных касаниях.</p>
+
+<h2 id="первоначальная-настройка-и-подключение-к-сети">Первоначальная настройка и подключение к сети</h2>
+
+<p>Процесс активации начинается с правильной установки программного обеспечения на смартфон. Для управления <em>SLRR by Jack V4</em> используется фирменное приложение, которое необходимо скачать из официального магазина. Перед началом процедуры убедитесь, что ваш телефон подключен к Wi-Fi сети с частотой 2.4 ГГц, так как устройство может не поддерживать 5 ГГц.</p>
+
+<p>После установки приложения необходимо зарегистрировать аккаунт и добавить новое устройство. Нажмите кнопку включения на корпусе робота и удерживайте ее в течение 5 секунд до появления голосового сигнала или мигания индикатора. В приложении выберите модель из списка и следуйте инструкциям на экране для сопряжения.</p>
+
+<div class="checklist-block"><h4>☑️ Первичная активация</h4><label class="check-item"><input type="checkbox"><span>Зарядить робот до 100%</span></label><label class="check-item"><input type="checkbox"><span>Установить приложение на смартфон</span></label><label class="check-item"><input type="checkbox"><span>Подключиться к Wi-Fi 2.4 ГГц</span></label><label class="check-item"><input type="checkbox"><span>Нажать и удерживать кнопку включения</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<p>Если автоматическое подключение не удается, попробуйте использовать режим точки доступа (AP Mode). Для этого необходимо одновременно нажать две кнопки на корпусе или использовать комбинацию, указанную в мануале. В этом режиме телефон соединяется напрямую с роботом, после чего передает ему данные о вашей домашней сети.</p>
+
+<p>Стабильность соединения зависит от качества сигнала в месте установки базы. <strong>Роутер</strong> должен находиться в зоне прямой видимости или иметь достаточную мощность сигнала для прохождения через стены. Иногда требуется перенастроить канал Wi-Fi на менее загруженный, чтобы избежать помех при управлении.</p>
+
+<ul>
+<li>📱 Убедитесь, что в приложении разрешены все запрашиваемые права доступа, включая геолокацию.</li>
+<li>🌐 Проверьте, не включена ли изоляция клиентов (Client Isolation) в настройках роутера.</li>
+<li>🔋 Убедитесь, что робот стоит на зарядной станции во время настройки.</li>
+</ul>
+
+<p>После успешного подключения устройство автоматически проверит наличие обновлений. <mark>Критически важно завершить установку всех доступных обновлений прошивки перед началом активной эксплуатации.</mark> Это обеспечит актуальность алгоритмов навигации и исправит возможные ошибки программного кода.</p>
+
+<h2 id="работа-с-картой-помещения-и-зонирование">Работа с картой помещения и зонирование</h2>
+
+<p>Одной из ключевых функций <em>SLRR by Jack V4</em> является построение детальной карты. Первая уборка всегда должна проходить в режиме построения карты, когда робот объезжает всю доступную площадь. В это время не следует переносить базу или мешать движению устройства, чтобы избежать разрывов в карте.</p>
+
+<p>После завершения сканирования в приложении появится интерактивная карта, которую можно редактировать. Вы можете создавать виртуальные стены, запретные зоны и разделять помещение на комнаты. Это позволяет задавать режим уборки только для кухни или гостиной, игнорируя остальные участки.</p>
+
+<table>
+<thead>
+<tr>
+<th>Тип зоны</th>
+<th>Описание</th>
+<th>Поведение робота</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Запретная зона</td>
+<td>Область, куда вход запрещен</td>
+<td>Полностью игнорирует участок</td>
+</tr>
+<tr>
+<td>Виртуальная стена</td>
+<td>Линейный барьер</td>
+<td>Не пересекает линию</td>
+</tr>
+<tr>
+<td>Зона усиленной уборки</td>
+<td>Участок с повышенным загрязнением</td>
+<td>Убирает дважды или с максимальной мощностью</td>
+</tr>
+</tbody>
+</table>
+
+<p>Для точной настройки зонирования используйте функцию разделения и объединения комнат. Если робот ошибочно объединил гостиную и коридор в одну комнату, вы можете вручную провести разделительную линию. И наоборот, слишком мелкие зоны можно объединить для более логичной навигации.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Как часто вы используете зонирование?</strong><ul><li>Ежедневно для разных комнат</li><li>Только для кухни/ванной</li><li>Редко, убираю везде</li><li>Вообще не использую</li></ul></div></div>
+
+<p>Сохранение нескольких карт позволяет использовать робот в домах с несколькими этажами или в случаях, когда мебель переставляется кардинально. <em>SLRR by Jack V4</em> может хранить до 5 различных карт в памяти. Переключение между ними происходит автоматически при установке базы в соответствующей зоне или вручную через приложение.</p>
+
+<blockquote>
+<p>⚠️ Внимание: При перемещении зарядной станции на новое место старую карту необходимо удалить или создать новую. Попытка использовать старую карту с новым расположением базы приведет к ошибкам возврата на зарядку.</p>
+</blockquote>
+
+<h2 id="обновление-прошивки-и-программное-обеспечение">Обновление прошивки и программное обеспечение</h2>
+
+<p>Регулярное обновление программного обеспечения — залог стабильной работы умного устройства. Разработчики <em>SLRR by Jack V4</strong> периодически выпускают патчи, улучшающие алгоритмы обхода препятствий и оптимизирующие работу батареи. Проверку обновлений рекомендуется проводить не реже одного раза в месяц.</p>
+
+<p>Процесс обновления можно запустить через приложение в разделе "Настройки устройства". Если автоматическое обновление не происходит, можно использовать метод ручной установки через USB-кабель или локальную сеть, скачав файл прошивки с официального сайта. Перед началом процедуры убедитесь, что заряд батареи составляет не менее 60%.</p>
+
+<p>В ходе обновления устройство может перезагружаться несколько раз, и индикаторы могут мигать в необычном режиме. Прерывание процесса обновления может привести к "окирпичиванию" устройства, поэтому обеспечьте стабное подключение к интернету и электросети.</p>
+
+<details class="faq-item"><summary>Что делать, если обновление зависло?</summary><div class="faq-answer"><p>Если индикаторы горят постоянно более 30 минут, попробуйте выполнить мягкий сброс, нажав кнопку включения. Если это не помогло, потребуется перепрошивка через инженерное меню или обращение в сервисный центр.</p></div></details>
+
+<p>В некоторых случаях после обновления могут сброситься настройки карты или расписание уборки. Рекомендуется сделать скриншот или сохранить конфигурацию в облако перед началом процедуры. Новые версии ПО часто добавляют поддержку новых функций или интеграцию с голосовыми ассистентами.</p>
+
+<ul>
+<li>💾 Всегда делайте резервное копирование настроек перед крупными обновлениями.</li>
+<li>📶 Не выключайте Wi-Fi роутер во время загрузки данных.</li>
+<li>🔌 Держите робот на зарядной станции во время всего процесса.</li>
+</ul>
+
+<p>Если после обновления робот начал вести себя странно (например, хаотично двигаться), попробуйте выполнить сброс до заводских настроек. Это очистит кэш и вернет программную часть к стабильному состоянию с новыми драйверами.</p>
+
+<h2 id="диагностика-и-устранение-распространенных-ошибок">Диагностика и устранение распространенных ошибок</h2>
+
+<p>В процессе эксплуатации пользователи могут сталкиваться с различными кодами ошибок, которые выводятся на экран смартфона или озвучиваются голосовым модулем. Понимание природы этих ошибок позволяет быстро решить проблему без вызова мастера. <strong>Код ошибки</em> обычно состоит из цифрового обозначения и текстового описания.</p>
+
+<p>Одной из частых проблем является ошибка датчиков. Если <em>SLRR by Jack V4</em> сообщает о застревании или ошибке колес, проверьте, не намотались ли волосы или нитки на оси колес и боковую щетку. Регулярная чистка этих узлов предотвращает перегрузку моторов и сбои в навигации.</p>
+
+<p>Ошибка лазерного дальномера (LDS) может возникнуть, если верхний блок заблокирован посторонним предметом или если датчик загрязнен. Протрите окошко дальномера мягкой сухой тканью. Также убедитесь, что над роботом нет свисающих предметов, таких как шторы или провода, которые могут заклинить вращающуюся часть.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Протирайте датчики падения на нижней панели робота сухой салфеткой раз в неделю. Пыль на них может вызвать ложное срабатывание, и робот будет думать, что находится на краю лестницы, отказываясь двигаться.</p></div>
+
+<p>Проблемы с подключением к Wi-Fi часто решаются перезагрузкой роутера или изменением пароля с спецсимволов на более простые (только буквы и цифры). Некоторые роутеры с функцией "умного переключения" между 2.4 и 5 ГГц могут блокировать подключение старых модулей, поэтому рекомендуется явно разделить сети в настройках роутера.</p>
+
+<p>Если робот перестал возвращаться на базу, проверьте контакты на зарядной станции и на самом роботе. Окисление контактов может препятствовать зарядке. Протрите их спиртовой салфеткой. Также база должна стоять на ровной поверхности и иметь свободное пространство по бокам (минимум 0.5 метра) и спереди (минимум 1.5 метра).</p>
+
+<h2 id="техническое-обслуживание-и-продление-срока-службы">Техническое обслуживание и продление срока службы</h2>
+
+<p>Для того чтобы <em>SLRR by Jack V4</em> служил долгие годы, необходимо соблюдать регламент технического обслуживания. Регулярная замена фильтров и щеток гарантирует высокое качество уборки и защищает мотор от перегрузок. HEPA-фильтр рекомендуется мыть холодной водой без моющих средств и сушить не менее 24 часов, но не чаще раза в месяц.</p>
+
+<p>Основная щетка также требует внимания. На ее концах могут накапливаться волосы, которые трудно удалить. Используйте специальный нож или инструмент из комплекта для очистки. Если щетка деформировалась или ворс стерся, ее необходимо заменить, иначе нагрузка на двигатель возрастет.</p>
+
+<ul>
+<li>🧹 Раз в неделю очищайте датчики и колеса от пыли и волос.</li>
+<li>🔋 Раз в полгода протирайте контакты зарядной станции.</li>
+<li>🌬️ Меняйте HEPA-фильтр каждые 3-6 месяцев в зависимости от нагрузки.</li>
+</ul>
+
+<p>Колеса робота имеют подпружиненную конструкцию для лучшего сцепления с поверхностью. В пространство между колесом и корпусом часто набивается пыль, которую нужно вычищать. Для смазки подвижных частей используйте только специальные смазки, рекомендованные производителем, избегая попадания масла на резиновые поверхности.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Регулярное обслуживание важнее, чем кажется: чистый робот убирает лучше, потребляет меньше энергии и реже ломается. Не игнорируйте сигналы о необходимости чистки.</p></div>
+
+<p>При длительном простое (например, в отпуске) рекомендуется полностью зарядить робот, выключить его и убрать в сухое место. Литий-ионные аккумуляторы не любят глубокого разряда, поэтому раз в 2-3 месяца устройство стоит ставить на зарядку, даже если оно не используется.</p>
+
+<details>
+<summary>Как часто нужно менять боковые щетки?</summary>
+<p>Боковые щетки <em>SLRR by Jack V4</em> являются расходным материалом. В среднем их меняют каждые 3-6 месяцев. Признаками износа является потертость щетины, потеря формы или появление трещин на пластике. Если щетка стала мягкой и перестала выметать мусор из углов, замена обязательна.</p>
+</details>
+
+<details>
+<summary>Можно ли использовать робот без Wi-Fi?</summary>
+<p>Да, большинство моделей <em>SLRR by Jack V4</em> поддерживают режим работы без интернета. Для этого на корпусе должна быть кнопка запуска. Однако без подключения к сети будут недоступны функции построения карты в приложении, удаленный запуск и голосовое управление. Робот будет работать по последнему сохраненному алгоритму или в хаотичном режиме.</p>
+</details>
+
+<details>
+<summary>Что означает мигающий красный индикатор?</summary>
+<p>Мигающий красный индикатор обычно сигнализирует о критической ошибке. Это может быть застревание, отсутствие пылесборника или неисправность датчика. Количество миганий часто соответствует коду ошибки (например, 3 мигания — ошибка колеса). Точную расшифровку нужно смотреть в инструкции к конкретной ревизии ПО.</p>
+</details>
+
+<details>
+<summary>Безопасно ли оставлять робот на зарядке постоянно?</summary>
+<p>Современные контроллеры питания в <em>SLRR by Jack V4</em> предотвращают перезаряд. Когда батарея достигает 100%, ток отключается. Однако для максимального продления жизни аккумулятора рекомендуется периодически давать ему разрядиться до 10-20% перед новой зарядкой, чтобы калибровать контроллер.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#технические-характеристики-и-особенности-модели-v4">Технические характеристики и особенности модели V4</a></li><li><a href="#первоначальная-настройка-и-подключение-к-сети">Первоначальная настройка и подключение к сети</a></li><li><a href="#работа-с-картой-помещения-и-зонирование">Работа с картой помещения и зонирование</a></li><li><a href="#обновление-прошивки-и-программное-обеспечение">Обновление прошивки и программное обеспечение</a></li><li><a href="#диагностика-и-устранение-распространенных-ошибок">Диагностика и устранение распространенных ошибок</a></li><li><a href="#техническое-обслуживание-и-продление-срока-службы">Техническое обслуживание и продление срока службы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/c/ch/chto-delat-esli-zablokirovali-icloud.html" class="related-card">iCloud заблокирован: как разблокировать аккаунт Apple в 2026 году</a></li><li><a href="/articles/m/me/mersedes-kak-sbrosit-davlenie-v-shinakh.html" class="related-card">Как сбросить давление в шинах Mercedes: полная инструкция</a></li><li><a href="/articles/p/p2/p2339-oshibka-mersedes.html" class="related-card">Ошибка P2339 Mercedes: причины, диагностика и ремонт цилиндров</a></li><li><a href="/articles/h/ho/honda-motorcycle-thailand.html" class="related-card">Honda Motorcycle Thailand: гид по заводу, ценам и экспорту</a></li><li><a href="/articles/m/me/mersedes-2000kh-godov.html" class="related-card">Мерседес 2000-х: Эпоха W211, W203 и расцвет AMG</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/c/ch/chto-delat-esli-zablokirovali-icloud.html" class="related-bottom-card"><span class="related-bottom-title">iCloud заблокирован: как разблокировать аккаунт Apple в 2026 году</span><span class="related-bottom-desc">Забыли пароль или Apple заблокировал iCloud? Узнайте все способы восстановления доступа, официальные</span></a><a href="/articles/m/me/mersedes-kak-sbrosit-davlenie-v-shinakh.html" class="related-bottom-card"><span class="related-bottom-title">Как сбросить давление в шинах Mercedes: полная инструкция</span><span class="related-bottom-desc">Узнайте, как сбросить и калибровать датчики давления в шинах на Mercedes-Benz (W204, W205, W212, W21</span></a><a href="/articles/p/p2/p2339-oshibka-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Ошибка P2339 Mercedes: причины, диагностика и ремонт цилиндров</span><span class="related-bottom-desc">Подробный разбор ошибки P2339 Mercedes-Benz. Почему горит Check Engine? Причины детонации, превышени</span></a><a href="/articles/h/ho/honda-motorcycle-thailand.html" class="related-bottom-card"><span class="related-bottom-title">Honda Motorcycle Thailand: гид по заводу, ценам и экспорту</span><span class="related-bottom-desc">Полный обзор производства Honda в Таиланде. Почему тайские мотоциклы считаются эталоном качества? Це</span></a><a href="/articles/m/me/mersedes-2000kh-godov.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес 2000-х: Эпоха W211, W203 и расцвет AMG</span><span class="related-bottom-desc">Полный гид по Mercedes-Benz 2000-х годов: кузов W211, W203, W220. Обзор двигателей, типичные поломки</span></a><a href="/articles/p/po/porogi-chrysler-sebring-2.html" class="related-bottom-card"><span class="related-bottom-title">Пороги Chrysler Sebring 2: выбор, замена и ремонт своими руками</span><span class="related-bottom-desc">Полный гид по порогам Chrysler Sebring 2. Выбор материала, антикоррозийная обработка, пошаговая инст</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

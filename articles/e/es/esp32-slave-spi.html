@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>ESP32 в режиме Slave SPI: настройка и примеры кода — Мерседес Инфо</title>
+    <meta name="description" content="Как настроить ESP32 как ведомое SPI-устройство: схема подключения, конфигурация регистров, обработка данных и типичные ошибки. Пошаговые инструкции для Arduino IDE и ESP-IDF.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/e/es/esp32-slave-spi.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="ESP32 в режиме Slave SPI: настройка и примеры кода">
+    <meta property="og:description" content="Как настроить ESP32 как ведомое SPI-устройство: схема подключения, конфигурация регистров, обработка данных и типичные ошибки. Пошаговые инструкции для Arduino IDE и ESP-IDF.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/e-class/">E Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">ESP32 в режиме Slave SPI: настройка и примеры кода</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>ESP32 как Slave SPI: полное руководство по настройке ведомого интерфейса</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-режим-slave-spi-и-когда-он-нужен">Что такое режим Slave SPI и когда он нужен</a></li><li><a href="#аппаратные-возможности-esp32-для-slave-spi">Аппаратные возможности ESP32 для Slave SPI</a></li><li><a href="#схема-подключения-esp32-в-режиме-slave-spi">Схема подключения ESP32 в режиме Slave SPI</a></li><li><a href="#настройка-slave-spi-в-arduino-ide">Настройка Slave SPI в Arduino IDE</a></li><li><a href="#настройка-slave-spi-в-esp-idf">Настройка Slave SPI в ESP-IDF</a></li><li><a href="#обработка-данных-и-типичные-ошибки">Обработка данных и типичные ошибки</a></li><li><a href="#практические-примеры-использования">Практические примеры использования</a></li><li><a href="#faq-частые-вопросы-по-slave-spi-на-esp32">FAQ: Частые вопросы по Slave SPI на ESP32</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Интерфейс <strong>SPI (Serial Peripheral Interface)</strong> широко используется для связи микроконтроллеров с датчиками, памятью и другими устройствами. В большинстве проектов <em>ESP32</em> выступает в роли <strong>мастера (Master)</strong>, но иногда требуется настроить его как <strong>ведомое устройство (Slave)</strong> — например, для приёма данных от другого контроллера или специализированного чипа. В этом режиме <em>ESP32</em> не инициирует обмен, а только реагирует на команды мастера, что открывает новые возможности для построения распределённых систем.</p>
+
+<p>В отличие от режима <strong>Master</strong>, где <em>ESP32</em> полностью контролирует шину, настройка <strong>Slave SPI</strong> имеет ряд нюансов: от выбора аппаратных выводов до обработки прерываний для своевременного чтения данных. В этой статье мы разберём <mark>уникальную особенность ESP32 — поддержку до 4-х независимых SPI-интерфейсов (SPI0–SPI3), где только SPI2 и SPI3 могут работать в режиме Slave</mark>, а также рассмотрим практические примеры для <em>Arduino IDE</em> и <em>ESP-IDF</em>.</p>
+
+<h2 id="что-такое-режим-slave-spi-и-когда-он-нужен">Что такое режим Slave SPI и когда он нужен</h2>
+
+<p>В режиме <strong>Slave SPI</strong> микроконтроллер <em>ESP32</em> не генерирует сигнал тактирования (<code>SCK</code>), а синхронизируется по внешнему источнику — мастеру. Основные особенности этого режима:</p>
+
+<ul>
+  <li>🔄 <strong>Пассивная роль</strong>: <em>ESP32</em> только отвечает на запросы мастера, не может инициализировать передачу самостоятельно.</li>
+  <li>📡 <strong>Приём данных по прерыванию</strong>: для надёжной работы требуется обработчик прерываний (<code>ISR</code>), иначе данные могут быть утеряны.</li>
+  <li>⚡ <strong>Ограниченная скорость</strong>: максимальная частота зависит от тактовой частоты <em>ESP32</em> и настройки делителя (до <code>80 МГц</code> в теории, но на практике редко превышает <code>20 МГц</code>).</li>
+  <li>🔌 <strong>Аппаратные ограничения</strong>: не все выводы <em>ESP32</em> поддерживают <strong>Slave SPI</strong> (например, <code>SPI1</code> может работать только как <strong>Master</strong>).</li>
+</ul>
+
+<p>Типичные сценарии использования:</p>
+<ul>
+  <li>📊 <strong>Сбор данных с нескольких датчиков</strong>, подключённых к мастер-устройству (например, <em>Raspberry Pi</em> или <em>STM32</em>).</li>
+  <li>🔗 <strong>Реализация протоколов</strong> типа <em>CAN</em> или <em>1-Wire</em> через SPI-мосты.</li>
+  <li>🖥️ <strong>Обмен данными с FPGA</strong> или специализированными чипами (например, <em>AD9959</em> для генерации сигналов).</li>
+  <li>🔄 <strong>Дуплексная связь</strong> между двумя <em>ESP32</em>, где одно устройство всегда мастер, а другое — ведомое.</li>
+</ul>
+
+<p>Важно понимать, что в режиме <strong>Slave</strong> <em>ESP32</em> не может динамически переключаться на роль <strong>Master</strong> без переконфигурации шины. Это накладывает ограничения на архитектуру системы, но упрощает протокол обмена.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Для чего вы используете SPI на ESP32?</strong><ul><li>Подключение датчиков</li><li>Связь с другим микроконтроллером</li><li>Работа с памятью (Flash/SRAM)</li><li>Управление дисплеями</li><li>Другое</li></ul></div></div>
+
+<h2 id="аппаратные-возможности-esp32-для-slave-spi">Аппаратные возможности ESP32 для Slave SPI</h2>
+
+<p><em>ESP32</em> имеет <strong>4 SPI-контроллера</strong> (<code>SPI0</code>–<code>SPI3</code>), но не все из них поддерживают режим <strong>Slave</strong>. В таблице ниже приведены ключевые характеристики:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Контроллер</th>
+      <th>Режим Slave</th>
+      <th>Макс. частота (МГц)</th>
+      <th>Поддерживаемые выводы</th>
+      <th>Особенности</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>SPI0</code></td>
+      <td>❌ Нет</td>
+      <td>—</td>
+      <td>—</td>
+      <td>Используется для flash-памяти, недоступен для пользователя.</td>
+    </tr>
+    <tr>
+      <td><code>SPI1</code></td>
+      <td>❌ Нет</td>
+      <td>до 80</td>
+      <td>HSPI</td>
+      <td>Только <strong>Master</strong>, часто используется для связи с дисплеями.</td>
+    </tr>
+    <tr>
+      <td><code>SPI2</code></td>
+      <td>✅ Да</td>
+      <td>до 80</td>
+      <td>VSPI</td>
+      <td>Поддерживает <strong>Slave</strong>, но требует ручной настройки выводов.</td>
+    </tr>
+    <tr>
+      <td><code>SPI3</code></td>
+      <td>✅ Да</td>
+      <td>до 80</td>
+      <td>HSPI (альтернативные выводы)</td>
+      <td>Рекомендуется для <strong>Slave</strong>, так как имеет выделенные сигналы <code>SS</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Для режима <strong>Slave</strong> оптимально использовать <code>SPI2</code> или <code>SPI3</code>. При этом:</p>
+<ul>
+  <li>🔌 Вывод <code>SS</code> (Slave Select) <strong>обязателен</strong> — без него <em>ESP32</em> не сможет определить начало передачи.</li>
+  <li>🔄 Выводы <code>MISO</code> (Master In Slave Out) и <code>MOSI</code> (Master Out Slave In) могут быть переназначены, но <code>SCK</code> должен быть жёстко привязан к определённому GPIO.</li>
+  <li>⚡ Для стабильной работы рекомендуется использовать <strong>pull-up резисторы</strong> на линиях <code>MOSI</code> и <code>SCK</code> (10 кОм).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы используете <code>SPI3</code> в режиме <strong>Slave</strong>, убедитесь, что в настройках <em>menuconfig</em> (для <em>ESP-IDF</em>) отключён параметр <code>CONFIG_SPI_MASTER_ISR_IN_IRAM</code>. В противном случае возможны конфликты с обработчиками прерываний.</blockquote>
+
+<h2 id="схема-подключения-esp32-в-режиме-slave-spi">Схема подключения ESP32 в режиме Slave SPI</h2>
+
+<p>Типовая схема подключения <em>ESP32</em> как ведомого устройства включает 4 основных сигнала:</p>
+<ul>
+  <li><code>SCK</code> (Serial Clock) — тактовый сигнал от мастера.</li>
+  <li><code>MOSI</code> (Master Out Slave In) — данные от мастера к ведомому.</li>
+  <li><code>MISO</code> (Master In Slave Out) — данные от ведомого к мастеру.</li>
+  <li><code>SS</code> (Slave Select) — сигнал выбора ведомого (активный низкий уровень).</li>
+</ul>
+
+<p>Пример подключения <em>ESP32</em> (Slave) к <em>Arduino Uno</em> (Master):</p>
+<pre><code>
+<p>Arduino Uno (Master)  ↔  ESP32 (Slave)</p>
+<p>-------------------     ---------------</p>
+<p>5V        →        VCC (5V или 3.3V с делителем)</p>
+<p>GND       →        GND</p>
+<p>D13 (SCK) →        GPIO 18 (SCK)</p>
+<p>D11 (MOSI)→        GPIO 23 (MOSI)</p>
+<p>D12 (MISO)←        GPIO 19 (MISO)</p>
+<p>D10 (SS)  →        GPIO 5 (SS)</p>
+</code></pre>
+
+<p>Ключевые моменты:</p>
+<ul>
+  <li>🔋 <strong>Уровни напряжения:</strong> Если мастер работает на <code>5V</code>, а <em>ESP32</em> — на <code>3.3V</code>, используйте делитель напряжения или логический конвертер для линий <code>MOSI</code> и <code>SCK</code>.</li>
+  <li>🔌 <strong>Pull-up резисторы:</strong> Рекомендуется установить резисторы <code>10 кОм</code> на линии <code>SCK</code> и <code>SS</code> для предотвращения ложных срабатываний.</li>
+  <li>⚡ <strong>Длина проводов:</strong> Для частот выше <code>10 МГц</code> используйте короткие провода (менее 10 см) или экранную витую пару.</li>
+</ul>
+
+
+<p>Выводы SCK, MOSI, MISO подключены корректно|</p>
+<p>Сигнал SS подключён к GPIO с поддержкой ввода|</p>
+<p>Уровни напряжения совместимы (3.3V/5V)|</p>
+<p>Установлены pull-up резисторы на SCK и SS|</p>
+<p>Питание ESP32 стабильно (не менее 500 мА)--></p>
+
+<h2 id="настройка-slave-spi-в-arduino-ide">Настройка Slave SPI в Arduino IDE</h2>
+
+<p>Для работы с <strong>Slave SPI</strong> в <em>Arduino IDE</em> используется библиотека <code>SPI</code>, но с специфическими настройками. Основные шаги:</p>
+
+<ol>
+  <li><strong>Инициализация SPI в режиме Slave:</strong>
+    <pre><code>#include &lt;SPI.h&gt;
+
+<p>void setup() {</p>
+<p>SPI.begin(SPI_MODE_SLAVE); // Инициализация в режиме Slave</p>
+<p>pinMode(SS, INPUT_PULLUP); // Настройка вывода SS как входа с pull-up</p>
+<p>}</code></pre></p>
+  </li>
+  <li><strong>Обработка прерывания:</strong> Данные приходят по прерыванию, поэтому нужно использовать <code>SPI.attachInterrupt()</code>:
+    <pre><code>void setup() {
+<p>SPI.begin(SPI_MODE_SLAVE);</p>
+<p>SPI.attachInterrupt(); // Включение прерывания</p>
+<p>}</p>
+
+<p>// Обработчик прерывания</p>
+<p>ISR(SPI_STC_vect) {</p>
+<p>byte received = SPDR; // Чтение принятого байта</p>
+<p>// Обработка данных</p>
+<p>}</code></pre></p>
+  </li>
+  <li><strong>Отправка данных мастеру:</strong> Для этого используется регистр <code>SPDR</code>:
+    <pre><code>void loop() {
+<p>if (digitalRead(SS) == LOW) { // Если Slave выбран</p>
+<p>SPDR = 0xAA; // Отправка байта мастеру</p>
+<p>while (!(SPSR & (1 << SPIF))); // Ожидание завершения передачи</p>
+<p>}</p>
+<p>}</code></pre></p>
+  </li>
+</ol>
+
+<p>Пример полного кода для приёма данных от мастера и отправки ответа:</p>
+<pre><code>#include &lt;SPI.h&gt;
+
+<p>volatile bool dataReceived = false;</p>
+<p>volatile byte receivedData;</p>
+
+<p>void setup() {</p>
+<p>Serial.begin(115200);</p>
+<p>pinMode(SS, INPUT_PULLUP);</p>
+<p>SPI.begin(SPI_MODE_SLAVE);</p>
+<p>SPI.attachInterrupt();</p>
+<p>}</p>
+
+<p>ISR(SPI_STC_vect) {</p>
+<p>receivedData = SPDR;</p>
+<p>dataReceived = true;</p>
+<p>}</p>
+
+<p>void loop() {</p>
+<p>if (dataReceived) {</p>
+<p>Serial.print("Received: 0x");</p>
+<p>Serial.println(receivedData, HEX);</p>
+<p>SPDR = receivedData + 1; // Отправляем мастеру байт +1</p>
+<p>dataReceived = false;</p>
+<p>}</p>
+<p>}</code></pre></p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> В <em>Arduino IDE</em> для <em>ESP32</em> обработчик прерывания <code>ISR(SPI_STC_vect)</code> может конфликтовать с другими прерываниями. Если данные теряются, попробуйте увеличить приоритет прерывания SPI в <code>esp_intr_alloc</code> (требует перехода на <em>ESP-IDF</em>).</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если мастер не получает ответ от ведомого, проверьте, что сигнал SS удерживается в низком состоянии достаточно долго (не менее 1 такта SCK). Некоторые мастера (например, STM32) могут слишком быстро переключать SS, что приводит к пропуску данных.</p></div>
+
+<h2 id="настройка-slave-spi-в-esp-idf">Настройка Slave SPI в ESP-IDF</h2>
+
+<p>Для профессиональных проектов рекомендуется использовать <em>ESP-IDF</em> — официальный фреймворк от Espressif. Здесь настройка <strong>Slave SPI</strong> гибче, но требует больше кода.</p>
+
+<p>Основные шаги:</p>
+<ol>
+  <li><strong>Конфигурация SPI:</strong> В файле <code>sdkconfig</code> убедитесь, что включена поддержка SPI:
+    <pre><code>CONFIG_SPI_MASTER_ISR_IN_IRAM=n
+<p>CONFIG_SPI_SLAVE_ISR_IN_IRAM=y</code></pre></p>
+  </li>
+  <li><strong>Инициализация шины:</strong>
+    <pre><code>#include "driver/spi_slave.h"
+
+<p>spi_bus_config_t buscfg = {</p>
+<p>.miso_io_num = GPIO_NUM_19, // MISO</p>
+<p>.mosi_io_num = GPIO_NUM_23, // MOSI</p>
+<p>.sclk_io_num = GPIO_NUM_18, // SCK</p>
+<p>.quadwp_io_num = -1,</p>
+<p>.quadhd_io_num = -1,</p>
+<p>.max_transfer_sz = 32, // Макс. размер передачи (байт)</p>
+<p>};</p>
+
+<p>spi_slave_interface_config_t slvcfg = {</p>
+<p>.spics_io_num = GPIO_NUM_5, // SS</p>
+<p>.flags = 0,</p>
+<p>.queue_size = 7,</p>
+<p>.mode = 0, // SPI_MODE0</p>
+<p>.post_setup_cb = NULL,</p>
+<p>.post_trans_cb = NULL</p>
+<p>};</code></pre></p>
+  </li>
+  <li><strong>Создание устройства Slave:</strong>
+    <pre><code>spi_device_handle_t spi;
+<p>spi_slave_initialize(SPI2_HOST, &buscfg, &slvcfg, &spi);</code></pre></p>
+  </li>
+  <li><strong>Приём и отправка данных:</strong>
+    <pre><code>uint8_t sendBuf[32] = {0};
+<p>uint8_t recvBuf[32] = {0};</p>
+<p>spi_slave_transaction_t t = {</p>
+<p>.length = 32 * 8, // Размер в битах</p>
+<p>.tx_buffer = sendBuf,</p>
+<p>.rx_buffer = recvBuf</p>
+<p>};</p>
+
+<p>spi_slave_transmit(spi, &t, portMAX_DELAY);</code></pre></p>
+  </li>
+</ol>
+
+<p>Полный пример кода для <em>ESP-IDF</em> с обработкой прерываний:</p>
+<details class="faq-item"><summary>Полный код для ESP-IDF с обработкой прерываний</summary><div class="faq-answer"><p>
+<p>#include "driver/spi_slave.h"</p>
+<p>#include "esp_log.h"</p>
+
+<p>static const char *TAG = "SPI_SLAVE";</p>
+
+<p>void spi_task(void *arg) {</p>
+<p>spi_bus_config_t buscfg = {</p>
+<p>.miso_io_num = GPIO_NUM_19,</p>
+<p>.mosi_io_num = GPIO_NUM_23,</p>
+<p>.sclk_io_num = GPIO_NUM_18,</p>
+<p>.quadwp_io_num = -1,</p>
+<p>.quadhd_io_num = -1,</p>
+<p>.max_transfer_sz = 32,</p>
+<p>};</p>
+
+<p>spi_slave_interface_config_t slvcfg = {</p>
+<p>.spics_io_num = GPIO_NUM_5,</p>
+<p>.flags = 0,</p>
+<p>.queue_size = 7,</p>
+<p>.mode = 0,</p>
+<p>};</p>
+
+<p>spi_device_handle_t spi;</p>
+<p>spi_slave_initialize(SPI2_HOST, &buscfg, &slvcfg, &spi);</p>
+
+<p>uint8_t sendBuf[32] = {0};</p>
+<p>uint8_t recvBuf[32] = {0};</p>
+
+<p>while (1) {</p>
+<p>spi_slave_transaction_t t = {</p>
+<p>.length = 32 * 8,</p>
+<p>.tx_buffer = sendBuf,</p>
+<p>.rx_buffer = recvBuf</p>
+<p>};</p>
+<p>spi_slave_transmit(spi, &t, portMAX_DELAY);</p>
+<p>ESP_LOGI(TAG, "Received: %02X %02X %02X...", recvBuf[0], recvBuf[1], recvBuf[2]);</p>
+<p>vTaskDelay(10 / portTICK_PERIOD_MS);</p>
+<p>}</p>
+<p>}</p>
+
+<p>void app_main() {</p>
+<p>xTaskCreate(spi_task, "spi_task", 4096, NULL, 5, NULL);</p>
+<p>}</p></div></details></p>
+
+<p>Преимущества <em>ESP-IDF</em> перед <em>Arduino IDE</em>:</p>
+<ul>
+  <li>🔧 <strong>Гибкая настройка прерываний</strong>: можно задать приоритет и обработчик в <code>IRAM</code>.</li>
+  <li>⚡ <strong>Поддержка DMA</strong>: для высокоскоростного обмена (до <code>80 МГц</code>).</li>
+  <li>📊 <strong>Отладка через <code>ESP_LOG</code></strong>: удобный вывод логов по <em>UART</em>.</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>В ESP-IDF для Slave SPI обязательно настройте параметр max_transfer_sz в соответствии с максимальным пакетом данных. Если пакеты больше этого значения, данные будут обрезаны.</p></div>
+
+<h2 id="обработка-данных-и-типичные-ошибки">Обработка данных и типичные ошибки</h2>
+
+<p>При работе с <strong>Slave SPI</strong> на <em>ESP32</em> часто возникают проблемы, связанные с синхронизацией, потерями данных или некорректной инициализацией. Рассмотрим типичные ошибки и способы их устранения.</p>
+
+<h3>1. Потеря данных при высокой скорости</h3>
+<p>Если мастер передаёт данные быстрее, чем <em>ESP32</em> успевает их обработать, возможны потери. Решения:</p>
+<ul>
+  <li>⚡ Уменьшите частоту <code>SCK</code> на стороне мастера (например, до <code>1 МГц</code>).</li>
+  <li>🔄 Используйте <code>DMA</code> в <em>ESP-IDF</em> для буферизации данных.</li>
+  <li>📡 Увеличьте размер очереди (<code>queue_size</code>) в конфигурации <strong>Slave</strong>.</li>
+</ul>
+
+<h3>2. Slave не отвечает мастеру</h3>
+<p>Если мастер не получает данные от <em>ESP32</em>, проверьте:</p>
+<ul>
+  <li>🔌 Корректность подключения <code>MISO</code> (мастер должен читать с этого вывода).</li>
+  <li>⚡ Уровень сигнала <code>SS</code>: он должен быть низким во время передачи.</li>
+  <li>🔄 Наличие <code>pull-up</code> резистора на <code>SS</code> (если мастер не удерживает сигнал).</li>
+</ul>
+
+<h3>3. Конфликты прерываний</h3>
+<p>Если данные принимаются с искажениями, возможно, обработчик прерывания SPI конфликтует с другими задачами. Решения:</p>
+<ul>
+  <li>🔧 В <em>ESP-IDF</em> назначьте прерыванию SPI высший приоритет:
+    <pre><code>esp_intr_alloc(SPI_INTR_SOURCE, ESP_INTR_FLAG_IRAM, spi_isr, NULL, &handle);</code></pre>
+  </li>
+  <li>📵 Отключите другие прерывания (например, <em>Wi-Fi</em>) на время критических операций.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы используете <em>Wi-Fi</em> или <em>Bluetooth</em> одновременно с <strong>Slave SPI</strong>, возможны задержки в обработке прерываний из-за конфликтов за доступ к шине <code>APB</code>. В этом случае рекомендуется использовать <code>SPI3</code> (он работает через отдельную шину <code>AHB</code>).</blockquote>
+
+<h3>4. Неправильный режим SPI (MODE0–MODE3)</h3>
+<p><em>ESP32</em> и мастер должны использовать одинаковый режим (<code>CPOL</code> и <code>CPHA</code>). Если данные искажаются, проверьте настройки:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Режим</th>
+      <th>CPOL</th>
+      <th>CPHA</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>MODE0</code></td>
+      <td>0</td>
+      <td>0</td>
+      <td>Тактирование по переднему фронту, данные захват по заднему.</td>
+    </tr>
+    <tr>
+      <td><code>MODE1</code></td>
+      <td>0</td>
+      <td>1</td>
+      <td>Тактирование по заднему фронту, данные захват по переднему.</td>
+    </tr>
+    <tr>
+      <td><code>MODE2</code></td>
+      <td>1</td>
+      <td>0</td>
+      <td>CPOL=1, CPHA=0.</td>
+    </tr>
+    <tr>
+      <td><code>MODE3</code></td>
+      <td>1</td>
+      <td>1</td>
+      <td>CPOL=1, CPHA=1.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>В <em>Arduino IDE</em> режим задаётся при инициализации:
+  <pre><code>SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));</code></pre>
+<p>В <em>ESP-IDF</em> — в структуре <code>spi_slave_interface_config_t</code> (поле <code>mode</code>).</p></p>
+
+<h2 id="практические-примеры-использования">Практические примеры использования</h2>
+
+<p>Рассмотрим два реальных сценария применения <strong>Slave SPI</strong> на <em>ESP32</em>.</p>
+
+<h3>Пример 1: Приём данных от STM32 (Master)</h3>
+<p>Задача: <em>STM32</em> отправляет пакеты данных (температура, влажность) по SPI, а <em>ESP32</em> принимает их и передаёт по <em>Wi-Fi</em>.</p>
+
+<p><strong>Код для ESP32 (Slave):</strong></p>
+<pre><code>#include &lt;SPI.h&gt;
+<p>#include &lt;WiFi.h&gt;</p>
+
+<p>const char* ssid = "your_SSID";</p>
+<p>const char* password = "your_PASSWORD";</p>
+
+<p>volatile uint8_t temp, humidity;</p>
+<p>volatile bool newData = false;</p>
+
+<p>void setup() {</p>
+<p>Serial.begin(115200);</p>
+<p>WiFi.begin(ssid, password);</p>
+
+<p>pinMode(SS, INPUT_PULLUP);</p>
+<p>SPI.begin(SPI_MODE_SLAVE);</p>
+<p>SPI.attachInterrupt();</p>
+<p>}</p>
+
+<p>ISR(SPI_STC_vect) {</p>
+<p>static uint8_t index = 0;</p>
+<p>uint8_t data = SPDR;</p>
+
+<p>if (index == 0) temp = data;</p>
+<p>else if (index == 1) {</p>
+<p>humidity = data;</p>
+<p>newData = true;</p>
+<p>}</p>
+<p>index = (index + 1) % 2;</p>
+<p>SPDR = 0xFF; // Отправляем мастеру подтверждение</p>
+<p>}</p>
+
+<p>void loop() {</p>
+<p>if (newData && WiFi.status() == WL_CONNECTED) {</p>
+<p>Serial.printf("Temp: %d°C, Humidity: %d%%\n", temp, humidity);</p>
+<p>// Отправка данных на сервер...</p>
+<p>newData = false;</p>
+<p>}</p>
+<p>}</code></pre></p>
+
+<h3>Пример 2: Обмен данными между двумя ESP32</h3>
+<p>Задача: Одна <em>ESP32</em> (Master) отправляет команды, вторая (Slave) выполняет их и возвращает статус.</p>
+
+<p><strong>Код для Master (ESP32):</strong></p>
+<pre><code>#include &lt;SPI.h&gt;
+
+<p>void setup() {</p>
+<p>Serial.begin(115200);</p>
+<p>SPI.begin();</p>
+<p>pinMode(SS, OUTPUT);</p>
+<p>digitalWrite(SS, HIGH);</p>
+<p>}</p>
+
+<p>void loop() {</p>
+<p>digitalWrite(SS, LOW);</p>
+<p>uint8_t command = 0x01; // Команда "включить светодиод"</p>
+<p>uint8_t response = SPI.transfer(command);</p>
+<p>digitalWrite(SS, HIGH);</p>
+
+<p>Serial.print("Sent: 0x");</p>
+<p>Serial.print(command, HEX);</p>
+<p>Serial.print(", Received: 0x");</p>
+<p>Serial.println(response, HEX);</p>
+<p>delay(1000);</p>
+<p>}</code></pre></p>
+
+<p><strong>Код для Slave (ESP32):</strong></p>
+<pre><code>#include &lt;SPI.h&gt;
+
+<p>const int ledPin = 2;</p>
+
+<p>void setup() {</p>
+<p>pinMode(ledPin, OUTPUT);</p>
+<p>pinMode(SS, INPUT_PULLUP);</p>
+<p>SPI.begin(SPI_MODE_SLAVE);</p>
+<p>SPI.attachInterrupt();</p>
+<p>}</p>
+
+<p>ISR(SPI_STC_vect) {</p>
+<p>uint8_t cmd = SPDR;</p>
+<p>if (cmd == 0x01) {</p>
+<p>digitalWrite(ledPin, HIGH);</p>
+<p>SPDR = 0xAA; // Подтверждение выполнения</p>
+<p>} else if (cmd == 0x02) {</p>
+<p>digitalWrite(ledPin, LOW);</p>
+<p>SPDR = 0x55;</p>
+<p>} else {</p>
+<p>SPDR = 0xFF; // Ошибка</p>
+<p>}</p>
+<p>}</p>
+
+<p>void loop() {}</code></pre></p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>При обмене между двумя ESP32 убедитесь, что мастер удерживает сигнал SS низким на всё время передачи пакета. Если SS будет подниматься между байтами, Slave сбросит состояние.</p></div>
+
+<h2 id="faq-частые-вопросы-по-slave-spi-на-esp32">FAQ: Частые вопросы по Slave SPI на ESP32</h2>
+
+<details>
+  <summary>Можно ли использовать SPI1 в режиме Slave?</summary>
+  <p>Нет, <code>SPI1</code> (HSPI) в <em>ESP32</em> поддерживает только режим <strong>Master</strong>. Для <strong>Slave</strong> доступны <code>SPI2</code> (VSPI) и <code>SPI3</code> (HSPI с альтернативными выводами).</p>
+</details>
+
+<details>
+  <summary>Почему данные искажаются при частоте выше 10 МГц?</summary>
+  <p>Это связано с задержками в обработке прерываний и длиной проводов. Попробуйте:</p>
+  <ul>
+    <li>Уменьшить частоту до <code>5–10 МГц</code>.</li>
+    <li>Использовать экранные провода.</li>
+    <li>В <em>ESP-IDF</em> включить <code>DMA</code> для SPI.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Как проверить, что Slave получает данные?</summary>
+  <p>Подключите логический анализатор к линиям <code>SCK</code>, <code>MOSI</code> и <code>SS</code>. В <em>Arduino IDE</em> можно выводить принятые данные в <code>Serial</code>:</p>
+  <pre><code>ISR(SPI_STC_vect) {
+<p>byte data = SPDR;</p>
+<p>Serial.print("Received: ");</p>
+<p>Serial.println(data, HEX);</p>
+<p>}</code></pre></p>
+  <p>В <em>ESP-IDF</em> используйте <code>ESP_LOGI</code>.</p>
+</details>
+
+<details>
+  <summary>Можно ли использовать Slave SPI одновременно с Wi-Fi?</summary>
+  <p>Да, но возможны задержки в обработке SPI из-за прерываний от <em>Wi-Fi</em>. Рекомендации:</p>
+  <ul>
+    <li>Используйте <code>SPI3</code> (он работает через <code>AHB</code>, что減少 конфликты).</li>
+    <li>Увеличьте приоритет прерывания SPI в <em>ESP-IDF</em>.</li>
+    <li>Отключайте <em>Wi-Fi</em> на время критических операций SPI.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Какие резисторы нужны для подтяжки линий SPI?</summary>
+  <p>Рекомендуется:</p>
+  <ul>
+    <li><code>SCK</code>: <code>10 кОм</code> pull-up к <code>3.3V</code>.</li>
+    <li><code>SS</code>: <code>10 кОм</code> pull-up к <code>3.3V</code> (если мастер не удерживает сигнал).</li>
+    <li><code>MOSI</code>: pull-up не обязателен, но может помочь при длинных проводах.</li>
+  </ul>
+  <p><code>MISO</code> обычно не требует подтяжки, так как управляется Slave.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-режим-slave-spi-и-когда-он-нужен">Что такое режим Slave SPI и когда он нужен</a></li><li><a href="#аппаратные-возможности-esp32-для-slave-spi">Аппаратные возможности ESP32 для Slave SPI</a></li><li><a href="#схема-подключения-esp32-в-режиме-slave-spi">Схема подключения ESP32 в режиме Slave SPI</a></li><li><a href="#настройка-slave-spi-в-arduino-ide">Настройка Slave SPI в Arduino IDE</a></li><li><a href="#настройка-slave-spi-в-esp-idf">Настройка Slave SPI в ESP-IDF</a></li><li><a href="#обработка-данных-и-типичные-ошибки">Обработка данных и типичные ошибки</a></li><li><a href="#практические-примеры-использования">Практические примеры использования</a></li><li><a href="#faq-частые-вопросы-по-slave-spi-на-esp32">FAQ: Частые вопросы по Slave SPI на ESP32</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/z/za/zamok-zazhiganiya-w212.html" class="related-card">Замена замка зажигания W212: симптомы, артикулы и ремонт</a></li><li><a href="/articles/p/pr/predokhranitel-pechki-w211.html" class="related-card">Предохранитель печки W211: схема, замена и ремонт</a></li><li><a href="/articles/b/ba/bamper-w124-amg.html" class="related-card">Бампер W124 AMG: выбор, установка и тюнинг для легендарного Мерседеса</a></li><li><a href="/articles/k/ku/kupit-mersedes-e-klass-w211.html" class="related-card">Купить Мерседес Е класс W211: гид по выбору, моторам и кузову</a></li><li><a href="/articles/a/av/avtozapusk-mersedes-w213.html" class="related-card">Автозапуск Mercedes W213: настройка и неисправности</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/z/za/zamok-zazhiganiya-w212.html" class="related-bottom-card"><span class="related-bottom-title">Замена замка зажигания W212: симптомы, артикулы и ремонт</span><span class="related-bottom-desc">Полный гид по замку зажигания Mercedes W212. Признаки неисправности EIS, коды ошибок, замена личинки</span></a><a href="/articles/p/pr/predokhranitel-pechki-w211.html" class="related-bottom-card"><span class="related-bottom-title">Предохранитель печки W211: схема, замена и ремонт</span><span class="related-bottom-desc">Где находится предохранитель печки Mercedes W211? Подробная схема блока, причины отказа отопителя и </span></a><a href="/articles/b/ba/bamper-w124-amg.html" class="related-bottom-card"><span class="related-bottom-title">Бампер W124 AMG: выбор, установка и тюнинг для легендарного Мерседеса</span><span class="related-bottom-desc">Подробный гайд по бамперам для &lt;em&gt;Mercedes-Benz W124 AMG&lt;/em&gt;: оригинальные и реплики, особенности </span></a><a href="/articles/k/ku/kupit-mersedes-e-klass-w211.html" class="related-bottom-card"><span class="related-bottom-title">Купить Мерседес Е класс W211: гид по выбору, моторам и кузову</span><span class="related-bottom-desc">Планируете купить Мерседес Е класс W211? Узнайте о надежных двигателях, проблемах с ржавчиной, ценах</span></a><a href="/articles/a/av/avtozapusk-mersedes-w213.html" class="related-bottom-card"><span class="related-bottom-title">Автозапуск Mercedes W213: настройка и неисправности</span><span class="related-bottom-desc">Полное руководство по автозапуску Мерседес W213. Причины отказа, настройка Star-Start, ошибки и сове</span></a><a href="/articles/m/me/mersedes-e500-volchok.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes E500 W124 Волчок: История, Двигатель 5.0 и Тюнинг</span><span class="related-bottom-desc">Легендарный Mercedes E500 W124 в кузове Волчок. Обзор двигателя M119, технические характеристики, пр</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

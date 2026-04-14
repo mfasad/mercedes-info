@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Assetto Corsa Club: Как создать и настроить сервер для гонок — Мерседес Инфо</title>
+    <meta name="description" content="Полный гайд по созданию Assetto Corsa Club. Настройка сервера, моды, CSP, Pure и поиск идеальной трассы для дрифта.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/a/as/assetto-corsa-club.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Assetto Corsa Club: Как создать и настроить сервер для гонок">
+    <meta property="og:description" content="Полный гайд по созданию Assetto Corsa Club. Настройка сервера, моды, CSP, Pure и поиск идеальной трассы для дрифта.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Assetto Corsa Club: Как создать и настроить сервер для гонок</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Assetto Corsa Club: Создание идеального сервера</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#выбор-платформы-и-хостинга-для-сервера">Выбор платформы и хостинга для сервера</a></li><li><a href="#установка-и-настройка-content-manager">Установка и настройка Content Manager</a></li><li><a href="#работа-с-модами-pure-csp-и-custom-shaders-patch">Работа с модами: Pure, CSP и Custom Shaders Patch</a></li><li><a href="#подбор-автопарка-и-трасс-для-клуба">Подбор автопарка и трасс для клуба</a></li><li><a href="#администрирование-и-правила-поведения">Администрирование и правила поведения</a></li><li><a href="#оптимизация-производительности-и-сеть">Оптимизация производительности и сеть</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Симулятор Assetto Corsa давно перерос статус просто гоночной игры, превратившись в полноценную платформу для создания виртуальных гоночных сообществ. Именно концепция <strong>Assetto Corsa Club</strong> (или просто «клуба») позволяет энтузиастам объединяться, создавать свои правила и наслаждаться многопользовательской ездой с уникальным набором модификаций. В отличие от официальных серверов, клубные площадки предлагают свободу, которую невозможно получить в стандартном режиме.</p>
+<p>Создание собственного клуба требует не только желания, но и понимания технических аспектов настройки сервера, работы с контентом и администрирования. Вам предстоит разобраться с <em>Content Manager</em>, выбрать правильные плагины и, возможно, настроить выделенную машину для обеспечения стабильной работы. Это путь, который открывает доступ к управлению целой гоночной экосистемой.</p>
+<p>В этой статье мы детально разберем все этапы: от выбора хостинга или настройки локального сервера до внедрения сложных погодных условий и трафика. Вы узнаете, как сделать ваш <strong>Assetto Corsa Club</strong> привлекательным для пилотов со всего мира и избежать типичных ошибок новичков при конфигурации сети.</p>
+
+<h2 id="выбор-платформы-и-хостинга-для-сервера">Выбор платформы и хостинга для сервера</h2>
+<p>Первым и самым критичным шагом является определение места, где будет базироваться ваш клуб. Вы можете запустить сервер на собственном домашнем ПК, используя встроенные средства игры, или арендовать профессиональный <strong>VPS/VDS</strong>. Домашний сервер подойдет для тестов и игры с парой друзей, но для публичного клуба с десятками участников потребуется стабильный канал связи и мощный процессор.</p>
+<p>Аренда выделенного сервера (Dedicated Server) избавляет вас от необходимости держать компьютер включенным 24/7 и зависеть от качества домашнего интернет-провайдера. Профессиональные хостинги часто предлагают предустановленные панели управления, такие как <em>Server Manager</em>, что значительно упрощает администрирование. Важно учитывать географическое расположение дата-центра: чем ближе сервер к основной массе игроков, тем ниже пинг.</p>
+<p>При выборе конфигурации оборудования обратите внимание на однопоточную производительность CPU, так как физический движок игры сильно зависит от частоты одного ядра. Также критически важен объем оперативной памяти, особенно если вы планируете использовать тяжелые моды погоды и графики.</p>
+<ul>
+<li>🚀 <strong>Локальный хостинг:</strong> бесплатно, но требует постоянного включения ПК и хорошего аплоада.</li>
+<li>💻 <strong>VPS/VDS:</strong> оптимальный баланс цены и производительности, полный контроль над системой.</li>
+<li>🏢 <strong>Специализированный игровой хостинг:</strong> высокая цена, но готовые решения и техподдержка 24/7.</li>
+</ul>
+<blockquote>⚠️ Внимание: При запуске домашнего сервера обязательно настройте проброс портов (Port Forwarding) в роутере, иначе игроки из внешней сети не смогут подключиться к вашему <strong>Assetto Corsa Club</strong>.</blockquote>
+
+<h2 id="установка-и-настройка-content-manager">Установка и настройка Content Manager</h2>
+<p>Для эффективного управления сервером стандартный лаунчер игры практически не используется. Золотым стандартом индустрии является <em>Content Manager</em> (CM) — сторонний лаунчер, который предоставляет расширенные возможности настройки. Именно через него происходит установка серверной части и конфигурация всех параметров клуба.</p>
+<p>После установки CM необходимо перейти в раздел «Серверы» и выбрать опцию создания нового экземпляра. Здесь вам будет предложено выбрать трассу, набор автомобилей и тип сессии. Интерфейс программы позволяет гибко настраивать правила квалификации, гонки и практики, устанавливая лимиты времени или количество кругов.</p>
+<p>Особое внимание следует уделить настройкам совместимости. Убедитесь, что версия сервера соответствует версии клиента у игроков, чтобы избежать ошибок подключения. В современных сборках это часто решается автоматическим обновлением, но ручной контроль версий <code>acServer.exe</code> никогда не помешает.</p>
+<div class="checklist-block"><h4>☑️ Проверка перед запуском сервера</h4><label class="check-item"><input type="checkbox"><span>Установлен Content Manager последней версии</span></label><label class="check-item"><input type="checkbox"><span>Выбрана стабильная трасса без ошибок</span></label><label class="check-item"><input type="checkbox"><span>Настроены права администратора</span></label><label class="check-item"><input type="checkbox"><span>Проверен брандмауэр Windows</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+<p>Важным аспектом является настройка паролей. Вы можете установить пароль для входа в клуб, пароль для администраторов и пароль для зарезервированных слотов. Это позволяет создавать закрытые мероприятия или VIP-зоны внутри одного сервера.</p>
+
+<h2 id="работа-с-модами-pure-csp-и-custom-shaders-patch">Работа с модами: Pure, CSP и Custom Shaders Patch</h2>
+<p>Современный <strong>Assetto Corsa Club</strong> немыслим без использования <em>Custom Shaders Patch</em> (CSP) и погодного мода <em>Pure</em>. Эти дополнения кардинально меняют визуальную составляющую и физическое поведение автомобиля, добавляя динамическое время суток, дождь, мокрый асфальт и реалистичное освещение.</p>
+<p>При создании сервера вы должны решить, будете ли вы требовать обязательного наличия этих модов у всех подключившихся. Включение опции «Allow CSP» в настройках сервера автоматически предложит игрокам скачать необходимые файлы, если у них еще не установлен нужный патч. Это создает барьер входа, но гарантирует единую визуальную картинку для всех участников.</p>
+<p>Настройка погоды требует тонкой балансировки. Слишком частый дождь может сделать трассу непроходимой для новичков, а экстремальные настройки графики — снизить FPS на слабых компьютерах, что приведет к лагам в мультиплеере. Рекомендуется использовать пресеты погоды с умеренными значениями для публичных серверов.</p>
+<table>
+<thead>
+<tr>
+<th>Модификация</th>
+<th>Влияние на сервер</th>
+<th>Требования к ПК</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>Custom Shaders Patch</em></td>
+<td>Базовая функциональность, новые эффекты</td>
+<td>Низкие</td>
+</tr>
+<tr>
+<td><em>Pure</em></td>
+<td>Погода, сезонность, трафик</td>
+<td>Средние</td>
+</tr>
+<tr>
+<td><em>Sol</em></td>
+<td>Альтернативная погода (конкурент Pure)</td>
+<td>Средние</td>
+</tr>
+<tr>
+<td><em>Real Weather</em></td>
+<td>Синхронизация с реальной погодой</td>
+<td>Низкие</td>
+</tr>
+</tbody>
+</table>
+<details class="faq-item"><summary>Совместимость Pure и Sol</summary><div class="faq-answer"><p>Моды Pure и Sol не могут работать одновременно на одном сервере. При попытке активировать оба мода игра выдаст ошибку или один из них перезапишет другой. Выберите один погодный движок для вашего клуба и придерживайтесь его.</!</p></div></details>
+
+<h2 id="подбор-автопарка-и-трасс-для-клуба">Подбор автопарка и трасс для клуба</h2>
+<p>Успех вашего <strong>Assetto Corsa Club</strong> напрямую зависит от качества подобранного контента. Использование стоковых автомобилей и трасс быстро наскучит опытным пилотам. Вам придется искать и устанавливать моды, но делать это нужно с умом, проверяя качество физики и наличие звуков.</p>
+<p>Популярностью пользуются серверы, заточенные под конкретную дисциплину: дрифт, гонки на выносливость, ралли или просто «свободная езда» (Free Roam). Для дрифта критически важны трассы с большим количеством асфальта и специфические моды на физику шин, позволяющие держать занос. Для кольцевых гонок важна точность трека и отсутствие багов с вылетами за пределы трассы.</p>
+<p>При загрузке модов обращайте внимание на их оптимизацию. Тяжелые 4K-тектуры могут быть красивы в скриншотах, но в онлайне с 20 машинами они создадут колоссальную нагрузку на канал передачи данных, вызывая рывки (лаги) у всех участников. Лучше выбрать хорошо оптимизированную трассу в 2K, чем неиграбельную в 8K.</p>
+<ul>
+<li>🏎️ <strong>Дрифт пакеты:</strong> требуют настройки сцепления и часто используют трассы-ангары или промышленные зоны.</li>
+<li>🏁 <strong>GT3/GT4 классы:</strong> идеальны для организованных гонок с пит-стопами и регламентом.</li>
+<li>🚙 <strong>Гражданский трафик:</strong> популярен для режимов Free Roam, но требует мощного сервера.</li>
+</ul>
+<blockquote>⚠️ Внимание: Всегда проверяйте моды на наличие вирусов и вредоносного кода перед установкой на сервер. Скачивайте контент только с проверенных ресурсов, таких как RaceDepartment или официальные Discord-каналы авторов.</blockquote>
+
+<h2 id="администрирование-и-правила-поведения">Администрирование и правила поведения</h2>
+<p>Запуск сервера — это только половина дела. Вторая, более сложная часть — это управление сообществом. В любом публичном <strong>Assetto Corsa Club</strong> найдутся нарушители правил: таранщики, те, кто ездит против движения, или пользователи с некорректными никами. Наличие активного админа или бота-модератора обязательно.</p>
+<p>Настройте права доступа в <code>Server Manager</code> или через конфигурационные файлы. Вы можете выдавать права кика (выброса) и бана конкретным пользователям. Также рекомендуется настроить систему белых списков (Whitelist), если вы создаете закрытый клуб для друзей, куда вход посторонним запрещен.</p>
+<p>Четко сформулируйте правила клуба в описании сервера. Укажите допустимый лимит контактов, правила использования трека (cutting rules) и поведение в чате. Нарушение этикета часто раздражает игроков больше, чем технические проблемы.</p>
+<div class="attention-box attention-info"><div><strong>📊 Что важнее всего в гоночном сервере?</strong><ul><li>Чистота от читеров</li><li>Стабильный FPS</li><li>Качество трасс</li><li>Активные администраторы</li></ul></div></div>
+<p>Для автоматизации можно использовать плагины, которые банят за использование определенных читов или аномально высокое количество очков, набранное за короткое время. Однако ничто не заменит живого модератора, который способен оценить игровую ситуацию контекстуально.</p>
+
+<h2 id="оптимизация-производительности-и-сеть">Оптимизация производительности и сеть</h2>
+<p>Финальный этап подготовки — оптимизация. Сервер Assetto Corsa отправляет телеметрию всех автомобилей всем подключенным клиентам. Чем больше машин на треке, тем выше нагрузка на сеть. Использование мода <em>Pure</em> с дождем увеличивает объем передаваемых данных.</p>
+<p>Рекомендуется ограничить количество слотов разумными пределами. Для сложных трасс и требовательных модов погоды оптимальным считается 15-20 машин. Если вы хотите запустить массовый заезд на 50+ машин, придется отключить тяжелые визуальные эффекты и снизить частоту обновления пакетов данных.</p>
+<p>Также стоит обратить внимание на настройки TCP/UDP. В большинстве случаев стандартные настройки работают нормально, но на нестабильных сетях ручная настройка буферов может снизить количество разрывов соединения. Используйте проводное подключение для сервера, избегая Wi-Fi.</p>
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте команду /info в чате игры, чтобы быстро проверить пинг всех игроков и выявить тех, у кого проблемы с соединением, до начала гонки.</p></div>
+<p>Регулярно проводите ребуты сервера (перезагрузки), особенно если он работает неделями без остановки. Это помогает очистить память от накопившихся ошибок и «мусора», который может вызывать утечки памяти (memory leaks) в движке игры.</p>
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Стабильность сервера важнее количества модов. Лучше убрать один тяжелый автомобиль, чем потерять всех игроков из-за постоянных лагов.</p></div>
+
+<h2 id="часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</h2>
+<details>
+<summary>Как добавить свои машины на сервер Assetto Corsa?</summary>
+<p>Вам нужно загрузить файлы модов (обычно в формате .kpz или распакованные папки) в директорию <code>content/cars</code> на сервере. После этого в настройках сервера через Content Manager выберите эти автомобили для добавления в пул доступных для гонки.</p>
+</details>
+<details>
+<summary>Почему игроки не могут подключиться к моему серверу?</summary>
+<p>Наиболее частая причина — закрытый порт. Проверьте, открыт ли порт (по умолчанию 9600) в брандмауэре и роутере. Также проблема может быть в несовпадении версий CSP или отсутствии у игрока обязательных модов, которые использует сервер.</p>
+</details>
+<details>
+<summary>Можно ли запустить сервер Assetto Corsa на Linux?</summary>
+<p>Да, это возможно. Существуют нативные серверные файлы для Linux, а также возможность запуска Windows-версии через Wine. Linux-серверы часто работают стабильнее и потребляют меньше ресурсов, но требуют знаний командной строки для настройки.</p>
+</details>
+<details>
+<summary>Где найти хорошие трассы для клуба?</summary>
+<p>Лучшие источники — это сайт RaceDepartment, Discord-каналы сообщества Assetto Corsa и специализированные сайты вроде <em>ACC Manager</em>. Ищите трассы с пометкой «Optimized» или «Multiplayer ready».</p>
+</details>
+<details>
+<summary>Нужно ли платить за создание сервера?</summary>
+<p>Само программное обеспечение сервера бесплатно. Платить нужно только если вы арендуете выделенный хостинг (VPS) у провайдера. Запуск на своем ПК бесплатен, но требует ваших затрат на электричество и интернет.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#выбор-платформы-и-хостинга-для-сервера">Выбор платформы и хостинга для сервера</a></li><li><a href="#установка-и-настройка-content-manager">Установка и настройка Content Manager</a></li><li><a href="#работа-с-модами-pure-csp-и-custom-shaders-patch">Работа с модами: Pure, CSP и Custom Shaders Patch</a></li><li><a href="#подбор-автопарка-и-трасс-для-клуба">Подбор автопарка и трасс для клуба</a></li><li><a href="#администрирование-и-правила-поведения">Администрирование и правила поведения</a></li><li><a href="#оптимизация-производительности-и-сеть">Оптимизация производительности и сеть</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/ma/marka-mersedes-kakoj-strany.html" class="related-card">Марка Мерседес какой страны: история бренда и заводы</a></li><li><a href="/articles/m/me/mersedes-bents-e53-amg.html" class="related-card">Mercedes-AMG E 53: обзор купе, кабриолета и седана</a></li><li><a href="/articles/b/bm/bmw-longlife-12-fe.html" class="related-card">BMW Longlife 12 FE: характеристики, допуски и совместимость масел</a></li><li><a href="/articles/k/ka/kakoj-slogan-u-mersedesa.html" class="related-card">Какой слоган у Мерседеса: история, эволюция и смысл фраз</a></li><li><a href="/articles/p/po/porsche-911-midnight-club.html" class="related-card">Porsche 911 Midnight Club: Легендарное спецпредложение 996</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/ma/marka-mersedes-kakoj-strany.html" class="related-bottom-card"><span class="related-bottom-title">Марка Мерседес какой страны: история бренда и заводы</span><span class="related-bottom-desc">Мерседес какой страны производитель? Германия. Узнайте историю бренда, где собирают автомобили, и по</span></a><a href="/articles/m/me/mersedes-bents-e53-amg.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-AMG E 53: обзор купе, кабриолета и седана</span><span class="related-bottom-desc">Полный гид по Mercedes-AMG E 53. Технические характеристики, двигатели, расход топлива, особенности </span></a><a href="/articles/b/bm/bmw-longlife-12-fe.html" class="related-bottom-card"><span class="related-bottom-title">BMW Longlife 12 FE: характеристики, допуски и совместимость масел</span><span class="related-bottom-desc">Полный разбор спецификации BMW Longlife 12 FE. Узнайте, чем отличается LL-12 от LL-04, для каких дви</span></a><a href="/articles/k/ka/kakoj-slogan-u-mersedesa.html" class="related-bottom-card"><span class="related-bottom-title">Какой слоган у Мерседеса: история, эволюция и смысл фраз</span><span class="related-bottom-desc">Узнайте, какой слоган у Мерседеса сегодня и как он менялся. Полный разбор знаменитых фраз бренда, их</span></a><a href="/articles/p/po/porsche-911-midnight-club.html" class="related-bottom-card"><span class="related-bottom-title">Porsche 911 Midnight Club: Легендарное спецпредложение 996</span><span class="related-bottom-desc">История Porsche 911 Midnight Club Edition 996: технические детали, редкость, отличия от Carrera и по</span></a><a href="/articles/p/pr/proverka-vin-mersedes-komplektatsiya.html" class="related-bottom-card"><span class="related-bottom-title">Проверка комплектации Мерседес по VIN: полная расшифровка</span><span class="related-bottom-desc">Как узнать комплектацию Мерседес по VIN коду. Подробная инструкция по расшифровке опций, проверка ис</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

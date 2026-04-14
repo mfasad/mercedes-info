@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Google Chrome не удаляется с Windows: способы решения — Мерседес Инфо</title>
+    <meta name="description" content="Не удаляется Google Chrome? Узнайте, как принудительно убрать браузер через реестр, командную строку и сторонние утилиты.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/g/go/google-chrome-ne-udalyaetsya.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Google Chrome не удаляется с Windows: способы решения">
+    <meta property="og:description" content="Не удаляется Google Chrome? Узнайте, как принудительно убрать браузер через реестр, командную строку и сторонние утилиты.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Google Chrome не удаляется с Windows: способы решения</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Что делать, если Google Chrome не удаляется</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#подготовка-системы-к-удалению-браузера">Подготовка системы к удалению браузера</a></li><li><a href="#использование-штатного-деинсталлятора-windows">Использование штатного деинсталлятора Windows</a></li><li><a href="#принудительное-завершение-процессов-через-диспетчер-задач">Принудительное завершение процессов через Диспетчер задач</a></li><li><a href="#удаление-через-командную-строку-и-powershell">Удаление через командную строку и PowerShell</a></li><li><a href="#очистка-реестра-и-остаточных-файлов">Очистка реестра и остаточных файлов</a></li><li><a href="#использование-специализированных-утилит-для-деинсталляции">Использование специализированных утилит для деинсталляции</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Ситуация, когда <strong>Google Chrome</strong> отказывается удаляться стандартными средствами операционной системы, является распространенной проблемой для пользователей Windows. Часто при попытке деинсталляции через панель управления процесс просто зависает или выдает ошибку о том, что файл занят другим приложением. Это может быть вызвано фоновыми процессами браузера, повреждением системных файлов или даже действием вредоносного ПО, маскирующегося под легитимный софт.</p>
+
+<p>В большинстве случаев проблема кроется в том, что <em>Google Update</em> или фоновые службы продолжают работать, блокируя доступ установщика к необходимым файлам. Без полного завершения всех связанных процессов удаление невозможно. Также стоит учитывать, что некоторые антивирусы могут воспринимать действия деинсталлятора как подозрительные и блокировать их.</p>
+
+<p>В данной статье мы разберем эффективные методы решения этой проблемы, начиная от простых проверок диспетчера задач и заканчивая ручным удалением через реестр. <mark>Критически важно понимать, что простое удаление папки с программой не очистит реестр и скрытые настройки, что может привести к ошибкам в будущем.</mark> Следуйте инструкциям последовательно, чтобы полностью очистить систему от браузера.</p>
+
+<h2 id="подготовка-системы-к-удалению-браузера">Подготовка системы к удалению браузера</h2>
+
+<p>Прежде чем приступать к радикальным мерам, необходимо убедиться, что браузер полностью закрыт. Часто пользователи закрывают видимое окно, но фоновые процессы остаются активными для ускорения запуска или синхронизации данных. Проверьте системный трей в правом нижнем углу экрана на наличие логотипа Chrome.</p>
+
+<p>Если вы обнаружите значок, нажмите на него правой кнопкой мыши и выберите опцию выхода. Это действие завершит работу всех связанных сервисов, включая <strong>Google Software Update</strong>. В некоторых случаях требуется перезагрузка компьютера перед началом процедуры удаления, чтобы сбросить все блокировки файлов.</p>
+
+<p>Также стоит временно отключить антивирусное программное обеспечение. Хотя современные защитные комплексы редко блокируют удаление браузеров, исключение этого фактора поможет избежать ложных срабатываний. Убедитесь, что у вашей учетной записи есть права администратора, так как без них внесение изменений в системные файлы невозможно.</p>
+
+<ul>
+<li>🛑 Закройте все вкладки и окна браузера Google Chrome.</li>
+<li>🛑 Проверьте трей на наличие фоновых процессов и завершите их.</li>
+<li>🛑 Перезагрузите компьютер для сброса временных блокировок.</li>
+<li>🛑 Убедитесь в наличии прав администратора на текущей учетной записи.</li>
+</ul>
+
+<blockquote>
+<p>⚠️ <strong>Внимание:</strong> Перед началом любых манипуляций с системными файлами настоятельно рекомендуется создать точку восстановления Windows. Это позволит откатить изменения в случае непредвиденных ошибок.</p>
+</blockquote>
+
+<div class="attention-box attention-info"><div><strong>📊 Сталкивались ли вы с неудаляемыми программами?</strong><ul><li>Да, часто</li><li>Редко, но было</li><li>Нет, всегда удаляется</li><li>Не знаю, не пробовал</li></ul></div></div>
+
+<h2 id="использование-штатного-деинсталлятора-windows">Использование штатного деинсталлятора Windows</h2>
+
+<p>Стандартный путь удаления программ в Windows 10 и 11 остается первым шагом, который следует предпринять. Перейдите в меню <code>Пуск</code> и выберите <code>Параметры</code>, затем откройте раздел <code>Приложения</code>. В списке установленных программ найдите <strong>Google Chrome</strong> и нажмите кнопку «Удалить».</p>
+
+<p>Система запустит встроенный uninstaller браузера. Если процесс пойдет успешно, вам предложат подтвердить действие и, возможно, оставить данные профиля для будущего использования. Однако, если <em>Chrome</em> не удаляется и появляется сообщение об ошибке, необходимо переходить к более глубоким методам очистки.</p>
+
+<p>Частой причиной сбоя является повреждение самого файла деинсталлятора. В таком случае система может сообщать, что пакет установки поврежден или отсутствует. В этом сценарии помогает повторная установка браузера поверх существующей версии, что восстановит недостающие компоненты uninstaller'а.</p>
+
+<div class="checklist-block"><h4>☑️ Проверка перед удалением</h4><label class="check-item"><input type="checkbox"><span>Открыть Параметры Windows</span></label><label class="check-item"><input type="checkbox"><span>Найти Google Chrome в списке</span></label><label class="check-item"><input type="checkbox"><span>Нажать кнопку Удалить</span></label><label class="check-item"><input type="checkbox"><span>Подтвердить действие в окне UAC</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<p>Если стандартный метод не сработал, не спешите удалять папку программы вручную. Это приведет к тому, что в реестре останутся «хвосты», которые могут конфликтовать с другими приложениями. Лучше воспользоваться специализированными утилитами или командной строкой для принудительной очистки.</p>
+
+<h2 id="принудительное-завершение-процессов-через-диспетчер-задач">Принудительное завершение процессов через Диспетчер задач</h2>
+
+<p>Ключевым моментом в решении проблемы, когда <strong>Google Chrome</strong> не удаляется, является полная остановка всех его процессов. Даже если визуально браузер закрыт, в памяти могут оставаться процессы <em>chrome.exe</em> или <em>googleupdate.exe</em>, которые блокируют доступ к файлам.</p>
+
+<p>Откройте Диспетчер задач, нажав комбинацию клавиш <code>Ctrl + Shift + Esc</code>. Перейдите на вкладку «Подробности» для получения расширенного списка. Найдите все процессы, содержащие в имени слово "chrome" или "google", и завершите их, выбрав соответствующую опцию в контекстном меню.</p>
+
+<p>После завершения всех процессов немедленно попробуйте запустить удаление снова. Если процесс удаления все равно прерывается, возможно, требуется отключить автоматическое обновление службы. Для этого можно временно переименовать папку <code>GoogleUpdate</code> в директории Program Files, чтобы заблокировать ее запуск.</p>
+
+<ul>
+<li>🔍 Нажмите <code>Ctrl + Shift + Esc</code> для вызова диспетчера.</li>
+<li>🔍 Перейдите на вкладку «Подробности» для полного списка.</li>
+<li>🔍 Найдите процессы chrome.exe и googleupdate.exe.</li>
+<li>🔍 Принудительно завершите задачи через контекстное меню.</li>
+</ul>
+
+<blockquote>
+<p>⚠️ <strong>Внимание:</strong> Завершение системных процессов может привести к нестабильной работе ОС. Убедитесь, что вы останавливаете только процессы, относящиеся к браузеру Chrome.</p>
+</blockquote>
+
+<details class="faq-item"><summary>Почему процессы возвращаются?</summary><div class="faq-answer"><p>Процессы Google Chrome часто имеют механизм самовосстановления. Если запущен хоть один скрытый процесс-наблюдатель, он мгновенно перезапустит основной браузер. Именно поэтому важно убить все процессы одновременно или использовать безопасный режим.</p></div></details>
+
+<h2 id="удаление-через-командную-строку-и-powershell">Удаление через командную строку и PowerShell</h2>
+
+<p>Для опытных пользователей наиболее эффективным методом является использование командной строки. Этот способ позволяет обойти графические интерфейсы, которые могут зависать. Сначала необходимо узнать точный путь к исполняемому файлу uninstaller'а.</p>
+
+<p>Обычно он находится в папке <code>C:\Program Files (x86)\Google\Chrome\Application</code>. Внутри этой директории найдите папку с номером версии, а в ней файл <em>setup.exe</em>. Запуск этого файла с определенными ключами позволит удалить браузер в обход стандартных проверок.</p>
+
+<p>Откройте командную строку от имени администратора. Введите путь к файлу установки, добавив ключи <code>--uninstall</code> и <code>--force-uninstall</code>. Это команда принудительно удалит программу, игнорируя ошибки зависимостей.</p>
+
+<pre><code>"C:\Program Files (x86)\Google\Chrome\Application\120.0.0.0\Installer\setup.exe" --uninstall --system-level --force-uninstall</code></pre>
+
+<p>Обратите внимание, что путь к файлу может отличаться в зависимости от версии браузера и разрядности системы. Если вы не уверены в пути, используйте PowerShell для поиска файла. Введите команду поиска по диску, чтобы locating точное местоположение <strong>setup.exe</strong>.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте команду dir /s /b setup.exe в папке Google, чтобы быстро найти точный путь к установщику для вашей версии браузера.</p></div>
+
+<h2 id="очистка-реестра-и-остаточных-файлов">Очистка реестра и остаточных файлов</h2>
+
+<p>После успешного или неудачного удаления в системе всегда остаются следы присутствия программы. Чтобы гарантировать, что <em>Google Chrome</em> удален полностью, необходимо очистить реестр Windows. Будьте крайне осторожны при работе с реестром, так как ошибка может нарушить работу всей системы.</p>
+
+<p>Нажмите <code>Win + R</code>, введите <code>regedit</code> и нажмите Enter. Перейдите по пути <code>HKEY_CURRENT_USER\Software\Google</code> и <code>HKEY_LOCAL_MACHINE\SOFTWARE\Google</code>. Удалите папки, связанные с Chrome и Chrome Update. Также проверьте ветку <code>Microsoft\Windows\CurrentVersion\Uninstall</code> на наличие записей о браузере.</p>
+
+<p>Не забудьте очистить временные файлы. Введите <code>%temp%</code> в строку запуска и удалите содержимое открывшейся папки. Файлы, которые не удаляются, можно пропустить, они могут быть заняты системой прямо сейчас.</p>
+
+<table>
+<thead>
+<tr>
+<th>Расположение</th>
+<th>Что удалять</th>
+<th>Риск ошибки</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Реестр (HKCU)</td>
+<td>Папка Google</td>
+<td>Низкий</td>
+</tr>
+<tr>
+<td>Реестр (HKLM)</td>
+<td>Папка Google</td>
+<td>Средний</td>
+</tr>
+<tr>
+<td>AppData</td>
+<td>Local/Google/Chrome</td>
+<td>Низкий</td>
+</tr>
+<tr>
+<td>Program Files</td>
+<td>Остатки папки Chrome</td>
+<td>Низкий</td>
+</tr>
+</tbody>
+</table>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Полная очистка требует удаления не только исполняемых файлов, но и записей в реестре, иначе система будет считать браузер установленным.</p></div>
+
+<h2 id="использование-специализированных-утилит-для-деинсталляции">Использование специализированных утилит для деинсталляции</h2>
+
+<p>Если ручные методы кажутся слишком сложными или не дают результата, на помощь придут специализированные программы-деинсталляторы. Такие утилиты, как <strong>Revo Uninstaller</strong>, <em>IObit Uninstaller</em> или <em>Geek Uninstaller</em>, созданы специально для удаления «упрямых» программ.</p>
+
+<p>Эти приложения сканируют систему на наличие всех файлов, папок и записей реестра, связанных с выбранным продуктом. Они способны запустить встроенный деинсталлятор, а затем провести глубокое сканирование остатков, которые обычный пользователь может не найти.</p>
+
+<p>Режим «Принудительное удаление» в таких утилитах игнорирует стандартный uninstaller и просто стирает все ключи реестра и файлы, ассоциированные с браузером. Это наиболее быстрый способ решить проблему, когда <strong>Google Chrome</strong> не удаляется обычными средствами.</p>
+
+<ul>
+<li>🚀 Скачайте reputable утилиту для удаления программ.</li>
+<li>🚀 Запустите сканирование системы на наличие установленных приложений.</li>
+<li>🚀 Выберите Google Chrome и нажмите «Удалить».</li>
+<li>🚀 Согласитесь на сканирование остаточных файлов и реестра.</li>
+</ul>
+
+<blockquote>
+<p>⚠️ <strong>Внимание:</strong> При использовании сторонних чистильщиков реестра обязательно создайте резервную копию реестра, которую предложит программа перед внесением изменений.</p>
+</blockquote>
+
+<details class="faq-item"><summary>Безопасны ли чистильщики реестра?</summary><div class="faq-answer"><p>Современные утилиты уровня Revo или Geek Uninstaller безопасны при использовании стандартных функций. Однако избегайте агрессивных «оптимизаторов», которые обещают ускорить ПК за счет глубокой чистки системных файлов.</p></div></details>
+
+<h2 id="часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</h2>
+
+<details>
+<summary>Почему кнопка удаления Google Chrome неактивна (серая)?</summary>
+<p>Это часто происходит, если браузер был установлен с правами администратора, а вы пытаетесь удалить его с обычной учетной записи. Также причиной может быть групповая политика организации, запрещающая изменение установленного ПО. Попробуйте войти под учетной записью администратора.</p>
+</details>
+
+<details>
+<summary>Можно ли просто удалить папку Program Files с браузером?</summary>
+<p>Технически вы можете удалить папку, но это считается «грязным» удалением. В реестре останутся записи, которые будут сообщать системе, что программа установлена, что может вызвать конфликты при попытке установить браузер заново или при обновлении других компонентов Google.</p>
+</details>
+
+<details>
+<summary>Удалит ли антивирус Chrome, если он не удаляется?</summary>
+<p>Антивирусы обычно не удаляют браузер, так как это легитимная программа. Однако, если файл деинсталлятора поврежден вирусом, антивирус может заблокировать его запуск. В таком случае сначала проведите полное сканирование системы.</p>
+</details>
+
+<details>
+<summary>Как удалить Chrome, если он установлен для всех пользователей?</summary>
+<p>Если программа установлена глобально, вам потребуются права администратора. Запустите командную строку или деинсталлятор от имени администратора (правая кнопка мыши -> Запуск от имени администратора), чтобы получить необходимый доступ.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#подготовка-системы-к-удалению-браузера">Подготовка системы к удалению браузера</a></li><li><a href="#использование-штатного-деинсталлятора-windows">Использование штатного деинсталлятора Windows</a></li><li><a href="#принудительное-завершение-процессов-через-диспетчер-задач">Принудительное завершение процессов через Диспетчер задач</a></li><li><a href="#удаление-через-командную-строку-и-powershell">Удаление через командную строку и PowerShell</a></li><li><a href="#очистка-реестра-и-остаточных-файлов">Очистка реестра и остаточных файлов</a></li><li><a href="#использование-специализированных-утилит-для-деинсталляции">Использование специализированных утилит для деинсталляции</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/k/ko/komu-prinadlezhit-kontsern-mersedes.html" class="related-card">Кому принадлежит Mercedes-Benz: структура концерна и владельцы в 2026</a></li><li><a href="/articles/z/za/zamena-termostata-nissan-almera-classic.html" class="related-card">Замена термостата Nissan Almera Classic: пошаговая инструкция</a></li><li><a href="/articles/p/pl/playstation-3-slim-proshivka.html" class="related-card">Прошивка PS3 Slim: пошаговая инструкция и советы эксперта</a></li><li><a href="/articles/m/me/mersedes-119-kuzov.html" class="related-card">Мерседес 119 кузов: история, характеристики и надежность</a></li><li><a href="/articles/r/re/restoran-clod-mone.html" class="related-card">Clod Mone: ресторан с уникальной кухней и атмосферой в Москве</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/k/ko/komu-prinadlezhit-kontsern-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Кому принадлежит Mercedes-Benz: структура концерна и владельцы в 2026</span><span class="related-bottom-desc">Узнайте, кто владеет Mercedes-Benz Group AG, как устроена структура концерна, ключевые акционеры и и</span></a><a href="/articles/z/za/zamena-termostata-nissan-almera-classic.html" class="related-bottom-card"><span class="related-bottom-title">Замена термостата Nissan Almera Classic: пошаговая инструкция</span><span class="related-bottom-desc">Как заменить термостат на Ниссан Альмера Классик 1.6. Признаки неисправности, выбор запчасти, слив а</span></a><a href="/articles/p/pl/playstation-3-slim-proshivka.html" class="related-bottom-card"><span class="related-bottom-title">Прошивка PS3 Slim: пошаговая инструкция и советы эксперта</span><span class="related-bottom-desc">Как правильно прошить PlayStation 3 Slim: официальные и кастомные прошивки, риски, инструкции по обн</span></a><a href="/articles/m/me/mersedes-119-kuzov.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес 119 кузов: история, характеристики и надежность</span><span class="related-bottom-desc">Полный обзор Mercedes-Benz 119 кузова: технические особенности, модификации, типичные неисправности </span></a><a href="/articles/r/re/restoran-clod-mone.html" class="related-bottom-card"><span class="related-bottom-title">Clod Mone: ресторан с уникальной кухней и атмосферой в Москве</span><span class="related-bottom-desc">Отзывы, меню, цены и секреты ресторана Clod Mone — где гастрономия встречается с искусством. Узнайте</span></a><a href="/articles/m/me/mersedes-2013-goda-tsena.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes 2013 года: цены, особенности и советы по покупке</span><span class="related-bottom-desc">Актуальные цены на Mercedes-Benz 2013 года выпуска: сравнение моделей, технические характеристики и </span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

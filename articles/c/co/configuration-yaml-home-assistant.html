@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Configuration YAML Home Assistant: Полное руководство — Мерседес Инфо</title>
+    <meta name="description" content="Глубокий разбор configuration.yaml для Home Assistant. Синтаксис, интеграции, пакеты и типичные ошибки при настройке умного дома.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/c/co/configuration-yaml-home-assistant.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Configuration YAML Home Assistant: Полное руководство">
+    <meta property="og:description" content="Глубокий разбор configuration.yaml для Home Assistant. Синтаксис, интеграции, пакеты и типичные ошибки при настройке умного дома.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776186482">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/оргтехника/" class="dropdown-item">📁 Оргтехника</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Configuration YAML Home Assistant: Полное руководство</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Мастер-класс по configuration.yaml в Home Assistant</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#базовая-структура-и-синтаксис-yaml">Базовая структура и синтаксис YAML</a></li><li><a href="#управление-интеграциями-и-платформами">Управление интеграциями и платформами</a></li><li><a href="#использование-пакетов-packages-для-структурирования">Использование пакетов (Packages) для структурирования</a></li><li><a href="#секреты-и-переменные-template-и-secrets">Секреты и переменные: Template и Secrets</a></li><li><a href="#типичные-ошибки-и-отладка-конфигурации">Типичные ошибки и отладка конфигурации</a></li><li><a href="#автоматизация-и-скрипты-в-yaml">Автоматизация и скрипты в YAML</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Центральным элементом любой инсталляции <strong>Home Assistant</strong> является файл <code>configuration.yaml</code>. Именно этот текстовый документ служит «мозговым центром», где прописываются все настройки, интеграции и автоматизации вашей системы умного дома. Понимание структуры и синтаксиса этого файла открывает доступ к максимальным возможностям платформы, выходящим далеко за рамки стандартного интерфейса.</p>
+
+<p>В отличие от графических настроек, ручное редактирование YAML позволяет внедрять сложные логические цепочки, управлять пакетами устройств и тонко настраивать поведение сенсоров. <em>YAML</em> (YAML Ain't Markup Language) — это язык сериализации данных, который делает упор на читаемость человеком. Однако он крайне чувствителен к отступам, и даже один лишний пробел может привести к тому, что весь <strong>Home Assistant</strong> откажется запускаться.</p>
+
+<p>В этой статье мы детально разберем архитектуру конфигурационного файла, рассмотрим лучшие практики его ведения и научимся избегать критических ошибок, которые часто допускают новички при первой настройке системы. Вы узнаете, как превратить хаотичный список устройств в стройную и логичную структуру.</p>
+
+<h2 id="базовая-структура-и-синтаксис-yaml">Базовая структура и синтаксис YAML</h2>
+
+<p>Фундаментом любой конфигурации является правильное соблюдение синтаксических правил. Файл <code>configuration.yaml</code> представляет собой набор пар «ключ: значение», где порядок следования элементов имеет значение, а отступы определяют вложенность. <strong>YAML</strong> не использует табуляцию; для отступов можно использовать только пробелы. Стандартным считается отступ в два пробела на каждый уровень вложенности.</p>
+
+<p>Каждая секция в файле начинается с ключевого слова, за которым следует двоеточие. Например, для включения истории необходимо прописать <code>history:</code>, а для логгера — <code>logger:</code>. Если вы забудете двоеточие или поставите его с лишним пробелом перед ним, парсер выдаст ошибку. Важно понимать, что регистр букв имеет значение: <code>Homeassistant</code> и <code>homeassistant</code> — это разные вещи для системы.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Никогда не используйте символы табуляции (Tab) в файлах YAML. Большинство редакторов кода автоматически заменяют их на пробелы, но некоторые могут оставить скрытый символ табуляции, что гарантированно приведет к сбою при перезагрузке <strong>Home Assistant</strong>.</p>
+</blockquote>
+
+<p>Для обозначения списков устройств или параметров используется дефис с пробелом. Это позволяет группировать однородные объекты. Ниже приведен пример правильной структуры базовых настроек:</p>
+
+<ul>
+<li>📌 <strong>homeassistant:</strong> — глобальные настройки, такие как единицы измерения и часовые пояса.</li>
+<li>📌 <strong>default_config:</strong> — набор часто используемых компонентов, включаемых по умолчанию.</li>
+<li>📌 <strong>automation:</strong> — секция для ручного добавления автоматизаций, если они не хранятся в отдельном файле.</li>
+<li>📌 <strong>group:</strong> — логическое объединение устройств для удобства управления.</li>
+</ul>
+
+<details class="faq-item"><summary>Почему YAML, а не JSON?</summary><div class="faq-answer"><p>YAML был выбран разработчиками Home Assistant из-за своей читаемости и возможности добавления комментариев с помощью символа #, что критично для документирования сложных конфигураций умного дома.</p></div></details>
+
+<h2 id="управление-интеграциями-и-платформами">Управление интеграциями и платформами</h2>
+
+<p>Основная мощь <strong>Home Assistant</strong> кроется в его способности объединять устройства от сотен различных производителей. В файле <code>configuration.yaml</code> это реализуется через платформы. Платформа — это конкретный тип устройства (например, свет, переключатель, сенсор), а интеграция — это способ связи с устройством (например, Zigbee, Wi-Fi, Bluetooth).</p>
+
+<p>Что добавить новое устройство, необходимо знать его платформу. Синтаксис обычно выглядит как <code>platform: имя_интеграции</code> внутри соответствующей секции, например, <code>light:</code> или <code>switch:</code>. Однако в современных версиях <em>Home Assistant</em> многие интеграции настраиваются через UI, но YAML остается незаменимым для сложных сценариев и кастомных компонентов.</p>
+
+<p>Рассмотрим пример добавления статического IP-камеры или сетевого выключателя. Вам нужно указать не только платформу, но и уникальное имя, хост устройства и, возможно, порт подключения. Все эти параметры передаются как значения ключей.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой протокол вы чаще всего используете?</strong><ul><li>Zigbee</li><li>Z-Wave</li><li>Wi-Fi</li><li>Bluetooth</li><li>MQTT</li></ul></div></div>
+
+<p>При работе с множеством устройств одного типа удобно использовать списки. Это позволяет компактно описать десятки лампочек или розеток, не загромождая файл лишними строками. Ключевым моментом здесь является уникальность идентификатора <code>entity_id</code>, который система часто генерирует автоматически на основе имени, но лучше контролировать его вручную.</p>
+
+<h2 id="использование-пакетов-packages-для-структурирования">Использование пакетов (Packages) для структурирования</h2>
+
+<p>Когда файл <code>configuration.yaml</code> разрастается до нескольких сотен строк, его становится невозможно поддерживать. На помощь приходит концепция пакетов (<strong>Packages</strong>). Пакеты позволяют выносить отдельные логические блоки конфигурации (например, настройки гостиной или системы безопасности) в отдельные файлы с расширением <code>.yaml</code>.</p>
+
+<p>Для активации этой функции в главном файле нужно прописать секцию <code>homeassistant:</code> с параметром <code>packages:</code>. Внутри указываются пути к файлам или папкам. Это не просто разделение файлов; пакеты могут содержать любые секции, которые обычно находятся в корневом <code>configuration.yaml</code>, включая автоматизации, скрипты и настройки интеграций.</p>
+
+<p>Преимущество такого подхода заключается в модульности. Если вы меняете освещение в спальне, вы редактируете только файл <code>bedroom.yaml</code>, не рискуя случайно сломать синтаксис во всей системе. Кроме того, пакеты легко передавать между пользователями или брать готовые решения из сообщества.</p>
+
+<ul>
+<li>📦 <strong>Организация:</strong> Разделение конфигурации по комнатам или функциональным зонам.</li>
+<li>📦 <strong>Безопасность:</strong> Снижение риска синтаксических ошибок в основном файле.</li>
+<li>📦 <strong>Портативность:</strong> Возможность легко копировать настройки отдельных узлов на другие серверы.</li>
+</ul>
+
+<div class="checklist-block"><h4>☑️ Проверка структуры пакетов</h4><label class="check-item"><input type="checkbox"><span>Создать папку packages в корне</span></label><label class="check-item"><input type="checkbox"><span>Добавить include в configuration.yaml</span></label><label class="check-item"><input type="checkbox"><span>Перенести секцию automation в отдельный файл</span></label><label class="check-item"><input type="checkbox"><span>Проверить валидность через Developer Tools</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<h2 id="секреты-и-переменные-template-и-secrets">Секреты и переменные: Template и Secrets</h2>
+
+<p>Хранить пароли, API-ключи и токены доступа прямо в файле конфигурации — плохая практика, особенно если вы планируете выкладывать конфиги в публичный репозиторий на GitHub. Для этого в <strong>Home Assistant</strong> существует файл <code>secrets.yaml</code>. В основном конфиге чувствительные данные заменяются на конструкцию <code>!secret имя_ключа</code>.</p>
+
+<p>Помимо безопасности, мощнейшим инструментом является шаблонизация (<strong>Templates</strong>). Используя синтаксис Jinja2 внутри фигурных скобок <code>{{ ... }}</code>, можно создавать динамические значения. Например, имя устройства может меняться в зависимости от времени суток, или состояние одного сенсора может вычисляться на основе данных двух других.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Файл <code>secrets.yaml</code> не проверяется на синтаксические ошибки так же строго, как основной конфиг. Одна ошибка в формате ключа может привести к тому, что <em>Home Assistant</em> не сможет считать секрет, и интеграция не запустится.</p>
+</blockquote>
+
+<p>Шаблоны позволяют реализовать сложную логику без написания полноценных скриптов на Python. Вы можете форматировать даты, выполнять математические операции с показаниями датчиков или конкатенировать строки. Это делает <code>configuration.yaml</code> по-настоящему программируемым интерфейсом.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте инструмент "Template Editor" в разделе "Инструменты разработчика", чтобы тестировать сложные шаблоны Jinja2 перед внедрением их в production-конфигурацию.</p></div>
+
+<h2 id="типичные-ошибки-и-отладка-конфигурации">Типичные ошибки и отладка конфигурации</h2>
+
+<p>Даже опытные пользователи допускают ошибки при редактировании YAML. Самая распространенная проблема — нарушение отступов. Если вы скопировали кусок кода из интернета, убедитесь, что уровни вложенности соответствуют вашей текущей структуре. Ошибка «IndentationError» указывает именно на это.</p>
+
+<p>Вторая частая проблема — дублирование ключей. В YAML ключи в одном словаре должны быть уникальны. Если вы дважды укажете параметр <code>platform</code> в одном списке, система использует последнее значение, игнорируя первое, что может привести к непредсказуемому поведению.</p>
+
+<p>Для диагностики проблем используйте встроенные инструменты. В интерфейсе <strong>Home Assistant</strong> есть раздел «Настройки» → «Система» → «Журнал» (Logs). Там отображаются все ошибки парсинга YAML с указанием номера строки. Также полезна команда проверки конфигурации в CLI.</p>
+
+<p>Таблица ниже summarizes常见 ошибки и способы их решения:</p>
+
+<table>
+<thead>
+<tr>
+<th>Тип ошибки</th>
+<th>Симптом</th>
+<th>Решение</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Invalid indentation</td>
+<td>HA не запускается, ошибка в логах</td>
+<td>Проверить отступы, заменить табы на пробелы</td>
+</tr>
+<tr>
+<td>Unknown variable</td>
+<td>Шаблон возвращает пустоту</td>
+<td>Проверить имя переменной в <code>secrets.yaml</code></td>
+</tr>
+<tr>
+<td>Duplicate key</td>
+<td>Некорректная работа устройства</td>
+<td>Найти повторяющиеся ключи в словаре</td>
+</tr>
+<tr>
+<td>Mapping expected</td>
+<td>Синтаксическая ошибка</td>
+<td>Проверить наличие двоеточия после ключа</td>
+</tr>
+</tbody>
+</table>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Использование VS Code с расширением Home Assistant YAML позволяет подсвечивать синтаксические ошибки еще до сохранения файла, экономя время на перезагрузках.</p></div>
+
+<h2 id="автоматизация-и-скрипты-в-yaml">Автоматизация и скрипты в YAML</h2>
+
+<p>Хотя визуальный редактор автоматизаций удобен, хранение их в YAML дает полный контроль. Автоматизации в <code>configuration.yaml</code> (или в пакетах) описываются через триггеры, условия и действия. Триггер запускает процесс, условия фильтруют события, а действия выполняют работу.</p>
+
+<p>Скрипты (<code>script:</code>) отличаются от автоматизаций тем, что не имеют триггеров и выполняются только по вызову (вручную или из другой автоматизации). Они идеальны для создания сценариев «Один клик», которые выполняют последовательность действий на разных устройствах.</p>
+
+<p>При написании сложных цепочек действий используйте режим <code>mode: restart</code> или <code>mode: queued</code>, чтобы избежать конфликтов, если скрипт будет запущен повторно до завершения предыдущего выполнения. Это особенно важно для управления климатом или мультимедиа.</p>
+
+<ul>
+<li>🚀 <strong>Триггеры:</strong> Время, состояние entity, события шины.</li>
+<li>🚀 <strong>Условия:</strong> Проверка состояния, время суток, наличие людей дома.</li>
+<li>🚀 <strong>Действия:</strong> Переключение сервисов, отправка уведомлений, задержка.</li>
+</ul>
+
+<details>
+<summary>Как сбросить конфигурацию к заводской?</summary>
+<p>Если вы запутались в правках, можно удалить файл <code>configuration.yaml</code> и создать новый. Однако проще использовать систему контроля версий (Git), если она настроена, чтобы откатиться к предыдущей рабочей версии. Также можно переименовать текущий файл в <code>configuration.yaml.bak</code> и перезапустить контейнер, но это приведет к потере всех настроек, если нет бэкапа.</p>
+</details>
+
+<details>
+<summary>Можно ли использовать комментарии в YAML?</summary>
+<p>Да, комментарии начинаются с символа <code>#</code>. Они игнорируются парсером и служат исключительно для человека. Рекомендуется активно комментировать сложные участки кода, особенно шаблоны Jinja2, чтобы через полгода понять логику своей работы.</p>
+</details>
+
+<details>
+<summary>Где найти документацию по конкретному ключу?</summary>
+<p>Официальная документация <em>Home Assistant</em> (home-assistant.io) содержит раздел "Configuration", где описаны все возможные ключи для каждой интеграции. Также полезна встроенная подсказка в редакторе кода, если используется плагин HA для VS Code.</p>
+</details>
+
+<mark>Критически важно:</mark> Перед внесением любых изменений в <code>configuration.yaml</code> всегда создавайте резервную копию файла. Одна синтаксическая ошибка может полностью остановить работу вашего умного дома до момента исправления.
+
+<p>Работа с <code>configuration.yaml</code> — это путь от новичка к эксперту в мире <strong>Home Assistant</strong>. Освоив этот инструмент, вы получаете безграничные возможности для кастомизации. Не бойтесь экспериментировать, но всегда делайте это с резервной копией и вниманием к деталям.</p></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#базовая-структура-и-синтаксис-yaml">Базовая структура и синтаксис YAML</a></li><li><a href="#управление-интеграциями-и-платформами">Управление интеграциями и платформами</a></li><li><a href="#использование-пакетов-packages-для-структурирования">Использование пакетов (Packages) для структурирования</a></li><li><a href="#секреты-и-переменные-template-и-secrets">Секреты и переменные: Template и Secrets</a></li><li><a href="#типичные-ошибки-и-отладка-конфигурации">Типичные ошибки и отладка конфигурации</a></li><li><a href="#автоматизация-и-скрипты-в-yaml">Автоматизация и скрипты в YAML</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/t/to/to-b4-mersedes-rasshifrovka.html" class="related-card">Код B4 Mercedes: расшифровка опции и комплектации</a></li><li><a href="/articles/m/mo/moment-zatyazhki-poddona-akpp-mersedes.html" class="related-card">Момент затяжки поддона АКПП Мерседес: таблица для всех моделей</a></li><li><a href="/articles/l/lu/luchshee-maslo-5w30-oil-club.html" class="related-card">Лучшее масло 5w30 Oil Club: рейтинг и выбор</a></li><li><a href="/articles/g/go/google-nexus-7.html" class="related-card">Google Nexus 7: Полный обзор легендарного планшета 2013 года</a></li><li><a href="/articles/m/mi/mitsubisi-eclipse-cross.html" class="related-card">Mitsubishi Eclipse Cross 2026: цены, характеристики и отзывы владельцев</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/t/to/to-b4-mersedes-rasshifrovka.html" class="related-bottom-card"><span class="related-bottom-title">Код B4 Mercedes: расшифровка опции и комплектации</span><span class="related-bottom-desc">Подробная расшифровка кода B4 для Mercedes-Benz. Что означает опция в комплектации, как она влияет н</span></a><a href="/articles/m/mo/moment-zatyazhki-poddona-akpp-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Момент затяжки поддона АКПП Мерседес: таблица для всех моделей</span><span class="related-bottom-desc">Полное руководство: момент затяжки поддона АКПП Мерседес (722.6, 722.9, 9G-Tronic). Таблицы, схемы, </span></a><a href="/articles/l/lu/luchshee-maslo-5w30-oil-club.html" class="related-bottom-card"><span class="related-bottom-title">Лучшее масло 5w30 Oil Club: рейтинг и выбор</span><span class="related-bottom-desc">Ищем лучшее масло 5w30 Oil Club. Обзор синтетических и полусинтетических масел для бензиновых и дизе</span></a><a href="/articles/g/go/google-nexus-7.html" class="related-bottom-card"><span class="related-bottom-title">Google Nexus 7: Полный обзор легендарного планшета 2013 года</span><span class="related-bottom-desc">Детальный анализ Google Nexus 7 (2013). Стоит ли покупать сегодня? Характеристики, прошивка, проблем</span></a><a href="/articles/m/mi/mitsubisi-eclipse-cross.html" class="related-bottom-card"><span class="related-bottom-title">Mitsubishi Eclipse Cross 2026: цены, характеристики и отзывы владельцев</span><span class="related-bottom-desc">Подробный обзор кроссовера Mitsubishi Eclipse Cross: технические данные, комплектации, плюсы/минусы,</span></a><a href="/articles/m/me/mercedes-benz-190-e-w201.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz 190 E (W201): легенда 80-х, технические особенности и цены</span><span class="related-bottom-desc">Подробный обзор Mercedes-Benz 190 E (W201): история, двигатели, слабые места, тюнинг и советы по пок</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>
