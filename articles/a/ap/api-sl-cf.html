@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Cloudflare API и SL: Настройка защиты и лимитов — Мерседес Инфо</title>
+    <meta name="description" content="Полное руководство по API Cloudflare и SL. Узнайте, как управлять лимитами (Rate Limits) и правилами безопасности через API для защиты вашего сайта.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/a/ap/api-sl-cf.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Cloudflare API и SL: Настройка защиты и лимитов">
+    <meta property="og:description" content="Полное руководство по API Cloudflare и SL. Узнайте, как управлять лимитами (Rate Limits) и правилами безопасности через API для защиты вашего сайта.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Cloudflare API и SL: Настройка защиты и лимитов</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>API Cloudflare и SL: Настройка Rate Limits</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#основы-работы-с-cloudflare-api">Основы работы с Cloudflare API</a></li><li><a href="#что-такое-sl-в-контексте-cloudflare">Что такое SL в контексте Cloudflare?</a></li><li><a href="#аутентификация-и-подготовка-окружения">Аутентификация и подготовка окружения</a></li><li><a href="#управление-rate-limits-через-api">Управление Rate Limits через API</a></li><li><a href="#таблица-параметров-и-лимитов">Таблица параметров и лимитов</a></li><li><a href="#анализ-логов-и-отладка-правил">Анализ логов и отладка правил</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Современная веб-разработка и администрирование серверов давно вышли за рамки ручного управления конфигурационными файлами. Когда речь заходит о масштабировании инфраструктуры, ключевым инструментом становится <strong>Cloudflare API</strong>. Этот мощный интерфейс позволяет автоматизировать управление DNS, настройкой SSL-сертификатов и, что особенно важно, правилами безопасности. Понимание того, как взаимодействовать с API, открывает доступ к гибкому управлению трафиком и защите от DDoS-атак.</p>
+
+<p>Одной из самых востребованных функций в контексте безопасности является управление лимитами запросов, часто обозначаемое как <strong>SL</strong> (Service Level или Speed Limits/Rate Limits). Запрос "api sl cf" часто возникает у администраторов, пытающихся найти способ программно ограничить количество запросов от одного IP-адреса. Это критически важно для защиты бэкенда от перегрузки и брутфорс-атак. В этой статье мы разберем, как эффективно использовать API Cloudflare для настройки этих параметров.</p>
+
+<p>Вы научитесь не только отправлять правильные запросы, но и понимать структуру ответов сервера. Мы рассмотрим реальные сценарии использования, где автоматизация через <em>Cloudflare API</em> спасает проекты от простоя. Готовы погрузиться в техническую сторону защиты вашего веб-ресурса? Давайте начнем с базовых принципов работы интерфейса.</p>
+
+<blockquote>⚠️ Внимание: Перед началом работы убедитесь, что у вас есть права администратора в зоне Cloudflare. Без соответствующих прав API вернет ошибку авторизации.</blockquote>
+
+<h2 id="основы-работы-с-cloudflare-api">Основы работы с Cloudflare API</h2>
+
+<p>Интерфейс <strong>Cloudflare API</strong> базируется на протоколе REST, что делает его понятным и предсказуемым для разработчиков. Все запросы должны быть отправлены через HTTPS с использованием метода GET, POST, PUT или DELETE в зависимости от требуемого действия. Для аутентификации необходимо использовать заголовки с токенами, которые генерируются в личном кабинете пользователя. <em>API Key</em> или <em>API Token</em> — это ваши ключи доступа, и их утечка равносильна передаче полного контроля над доменом посторонним.</p>
+
+<p>Важно различать два типа ключей: Global API Key и API Token. Первый дает доступ ко всему аккаунту, включая создание и удаление зон, тогда как второй можно ограничить конкретными правами и зонами. Для задач, связанных с настройкой <strong>SL</strong> (Rate Limits), рекомендуется использовать токены с минимально необходимыми правами. Это遵循 принцип наименьших привилегий и повышает общую безопасность вашей инфраструктуры.</p>
+
+<p>Каждый запрос к API должен содержать информацию о том, к какой зоне (Zone ID) он относится. Zone ID — это уникальный идентификатор вашего домена в системе Cloudflare. Без этого параметра сервер не поймет, к какому именно сайту нужно применить настройки. Структура URL обычно выглядит как <code>https://api.cloudflare.com/client/v4/zones/{zone_id}</code>, где далее следует путь к конкретному ресурсу.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Всегда храните свои API токены в переменных окружения, а не в коде приложения. Это предотвратит случайную утечку ключей при публикации репозитория.</p></div>
+
+<h2 id="что-такое-sl-в-контексте-cloudflare">Что такое SL в контексте Cloudflare?</h2>
+
+<p>В запросах пользователей аббревиатура <strong>SL</strong> часто интерпретируется по-разному, но в контексте Cloudflare наиболее релевантным является понятие Rate Limiting (ограничение частоты запросов). Хотя официального термина "SL API" в документации нет, под этим часто подразумевают управление правилами <em>Rate Limits</em>. Эти правила позволяют блокировать или замедлять трафик, который превышает заданные пороги.</p>
+
+<p>Основная цель таких ограничений — защита сервера от чрезмерной нагрузки. Например, вы можете настроить правило, которое блокирует IP-адрес, если он делает более 100 запросов в минуту к странице логина. Это эффективно предотвращает перебор паролей. API позволяет создавать, изменять и удалять такие правила программно, что удобно для динамического изменения политики безопасности.</p>
+
+<p>Существует также понятие <strong>Service Level</strong> (уровень обслуживания), которое относится к тарифным планам (Free, Pro, Business, Enterprise). Доступность некоторых функций API, включая расширенные правила Rate Limiting, зависит от вашего тарифа. На бесплатном тарифе возможности могут быть ограничены по сравнению с корпоративными планами.</p>
+
+<details class="faq-item"><summary>Чем отличается Rate Limiting от WAF?</summary><div class="faq-answer"><p>Rate Limiting работает на уровне количества запросов за единицу времени, тогда как WAF (Web Application Firewall) анализирует содержимое запросов на наличие угроз, таких как SQL-инъекции.</p></div></details>
+
+<h2 id="аутентификация-и-подготовка-окружения">Аутентификация и подготовка окружения</h2>
+
+<p>Прежде чем отправлять команды управления <strong>SL</strong>, необходимо правильно настроить окружение. Вам потребуется curl, Postman или любой другой HTTP-клиент. Главное — правильно сформировать заголовки запроса. Для токена используется заголовок <code>Authorization: Bearer YOUR_API_TOKEN</code>. Если вы используете Global API Key, заголовок будет выглядеть иначе: <code>X-Auth-Key: YOUR_GLOBAL_KEY</code> и <code>X-Auth-Email: your@email.com</code>.</p>
+
+<p>Проверка доступа — первый шаг. Отправьте простой GET-запрос к эндпоинту зон, чтобы убедиться, что токен работает. Если вы получите список ваших доменов с кодом ответа 200, значит, авторизация прошла успешно. В случае ошибки 401 или 403 проверьте правильность введенного токена и его права доступа в панели управления.</p>
+
+<ul>
+<li>🔑 Сгенерируйте новый API Token в разделе "My Profile" -> "API Tokens".</li>
+<li>🌐 Выберите шаблон "Edit zone DNS" или создайте кастомный токен с правами на Zone -> Rate Limits.</li>
+<li>💻 Сохраните токен в безопасном месте и используйте переменную окружения <code>CLOUDFLARE_API_TOKEN</code>.</li>
+</ul>
+
+<p>Не забывайте, что токены имеют свойство заканчиваться или могут быть отозваны. В автоматизированных системах стоит предусмотреть механизм уведомления об истечении срока действия ключей. Это поможет избежать внезапного прекращения работы скриптов мониторинга или защиты.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой инструмент вы используете для работы с API?</strong><ul><li>curl</li><li>Postman</li><li>Python (requests)</li><li>Terraform</li><li>Другое</li></ul></div></div>
+
+<h2 id="управление-rate-limits-через-api">Управление Rate Limits через API</h2>
+
+<p>Настройка лимитов — это сердце управления <strong>SL</strong>. Эндпоинт для работы с правилами Rate Limits в API v4 выглядит как <code>/zones/{zone_id}/ratelimits</code>. Здесь вы можете создавать правила, которые описывают匹配条件 (match conditions) и действия (actions). Условия могут базироваться на URL пути, методе запроса или характеристиках IP.</p>
+
+<p>Рассмотрим пример создания правила. Вам нужно определить порог (threshold) и период времени (period). Например, 1000 запросов за 60 секунд. Действием может быть блокировка (<code>block</code>) или challenge (<code>challenge</code>), где пользователю предлагается решить капчу. API принимает эти параметры в формате JSON.</p>
+
+<pre><code>curl -X POST "https://api.cloudflare.com/client/v4/zones/ZONE_ID/ratelimits" \
+<p>-H "Authorization: Bearer API_TOKEN" \</p>
+<p>-H "Content-Type: application/json" \</p>
+<p>--data '{"match":{"request":{"url_pattern":"*example.com/login*"}},"threshold":10,"period":60,"action":{"mode":"block"}}'</code></pre></p>
+
+<p>Важно правильно настроить ключи счетчика. Вы можете считать запросы по IP-адресу, по стране или даже по конкретному заголовку User-Agent. Гибкость <em>Cloudflare API</strong> позволяет создавать очень точные правила. Например, можно сделать более строгие лимиты для API-эндпоинтов и более мягкие для статических изображений.</p>
+
+<div class="checklist-block"><h4>☑️ Проверка правила Rate Limit</h4><label class="check-item"><input type="checkbox"><span>Правило создано через API</span></label><label class="check-item"><input type="checkbox"><span>Порог установлен верно</span></label><label class="check-item"><input type="checkbox"><span>Действие (block/challenge) выбрано</span></label><label class="check-item"><input type="checkbox"><span>Тестовый запрос отправлен</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<h2 id="таблица-параметров-и-лимитов">Таблица параметров и лимитов</h2>
+
+<p>При работе с API важно знать ограничения самой платформы. Cloudflare устанавливает лимиты на количество правил, которые можно создать, и на частоту вызовов самого API. Превышение этих лимитов приведет к ошибкам 429 Too Many Requests. Ниже приведена таблица основных параметров, с которыми вы столкнетесь.</p>
+
+<table>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Описание</th>
+<th>Типичное значение</th>
+<th>Ограничение API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Threshold</td>
+<td>Максимальное кол-во запросов</td>
+<td>10 - 10000</td>
+<td>Зависит от тарифа</td>
+</tr>
+<tr>
+<td>Period</td>
+<td>Временное окно (сек)</td>
+<td>60 - 3600</td>
+<td>Макс 1 час</td>
+</tr>
+<tr>
+<td>Rules Count</td>
+<td>Кол-во правил на зону</td>
+<td>5 - 50</td>
+<td>Зависит от плана</td>
+</tr>
+<tr>
+<td>API Rate</td>
+<td>Запросов в секунду к API</td>
+<td>1 - 5</td>
+<td>1200 в 5 мин</td>
+</tr>
+</tbody>
+</table>
+
+<p>Обратите внимание на столбец "Ограничение API". Если ваш скрипт работает слишком быстро, Cloudflare временно заблокирует ваш IP. Реализуйте механизм экспоненциальной отсрочки (exponential backoff) в своем коде. Это стандартная практика для работы с любыми публичными API.</p>
+
+<blockquote>⚠️ Внимание: Изменение правил Rate Limits через API вступает в силу практически мгновенно, но распространение по всей сети Cloudflare может занять до 30 секунд.</blockquote>
+
+<h2 id="анализ-логов-и-отладка-правил">Анализ логов и отладка правил</h2>
+
+<p>После настройки <strong>SL</em> необходимо убедиться, что правила работают корректно. API Cloudflare предоставляет доступ к логам (Logpush или Enterprise Log Share), но для быстрой проверки можно использовать заголовки ответов. При блокировке запроса сервер вернет статус 429. В логах вы увидите срабатывание правила по его ID.</p>
+
+<p>Для отладки используйте тестовые скрипты, которые эмулируют нагрузку. Можно запустить простой цикл запросов к защищенному URL и наблюдать за реакцией сервера. Если после N запросов приходит блок, значит, конфигурация <em>Rate Limiting</em> выполнена верно. Не забудьте убрать тестовые правила после проверки, чтобы не блокировать реальных пользователей.</p>
+
+<p>Аналитика в панели Cloudflare также показывает графики заблокированных запросов. Сопоставление времени создания правила через API и скачков на графике blocked requests — лучший способ верификации. Если график остается плоским, возможно, условие匹配 (match) слишком узкое или, наоборот, слишком широкое.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Правила Rate Limits применяются до обработки WAF, что позволяет экономить ресурсы сервера, отсекая спам еще на входе.</p></div>
+
+<h2 id="часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</h2>
+
+<details>
+<summary>Можно ли использовать API Cloudflare бесплатно?</summary>
+<p>Да, доступ к API предоставляется бесплатно для всех тарифных планов, включая Free. Однако количество правил Rate Limits, которые вы можете создать, зависит от вашего тарифа. На бесплатном плане доступно до 5 правил, на плане Pro — до 10, а на Enterprise — до 50 и более.</p>
+</details>
+
+<details>
+<summary>Как найти свой Zone ID?</summary>
+<p>Zone ID можно найти в панели управления Cloudflare на главной странице обзора домена (Overview). Также его можно получить программно, отправив GET-запрос к эндпоинту <code>/zones?name=example.com</code>. В ответе JSON будет поле <code>id</code>.</p>
+</details>
+
+<details>
+<summary>Что делать, если API возвращает ошибку 400 Bad Request?</summary>
+<p>Ошибка 400 означает, что структура вашего JSON-запроса неверна. Проверьте синтаксис, наличие обязательных полей (threshold, period, action) и правильность типов данных (числа должны быть числами, строки — строками). Используйте <mark>JSONLint</mark> для проверки формата.</p>
+</details>
+
+<details>
+<summary>Влияют ли правила API на SEO?</summary>
+<p>Правильно настроенные правила Rate Limits не влияют на SEO, так как они обычно не блокируют поисковых роботов (Googlebot, Yandex). Однако если вы установите слишком агрессивные лимиты, роботы могут быть заблокированы. Рекомендуется добавлять исключения для известных User-Agent поисковиков.</p>
+</details>
+
+<details>
+<summary>Как удалить правило через API?</summary>
+<p>Для удаления правила используйте метод DELETE и укажите ID правила в URL: <code>DELETE /zones/{zone_id}/ratelimits/{rule_id}</code>. После успешного выполнения запроса правило будет удалено из конфигурации зоны.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#основы-работы-с-cloudflare-api">Основы работы с Cloudflare API</a></li><li><a href="#что-такое-sl-в-контексте-cloudflare">Что такое SL в контексте Cloudflare?</a></li><li><a href="#аутентификация-и-подготовка-окружения">Аутентификация и подготовка окружения</a></li><li><a href="#управление-rate-limits-через-api">Управление Rate Limits через API</a></li><li><a href="#таблица-параметров-и-лимитов">Таблица параметров и лимитов</a></li><li><a href="#анализ-логов-и-отладка-правил">Анализ логов и отладка правил</a></li><li><a href="#часто-задаваемые-вопросы-faq">Часто задаваемые вопросы (FAQ)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/b/bl/blok-upravleniya-sam-mersedes-chto-eto.html" class="related-card">SAM модуль Mercedes: функции, неисправности и диагностика</a></li><li><a href="/articles/a/ab/abro-electronic-contact-cleaner.html" class="related-card">ABRO Electronic Contact Cleaner: состав, применение, аналоги (2026)</a></li><li><a href="/articles/m/mo/motor-102-mersedes.html" class="related-card">Двигатель M102 Mercedes: характеристики, проблемы и тюнинг</a></li><li><a href="/articles/o/or/originalnye-zapchasti-mersedes.html" class="related-card">Оригинальные запчасти Mercedes: как отличить подделку и где купить</a></li><li><a href="/articles/p/po/podklyuchenie-farkopa-mersedes.html" class="related-card">Подключение фаркопа Мерседес: электрика, адаптация, ошибки</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/b/bl/blok-upravleniya-sam-mersedes-chto-eto.html" class="related-bottom-card"><span class="related-bottom-title">SAM модуль Mercedes: функции, неисправности и диагностика</span><span class="related-bottom-desc">Что такое блок SAM в Мерседес? Полный разбор модуля сигнализации и активации. Симптомы поломки, коды</span></a><a href="/articles/a/ab/abro-electronic-contact-cleaner.html" class="related-bottom-card"><span class="related-bottom-title">ABRO Electronic Contact Cleaner: состав, применение, аналоги (2026)</span><span class="related-bottom-desc">Подробный гайд по очистителю контактов ABRO: технические характеристики, инструкция по применению, с</span></a><a href="/articles/m/mo/motor-102-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Двигатель M102 Mercedes: характеристики, проблемы и тюнинг</span><span class="related-bottom-desc">Подробный разбор мотора M102 от Mercedes: технические данные, слабые места, ресурс, рекомендации по </span></a><a href="/articles/o/or/originalnye-zapchasti-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Оригинальные запчасти Mercedes: как отличить подделку и где купить</span><span class="related-bottom-desc">Полный гайд по выбору оригинальных запчастей Mercedes-Benz: признаки подлинности, сравнение с аналог</span></a><a href="/articles/p/po/podklyuchenie-farkopa-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Подключение фаркопа Мерседес: электрика, адаптация, ошибки</span><span class="related-bottom-desc">Профессиональное подключение фаркопа Mercedes с учетом CAN-шины. Адатация через Star Diagnosis, пров</span></a><a href="/articles/p/p0/p0244-oshibka-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Ошибка P0244 Mercedes: причины, симптомы и методы устранения</span><span class="related-bottom-desc">Подробный разбор кода P0244 для Mercedes-Benz. Диагностика перепускного клапана турбины, проверка эл</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Спецификация API CF SL: Полное руководство по API Cloudflare — Мерседес Инфо</title>
+    <meta name="description" content="Подробный разбор спецификации API Cloudflare: методы, токены доступа, управление DNS и правилами Firewall. Инструкция для разработчиков.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/s/sp/spetsifikatsiya-api-cf-sl.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Спецификация API CF SL: Полное руководство по API Cloudflare">
+    <meta property="og:description" content="Подробный разбор спецификации API Cloudflare: методы, токены доступа, управление DNS и правилами Firewall. Инструкция для разработчиков.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Спецификация API CF SL: Полное руководство по API Cloudflare</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Спецификация API Cloudflare: Глубокое руководство по Cloudflare API</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#архитектура-и-базовые-принципы-работы-api">Архитектура и базовые принципы работы API</a></li><li><a href="#аутентификация-и-управление-токенами-доступа">Аутентификация и управление токенами доступа</a></li><li><a href="#работа-с-dns-зонами-и-записями">Работа с DNS-зонами и записями</a></li><li><a href="#управление-правилами-firewall-и-безопасностью">Управление правилами Firewall и безопасностью</a></li><li><a href="#кэширование-и-оптимизация-производительности">Кэширование и оптимизация производительности</a></li><li><a href="#обработка-ошибок-и-лимиты-запросов">Обработка ошибок и лимиты запросов</a></li><li><a href="#faq-часто-задаваемые-вопросы">FAQ: Часто задаваемые вопросы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>В современном веб-разработке управление инфраструктурой через графический интерфейс становится слишком медленным и неэффективным. Когда речь заходит о масштабировании проектов, на первый план выходит автоматизация процессов. Именно здесь на сцену выходит <strong>спецификация API CF SL</strong>, которая позволяет управлять доменами, DNS-записями, настройками безопасности и кэшированием программным путем. Понимание того, как работает <em>Cloudflare API</em>, открывает перед инженерами возможности по созданию гибких систем мониторинга и деплоя.</p>
+
+<p>В этой статье мы детально разберем архитектуру взаимодействия с API облачного провайдера, рассмотрим структуру запросов и ответных данных. Вы узнаете, как правильно формировать заголовки, какие методы использовать для различных задач и как избегать распространенных ошибок при интеграции. Глубокое погружение в <strong>спецификацию API CF SL</strong> позволит вам автоматизировать рутинные задачи и повысить надежность вашей инфраструктуры.</p>
+
+<p>Работа с API требует четкого понимания того, как устроены конечные точки и какие данные передаются между клиентом и сервером. Мы рассмотрим не только базовые операции, но и продвинутые сценарии использования, включая управление сертификатами SSL и настройку правил Firewall. Все это поможет вам стать более эффективным специалистом в области DevOps и системного администрирования.</p>
+
+<h2 id="архитектура-и-базовые-принципы-работы-api">Архитектура и базовые принципы работы API</h2>
+
+<p>Основой взаимодействия с сервисом является RESTful-архитектура, что означает использование стандартных HTTP-методов для выполнения CRUD-операций. Каждый запрос должен быть направлен на базовый URL <code>https://api.cloudflare.com/client/v4</code>, после чего следует путь к конкретному ресурсу. <strong>Спецификация API CF SL</strong> четко регламентирует формат передаваемых данных, который обычно представляет собой JSON-объекты. Это обеспечивает кроссплатформенность и простоту интеграции с любыми языками программирования.</p>
+
+<p>Важнейшим аспектом является аутентификация, которая в данной системе реализована через заголовки HTTP. Для доступа к ресурсам необходимо использовать <em>API Key</em> или, что более безопасно, <strong>API Token</strong>. Использование токенов предпочтительно, так как они позволяют ограничивать права доступа конкретными зонами или действиями, минимизируя риски в случае компрометации ключа. Заголовок <code>Authorization: Bearer YOUR_TOKEN</code> должен присутствовать в каждом запросе.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Никогда не передавайте свои API-ключи в публичных репозиториях или логах. Используйте переменные окружения для хранения секретных данных, чтобы избежать утечки критической информации.</p>
+</blockquote>
+
+<p>Структура ответа от сервера всегда стандартизирована и содержит поле <code>success</code>, указывающее на статус выполнения операции, и массив <code>errors</code> или <code>messages</code> для детализации результата. Понимание этой структуры позволяет писать устойчивый код, который корректно обрабатывает как успешные выполнения, так и различные типы ошибок. <strong>Спецификация API CF SL</strong> предусматривает коды ошибок, которые помогают быстро диагностировать проблемы с запросами.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте заголовок X-Auth-Email вместе с X-Auth-Key только в legacy-режимах, для новых проектов строго рекомендуется использовать Bearer Token.</p></div>
+
+<h2 id="аутентификация-и-управление-токенами-доступа">Аутентификация и управление токенами доступа</h2>
+
+<p>Безопасность при работе с облачной инфраструктурой стоит на первом месте, поэтому процесс получения и использования учетных данных требует особого внимания. Существует два основных способа авторизации: использование глобального API Key, привязанного к аккаунту, и создание специфических токенов. <strong>Спецификация API CF SL</strong> настоятельно рекомендует использовать токены, так как они позволяют реализовать принцип минимальных привилегий. Вы можете создать токен, который дает право только на редактирование DNS определенной зоны, не затрагивая остальные настройки аккаунта.</p>
+
+<p>Процесс создания токена происходит через панель управления или также программно через API. При генерации вы задаете шаблон прав доступа, например, <em>Zone - DNS - Edit</em>. Это означает, что даже если такой токен будет украден, злоумышленник не сможет изменить настройки Firewall или удалить аккаунт. Ключевым моментом здесь является правильное сопоставление <strong>Zone ID</strong> и прав доступа в момент создания учетной записи для интеграции.</p>
+
+<ul>
+    <li>🔑 Глобальный API Key дает полный доступ ко всему аккаунту и всем зонам, что делает его использование рискованным.</li>
+    <li>🛡️ API Token позволяет гибко настраивать права доступа (Scope) для конкретных зон или аккаунтов.</li>
+    <li>📅 Токены могут иметь срок действия, после которого они автоматически перестают работать, повышая безопасность.</li>
+    <li>🔄 Возможность отзыва токена в любой момент без смены пароля от основной учетной записи.</li>
+</ul>
+
+<p>При реализации клиентской части приложения важно правильно форматировать запросы. Заголовки должны содержать <code>Content-Type: application/json</code>, чтобы сервер корректно распознал тело запроса. Ошибки в форматировании заголовков часто приводят к ответу с кодом 400 Bad Request. <strong>Спецификация API CF SL</strong> требует строгого соблюдения синтаксиса JSON, включая использование двойных кавычек для ключей и строк.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой метод аутентификации вы используете чаще?</strong><ul><li>Глобальный API Key</li><li>API Token</li><li>OAuth 2.0</li><li>Я не использую API</li></ul></div></div>
+
+<h2 id="работа-с-dns-зонами-и-записями">Работа с DNS-зонами и записями</h2>
+
+<p>Одной из самых частых задач, решаемых через API, является управление DNS-записями. Автоматизация этого процесса позволяет динамически обновлять IP-адреса серверов, создавать временные записи для деплоя или настраивать сложные схемы балансировки нагрузки. <strong>Спецификация API CF SL</strong> предоставляет полный набор методов для работы с ресурсами зон. Для начала работы часто требуется получить список всех зон, отфильтровав их по имени, чтобы узнать уникальный идентификатор <em>Zone ID</em>.</p>
+
+<p>Получив идентификатор зоны, вы можете выполнять операции CRUD (Create, Read, Update, Delete) над записями. Например, для создания новой A-записи необходимо отправить POST-запрос с указанием типа записи, имени, содержимого (IP-адреса) и параметра проксирования. Параметр <code>proxied</code> принимает булево значение: если установлено <code>true</code>, трафик будет проходить через сеть защиты Cloudflare.</p>
+
+<p>Рассмотрим пример получения списка DNS-записей для конкретной зоны. Это часто необходимо для проверки текущей конфигурации перед внесением изменений. Запрос будет выглядеть следующим образом:</p>
+
+<pre><code>curl -X GET "https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records" \
+<p>-H "Authorization: Bearer YOUR_TOKEN" \</p>
+<p>-H "Content-Type: application/json"</code></pre></p>
+
+<p>В ответе вы получите JSON-объект, содержащий массив результатов. Каждый элемент массива будет иметь поля <code>id</code>, <code>type</code>, <code>name</code>, <code>content</code> и другие метаданные. <strong>Спецификация API CF SL</strong> позволяет также использовать пагинацию и фильтры для оптимизации выборки данных, если в зоне содержится большое количество записей.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Параметр</th>
+            <th>Тип</th>
+            <th>Описание</th>
+            <th>Обязательный</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>type</td>
+            <td>String</td>
+            <td>Тип записи (A, AAAA, CNAME, MX)</td>
+            <td>Да</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>String</td>
+            <td>Доменное имя записи</td>
+            <td>Да</td>
+        </tr>
+        <tr>
+            <td>content</td>
+            <td>String</td>
+            <td>Содержимое записи (IP, домен и т.д.)</td>
+            <td>Да</td>
+        </tr>
+        <tr>
+            <td>proxied</td>
+            <td>Boolean</td>
+            <td>Проксировать трафик через Cloudflare</td>
+            <td>Нет</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для обновления существующей записи используйте метод PUT с указанием ID записи, а для создания новой — POST к коллекции записей зоны.</p></div>
+
+<h2 id="управление-правилами-firewall-и-безопасностью">Управление правилами Firewall и безопасностью</h2>
+
+<p>Безопасность веб-приложений невозможна без динамического управления правилами Firewall. <strong>Спецификация API CF SL</strong> позволяет программно создавать, изменять и удалять правила, блокирующие вредоносный трафик. Это особенно полезно при обнаружении DDoS-атак или брутфорс-атак в реальном времени. Вы можете автоматически добавлять IP-адреса атакующих в черный список или изменять пороговые значения для срабатывания правил.</p>
+
+<p>Правила Firewall строятся на основе выражений, использующих синтаксис фильтрации. Например, можно создать правило, которое блокирует запросы из определенной страны, если частота запросов превышает заданный лимит. API позволяет загружать сложные конфигурации правил bulk-операциями, что удобно при массовом развертывании политик безопасности на множестве доменов.</p>
+
+<blockquote>
+<p>⚠️ Внимание: При удалении правил Firewall через API будьте предельно осторожны. Ошибка в скрипте может привести к удалению критически важных защитных правил и оставить сайт уязвимым.</p>
+</blockquote>
+
+<p>Кроме того, через API можно управлять списками IP-адресов (IP Lists), которые используются в правилах Firewall. Это позволяет централизованно обновлять списки "плохих" или "хороших" IP-адресов. <em>Cloudflare API</em> поддерживает асинхронные операции для больших списков, возвращая ID операции для последующей проверки статуса выполнения.</p>
+
+<ul>
+    <li>🚀 Мгновенное применение изменений правил безопасности по всему миру.</li>
+    <li>📉 Автоматическое снижение нагрузки на сервер при атаках путем блокировки на уровне сети.</li>
+    <li>🧩 Гибкая настройка условий срабатывания правил на основе множества параметров запроса.</li>
+    <li>📊 Возможность логгирования заблокированных запросов для дальнейшего анализа.</li>
+</ul>
+
+<h2 id="кэширование-и-оптимизация-производительности">Кэширование и оптимизация производительности</h2>
+
+<p>Эффективное управление кэшем — ключевой фактор скорости загрузки сайта. <strong>Спецификация API CF SL</strong> предоставляет инструменты для принудительной очистки кэша (Purge) по различным критериям. Вы можете очистить кэш целиком для зоны, по конкретному URL или даже по тегу кэширования. Последний вариант является наиболее гибким, так как позволяет обновлять контент логических блоков, не затрагивая весь сайт.</p>
+
+<p>Использование тегов кэширования требует предварительной настройки на стороне приложения. При отдаче контента сервер должен отправлять заголовок <code>Cache-Tag</code> с соответствующим значением. Затем, при обновлении данных, достаточно отправить запрос на очистку по этому тегу. Это снижает нагрузку на систему кэширования и ускоряет процесс обновления контента для пользователей.</p>
+
+<details class="faq-item"><summary>Как работает очистка по тегам?</summary><div class="faq-answer"><p>Очистка по тегам доступна только на платных тарифах. Она позволяет удалить из кэша все объекты, помеченные определенным идентификатором, что идеально подходит для микросервисной архитектуры.</p></div></details>
+
+<p>Также API позволяет управлять настройками уровня кэширования, браузерным TTL и другими параметрами оптимизации. Вы можете динамически переключать режимы работы в зависимости от текущей нагрузки или проводимых технических работ. <strong>Спецификация API CF SL</strong> гарантирует, что изменения в настройках кэширования применяются глобально за считанные секунды.</p>
+
+<div class="checklist-block"><h4>☑️ Чек-лист перед очисткой кэша</h4><label class="check-item"><input type="checkbox"><span>Проверить актуальность контента на origin-сервере</span></label><label class="check-item"><input type="checkbox"><span>Убедиться в наличии резервной копии</span></label><label class="check-item"><input type="checkbox"><span>Выбрать правильный метод очистки (URL/Tag/All)</span></label><label class="check-item"><input type="checkbox"><span>Проверить работу сайта после очистки</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<h2 id="обработка-ошибок-и-лимиты-запросов">Обработка ошибок и лимиты запросов</h2>
+
+<p>Любая интеграция с внешним сервисом должна учитывать возможность возникновения ошибок и ограничений на частоту запросов. <strong>Спецификация API CF SL</strong> определяет стандартные HTTP-коды состояния и собственные коды ошибок Cloudflare. Например, код 429 Too Many Requests указывает на превышение лимита запросов (Rate Limiting). Важно реализовывать механизм экспоненциальной задержки (exponential backoff) при получении таких ответов.</p>
+
+<p>Лимиты запросов зависят от типа учетной записи и используемого метода API. Для бесплатных аккаунтов они могут быть довольно строгими, поэтому рекомендуется кэшировать ответы там, где это возможно, и избегать опросов (polling) в цикле без задержек. Использование заголовков ответа, таких как <code>X-RateLimit-Remaining</code>, помогает клиенту понимать, сколько запросов еще можно сделать.</p>
+
+<p>При анализе ошибок важно обращать внимание на поле <code>error_chain</code> в ответе JSON, которое может содержать дополнительную контекстуальную информацию о причине сбоя. <em>Cloudflare API</em> может возвращать специфические ошибки валидации данных, указывая, какой именно параметр запроса не соответствует требованиям спецификации.</p>
+
+<blockquote>
+<p>⚠️ Внимание: Не игнорируйте заголовки Rate Limit. Агрессивные запросы могут привести к временной блокировке вашего IP-адреса со стороны Cloudflare.</p>
+</blockquote>
+
+<h2 id="faq-часто-задаваемые-вопросы">FAQ: Часто задаваемые вопросы</h2>
+
+<details>
+    <summary>Где найти свой Zone ID для работы с API?</summary>
+    <p>Zone ID можно найти в панели управления Cloudflare на главной странице обзора домена. Он также возвращается в ответе API при запросе списка зон. Ищите поле <code>id</code> в объекте зоны.</p>
+</details>
+
+<details>
+    <summary>Какой лимит запросов действует для бесплатного аккаунта?</summary>
+    <p>Для бесплатных планов обычно действует лимит около 1200 запросов в 5 минут для большинства эндпоинтов, но точные значения могут меняться. Всегда проверяйте заголовки ответа <code>X-RateLimit-Limit</code>.</p>
+</details>
+
+<details>
+    <summary>Можно ли использовать API для управления Cloudflare Workers?</summary>
+    <p>Да, <strong>спецификация API CF SL</strong> включает эндпоинты для загрузки, обновления и удаления скриптов Workers, а также для управления их привязками и переменными окружения.</p>
+</details>
+
+<details>
+    <summary>Что делать, если API возвращает ошибку 403 Forbidden?</summary>
+    <p>Ошибка 403 чаще всего означает проблему с токеном доступа. Проверьте, действителен ли токен, не истек ли его срок и имеет ли он необходимые права (Scope) для выполняемой операции.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#архитектура-и-базовые-принципы-работы-api">Архитектура и базовые принципы работы API</a></li><li><a href="#аутентификация-и-управление-токенами-доступа">Аутентификация и управление токенами доступа</a></li><li><a href="#работа-с-dns-зонами-и-записями">Работа с DNS-зонами и записями</a></li><li><a href="#управление-правилами-firewall-и-безопасностью">Управление правилами Firewall и безопасностью</a></li><li><a href="#кэширование-и-оптимизация-производительности">Кэширование и оптимизация производительности</a></li><li><a href="#обработка-ошибок-и-лимиты-запросов">Обработка ошибок и лимиты запросов</a></li><li><a href="#faq-часто-задаваемые-вопросы">FAQ: Часто задаваемые вопросы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/e/ex/exclusive-spb-shiny.html" class="related-card">Exclusive SPB шины: премиум-резина для Петербурга | Цены, отзывы, выбор</a></li><li><a href="/articles/a/am/amg-japan-trade-zapchasti-na-mercedes-benz.html" class="related-card">AMG Japan Trade запчасти Mercedes: каталог, цены, доставка</a></li><li><a href="/articles/a/ak/akkumulyator-dlya-mersedes.html" class="related-card">Какой аккумулятор выбрать для Mercedes: советы эксперта 2026</a></li><li><a href="/articles/k/ko/konditsioner-mersedes-124.html" class="related-card">Кондиционер Mercedes W124: ремонт, заправка, неисправности и советы</a></li><li><a href="/articles/m/mi/microsd-10-class.html" class="related-card">MicroSD Class 10: что это, как выбрать и где использовать (2026)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/e/ex/exclusive-spb-shiny.html" class="related-bottom-card"><span class="related-bottom-title">Exclusive SPB шины: премиум-резина для Петербурга | Цены, отзывы, выбор</span><span class="related-bottom-desc">Какие шины Exclusive SPB подходят для Петербурга? Сравнение моделей, цены 2026, отзывы владельцев и </span></a><a href="/articles/a/am/amg-japan-trade-zapchasti-na-mercedes-benz.html" class="related-bottom-card"><span class="related-bottom-title">AMG Japan Trade запчасти Mercedes: каталог, цены, доставка</span><span class="related-bottom-desc">Исчерпывающий гид по покупке запчастей AMG через Japan Trade. Анализ рынка, оригинальные артикулы, с</span></a><a href="/articles/a/ak/akkumulyator-dlya-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Какой аккумулятор выбрать для Mercedes: советы эксперта 2026</span><span class="related-bottom-desc">Рейтинг аккумуляторов для Mercedes всех классов: оригинальные, аналоги, параметры подбора. Инструкци</span></a><a href="/articles/k/ko/konditsioner-mersedes-124.html" class="related-bottom-card"><span class="related-bottom-title">Кондиционер Mercedes W124: ремонт, заправка, неисправности и советы</span><span class="related-bottom-desc">Полное руководство по кондиционеру Mercedes-Benz W124: как диагностировать неисправности, заправить </span></a><a href="/articles/m/mi/microsd-10-class.html" class="related-bottom-card"><span class="related-bottom-title">MicroSD Class 10: что это, как выбрать и где использовать (2026)</span><span class="related-bottom-desc">Разбираемся в стандарте MicroSD Class 10: скорость, совместимость, лучшие модели для смартфонов, кам</span></a><a href="/articles/l/lo/lobovoe-steklo-kmk-glass-otzyvy.html" class="related-bottom-card"><span class="related-bottom-title">Лобовое стекло КМК Гласс: отзывы владельцев и экспертов</span><span class="related-bottom-desc">Полный анализ лобовых стекол KMK Glass. Отзывы, тесты на прочность, сравнение с оригиналом и советы </span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

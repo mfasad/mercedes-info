@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>HTTPS Avito.ru: как работает защищённое соединение и почему важно его проверять — Мерседес Инфо</title>
+    <meta name="description" content="Разбираем, что значит HTTPS на Avito.ru, как проверить подлинность сертификата и почему это критично для безопасности сделок. Инструкции, советы и FAQ от экспертов.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/h/ht/https-avito-ru-polnaya.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="HTTPS Avito.ru: как работает защищённое соединение и почему важно его проверять">
+    <meta property="og:description" content="Разбираем, что значит HTTPS на Avito.ru, как проверить подлинность сертификата и почему это критично для безопасности сделок. Инструкции, советы и FAQ от экспертов.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">HTTPS Avito.ru: как работает защищённое соединение и почему важно его проверять</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Avito.ru по HTTPS: как проверить защиту соединения и избежать мошенничества</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-https-и-почему-avitoru-перешёл-на-него-полностью">Что такое HTTPS и почему Avito.ru перешёл на него полностью</a></li><li><a href="#как-проверить-подлинность-https-на-avitoru-пошаговая-инструкция">Как проверить подлинность HTTPS на Avito.ru: пошаговая инструкция</a></li><li><a href="#фишинг-под-видом-https-как-мошенники-обманывают-пользователей-avito">Фишинг под видом HTTPS: как мошенники обманывают пользователей Avito</a></li><li><a href="#что-делать-если-https-на-avitoru-не-работает-или-пропадает">Что делать, если HTTPS на Avito.ru не работает или пропадает</a></li><li><a href="#безопасность-сделок-на-avito-как-https-защищает-ваши-деньги">Безопасность сделок на Avito: как HTTPS защищает ваши деньги</a></li><li><a href="#частые-мифы-о-https-на-avitoru-что-правда-а-что-нет">Частые мифы о HTTPS на Avito.ru: что правда, а что нет</a></li><li><a href="#faq-ответы-на-частые-вопросы-о-https-на-avitoru">FAQ: Ответы на частые вопросы о HTTPS на Avito.ru</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>Avito.ru</em> — крупнейшая площадка объявлений в России, где ежедневно совершаются миллионы сделок. Но как убедиться, что ваши данные (логины, пароли, платежная информация) не попадают в руки мошенников? Всё начинается с маленького, но критичного элемента — протокола <strong>HTTPS</strong> в адресной строке. Этот зелёный замочек или надпись «Защищено» — не просто украшение, а гарантия шифрования трафика между вами и сервером <em>Avito</em>.</p>
+
+<p>Однако даже HTTPS не даёт 100% защиты, если вы игнорируете базовые правила безопасности. В этой статье мы разберём, как работает защищённое соединение на <em>Avito.ru</em>, как проверить подлинность сертификата, какие угрозы таит в себе поддельный «HTTPS», и что делать, если браузер вдруг предупреждает об опасности. А ещё — ответим на вопросы, которые пользователи стесняются задать вслух: можно ли доверять <em>Avito</em> с HTTP, почему иногда пропадает замочек, и как не нарваться на фишинг даже с «зелёным» протоколом.</p>
+
+<h2 id="что-такое-https-и-почему-avitoru-перешёл-на-него-полностью">Что такое HTTPS и почему Avito.ru перешёл на него полностью</h2>
+
+<p>Протокол <strong>HTTPS</strong> (HyperText Transfer Protocol Secure) — это защищённая версия HTTP, которая шифрует все данные, передаваемые между вашим устройством и сервером <em>Avito</em>. В отличие от уязвимого HTTP, где информацию можно перехватить (например, логины/пароли), HTTPS использует <code>TLS/SSL-сертификаты</code>, которые:</p>
+
+<ul>
+  <li>🔒 Шифруют трафик: даже если хакер перехватит пакеты данных, расшифровать их без ключа невозможно.</li>
+  <li>🆔 Подтверждают подлинность сайта: сертификат выдаётся только реальному владельцу домена <em>avito.ru</em>.</li>
+  <li>🛡️ Защищают от атак «человек посередине» (MITM), когда мошенник подменяет данные между вами и сервером.</li>
+</ul>
+
+<p><em>Avito.ru</em> перешёл на принудительный HTTPS ещё в 2017 году, но до сих пор пользователи сталкиваются с проблемами: то браузер ругается на сертификат, то замочек исчезает на некоторых страницах. Причина часто кроется в:</p>
+<ul>
+  <li>🌐 Проблемах с кэшем браузера (устаревшие данные конфликтуют с актуальным сертификатом).</li>
+  <li>🕵️‍♂️ Фишинговых копиях сайта, где мошенники подделывают HTTPS (об этом подробнее в следующем разделе).</li>
+  <li>📡 Проблемах на стороне интернет-провайдера (например, если он использует собственные сертификаты для «оптимизации» трафика).</li>
+</ul>
+
+<div class="attention-box attention-info"><div><strong>📊 Как часто вы проверяете адресную строку на наличие HTTPS?</strong><ul><li>Всегда</li><li>Только на платежных страницах</li><li>Иногда</li><li>Никогда</li></ul></div></div>
+
+<h2 id="как-проверить-подлинность-https-на-avitoru-пошаговая-инструкция">Как проверить подлинность HTTPS на Avito.ru: пошаговая инструкция</h2>
+
+<p>Зелёный замочек в адресной строке — это хорошо, но недостаточно. Мошенники научились подделывать даже визуальные признаки безопасности. Чтобы убедиться, что вы на настоящем <em>Avito.ru</em>, а не на фишинговой копии, выполните эти шаги:</p>
+
+<ol>
+  <li><strong>Проверьте адрес</strong>: настоящий <em>Avito</em> всегда начинается с <code>https://www.avito.ru</code> (без опечаток, лишних символов или поддоменов вроде <code>secure-avito.ru</code>).</li>
+  <li><strong>Кликните на замочек</strong>: в большинстве браузеров (Chrome, Firefox, Edge) рядом с адресом отображается иконка замка. Нажмите на неё и изучите данные сертификата.</li>
+  <li><strong>Проверьте выдавшего сертификат</strong>: в разделе «Сертификат» должно быть указано, что он выдан <em>Let’s Encrypt</em> или <em>DigiCert</em> (официальные центры сертификации <em>Avito</em>). Если увидели незнакомое название — это повод насторожиться.</li>
+  <li><strong>Срок действия</strong>: действующий сертификат <em>Avito.ru</em> обычно обновляется каждые 3 месяца. Если дата истекла или осталось меньше недели — это подозрительно.</li>
+</ol>
+
+<p>Вот как выглядит подлинный сертификат <em>Avito.ru</em> (данные актуальны на 2026 год):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Значение для настоящего Avito.ru</th>
+      <th>Признаки подделки</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Выдавший сертификат</td>
+      <td><em>Let’s Encrypt</em> / <em>DigiCert</em></td>
+      <td>Неизвестные центры (например, <em>Free SSL</em> или <em>Self-Signed</em>)</td>
+    </tr>
+    <tr>
+      <td>Домен</td>
+      <td><code>avito.ru</code>, <code>www.avito.ru</code></td>
+      <td>Опечатки: <code>avitoo.ru</code>, <code>avito-secure.ru</code></td>
+    </tr>
+    <tr>
+      <td>Срок действия</td>
+      <td>От нескольких дней до 3 месяцев</td>
+      <td>Истёк или действует больше года</td>
+    </tr>
+    <tr>
+      <td>Алгоритм шифрования</td>
+      <td><code>TLS 1.2</code> или <code>TLS 1.3</code></td>
+      <td><code>SSL 3.0</code> (устаревший и небезопасный)</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>⚠️ <strong>Внимание</strong>: Если браузер показывает предупреждение «Ваше соединение не защищено» или «Сертификат безопасности недействителен», <mark>никогда не игнорируйте его и не нажимайте «Дополнительно → Перейти на сайт»</mark>. Это может быть признаком атаки или подмены сертификата.</blockquote>
+
+<div class="checklist-block"><h4>☑️ Проверка HTTPS на Avito.ru</h4><label class="check-item"><input type="checkbox"><span>Убедиться, что адрес начинается с https://www.avito.ru</span></label><label class="check-item"><input type="checkbox"><span>Кликнуть на замочек и проверить выдавшего сертификат</span></label><label class="check-item"><input type="checkbox"><span>Сверить срок действия (не истёк)</span></label><label class="check-item"><input type="checkbox"><span>Проверить алгоритм шифрования (TLS 1.2/1.3)</span></label><label class="check-item"><input type="checkbox"><span>Обновить браузер до последней версии</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 5</div></div>
+
+<h2 id="фишинг-под-видом-https-как-мошенники-обманывают-пользователей-avito">Фишинг под видом HTTPS: как мошенники обманывают пользователей Avito</h2>
+
+<p>Даже зелёный замочек не гарантирует, что вы на настоящем <em>Avito.ru</em>. Мошенники активно используют бесплатные SSL-сертификаты (например, от <em>Let’s Encrypt</em>), чтобы создать копии сайта с HTTPS. Их цель — украсть логины, пароли или реквизиты карт. Распространённые схемы:</p>
+
+<ul>
+  <li>🎣 <strong>Поддельные страницы входа</strong>: вас перенаправляют на <code>avito-auth.ru</code> или <code>avito-login.com</code>, где просят «повторно войти» для безопасности. Настоящий <em>Avito</em> никогда не просит вводить пароль на сторонних доменах!</li>
+  <li>💳 <strong>Ложные платежные формы</strong>: мошенники создают копии страниц оплаты <em>Avito Услуг</em> (например, <code>avito-pay.ru</code>) и просят ввести данные карты. Проверяйте адрес — платежи должны проходить только через <code>secure.avito.ru</code>.</li>
+  <li>📧 <strong>Письма от «службы безопасности»</strong>: вам приходит email якобы от <em>Avito</em> с просьбой «подтвердить аккаунт» по ссылке. Настоящие письма от <em>Avito</em> никогда не содержат ссылок для ввода данных!</li>
+</ul>
+
+<p>Как распознать фишинг:</p>
+<ul>
+  <li>🔍 <strong>Адрес сайта</strong>: даже одна лишняя буква (например, <code>arnito.ru</code> вместо <code>avito.ru</code>) — признак подделки.</li>
+  <li>📌 <strong>Дизайн</strong>: фишинговые сайты часто имеют кривой шрифт, размытые логотипы или опечатки в тексте.</li>
+  <li>🔗 <strong>Ссылки в письмах</strong>: наведите курсор на ссылку (не кликайте!). Если внизу браузера отображается адрес, отличный от <code>avito.ru</code>, — это фишинг.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание</strong>: Мошенники часто регистрируют домены с опечатками (например, <code>авито.рф</code> вместо <code>avito.ru</code>) и покупают для них SSL-сертификаты. Браузер покажет замочек, но сайт будет поддельным!</blockquote>
+
+<details class="faq-item"><summary>Пример фишингового письма</summary><div class="faq-answer"><p>---
+<p>Тема: "Ваш аккаунт Avito заблокирован!"</p>
+<p>Текст: "Уважаемый пользователь, ваш аккаунт временно заблокирован по причине подозрительной активности. Для разблокировки перейдите по ссылке: [http://avito-secure.ru/verify] (не кликайте!).</p>
+<p>Подпись: «Служба безопасности Avito».</p>
+<p>---</p>
+<p>Реальность: Настоящий <em>Avito</em> никогда не блокирует аккаунты по email и не просит переходить по сторонним ссылкам.</p></div></details></p>
+
+<h2 id="что-делать-если-https-на-avitoru-не-работает-или-пропадает">Что делать, если HTTPS на Avito.ru не работает или пропадает</h2>
+
+<p>Иногда пользователи сталкиваются с тем, что замочек в адресной строке исчезает, браузер ругается на сертификат, или сайт вообще открывается по HTTP. Причины и решения:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Проблема</th>
+      <th>Возможная причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Замочек серый или перечёркнут</td>
+      <td>На странице загружаются небезопасные элементы (например, картинки по HTTP)</td>
+      <td>Обновите страницу (<code>Ctrl + F5</code>). Если проблема осталась — сообщите в поддержку <em>Avito</em></td>
+    </tr>
+    <tr>
+      <td>Предупреждение «Сертификат недействителен»</td>
+      <td>Устаревший кэш браузера или системное время сбито</td>
+      <td>Очистите кэш (<code>Ctrl + Shift + Del</code>) и проверьте дату/время на устройстве</td>
+    </tr>
+    <tr>
+      <td>Сайт открывается по HTTP</td>
+      <td>Перенаправление блокируется антивирусом или расширением браузера</td>
+      <td>Отключите VPN/антивирус временно или проверьте настройки прокси</td>
+    </tr>
+    <tr>
+      <td>Ошибка «NET::ERR_CERT_DATE_INVALID»</td>
+      <td>Сертификат истёк (редко, но бывает при сбоях на стороне <em>Avito</em>)</td>
+      <td>Подождите 10–15 минут и попробуйте снова. Если ошибка осталась — напишите в @avito_podderzhka (Telegram)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Если ни один из способов не помог, попробуйте:</p>
+<ol>
+  <li>Открыть сайт в другом браузере (например, в <em>Firefox</em>, если проблема в <em>Chrome</em>).</li>
+  <li>Проверить <em>Avito</em> через мобильное соединение (если проблема на Wi-Fi, возможно, её блокирует провайдер).</li>
+  <li>Использовать официальное приложение <em>Avito</em> (оно всегда подключается по HTTPS).</li>
+</ol>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если вы часто сталкиваетесь с проблемами HTTPS, добавьте <em>Avito.ru</em> в закладки и всегда заходите через неё. Это защитит от опечаток в адресе и фишинга.</p></div>
+
+<h2 id="безопасность-сделок-на-avito-как-https-защищает-ваши-деньги">Безопасность сделок на Avito: как HTTPS защищает ваши деньги</h2>
+
+<p>HTTPS важен не только для защиты логинов, но и для безопасных платежей. На <em>Avito</em> это касается:</p>
+<ul>
+  <li>💰 <strong>Оплаты услуг</strong> (продвижение объявлений, <em>Avito Услуги</em>): все платежи проходят через <code>secure.avito.ru</code> с шифрованием данных карты.</li>
+  <li>📱 <strong>Переводов через <em>Avito Защищённые сделки</strong></em>: деньги резервируются на счёте <em>Avito</em> до подтверждения передачи товара.</li>
+  <li>🔑 <strong>Авторизации через соцсети</strong> (ВКонтакте, Google): токены передаются по защищённому каналу.</li>
+</ul>
+
+<p>Что делать, чтобы не потерять деньги:</p>
+<ul>
+  <li>🛒 <strong>Проверяйте адрес</strong> перед оплатой: он должен начинаться с <code>https://secure.avito.ru/...</code>.</li>
+  <li>📵 <strong>Не переходите по ссылкам</strong> из SMS/email для оплаты. Все платежи должны проходить только через личный кабинет <em>Avito</em>.</li>
+  <li>🔍 <strong>Используйте виртуальные карты</strong> для оплаты услуг (например, от <em>Тинькофф</em> или <em>Сбербанка</em>). Это ограничит риск утечки данных основной карты.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание</strong>: Мошенники часто просят оплатить «комиссию» или «залог» через сторонние сервисы (например, <em>Qiwi</em> или <em>ЮMoney</em>) под предлогом «защиты сделки». <mark>Настоящий <em>Avito</em> никогда не требует переводов за пределами своей платформы</mark>.</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Даже если сайт использует HTTPS, всегда проверяйте реквизиты получателя при переводе денег. Мошенники могут подменить номер карты или счёт в последнюю секунду!</p></div>
+
+<h2 id="частые-мифы-о-https-на-avitoru-что-правда-а-что-нет">Частые мифы о HTTPS на Avito.ru: что правда, а что нет</h2>
+
+<p>Вокруг HTTPS ходит много заблуждений. Разберём самые популярные:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Миф</th>
+      <th>Реальность</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>«Если есть HTTPS, сайт точно настоящий»</td>
+      <td>Нет! Мошенники покупают SSL-сертификаты для фишинговых сайтов. Всегда проверяйте домен.</td>
+    </tr>
+    <tr>
+      <td>«Avito может прочитать мои сообщения в чате»</td>
+      <td>Нет. Сообщения шифруются по протоколу <code>Signal Protocol</code> (как в <em>WhatsApp</em>), и даже <em>Avito</em> не имеет к ним доступа.</td>
+    </tr>
+    <tr>
+      <td>«VPN делает соединение с Avito безопаснее»</td>
+      <td>Не всегда. Бесплатные VPN могут сами перехватывать трафик. Для <em>Avito</em> достаточно HTTPS.</td>
+    </tr>
+    <tr>
+      <td>«Если браузер не ругается, всё в порядке»</td>
+      <td>Не совсем. Некоторые атаки (например, <em>DNS-spoofing</em>) обходят проверки браузера.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Ещё один распространённый миф: «<em>Avito</em> сам защищает пользователей от мошенников». На самом деле площадка только предоставляет инструменты (например, <em>Защищённые сделки</em>), но окончательная ответственность лежит на вас. Всегда:</p>
+<ul>
+  <li>🔎 Проверяйте репутацию продавца (отзывы, дата регистрации).</li>
+  <li>📸 Просите дополнительные фото/видео товара с текущей датой.</li>
+  <li>🏦 Используйте <em>Avito Защищённые сделки</em> для дорогостоящих покупок.</li>
+</ul>
+
+<h2 id="faq-ответы-на-частые-вопросы-о-https-на-avitoru">FAQ: Ответы на частые вопросы о HTTPS на Avito.ru</h2>
+
+<details>
+  <summary>Можно ли пользоваться Avito, если браузер показывает предупреждение о сертификате?</summary>
+  <p>Нет! Предупреждение о сертификате означает, что соединение не защищено, и ваши данные могут быть перехвачены. Никогда не игнорируйте такие ошибки. Попробуйте:</p>
+  <ol>
+    <li>Обновить страницу (<code>Ctrl + F5</code>).</li>
+    <li>Очистить кэш браузера.</li>
+    <li>Проверить системное время (если оно сбито, сертификат будет казаться просроченным).</li>
+  </ol>
+  <p>Если ошибка осталась, напишите в поддержку <em>Avito</em> или дождитесь устранения проблемы на их стороне.</p>
+</details>
+
+<details>
+  <summary>Почему на некоторых страницах Avito замочек исчезает?</summary>
+  <p>Это происходит, если на странице загружаются элементы по незащищённому протоколу HTTP (например, картинки или скрипты). Обычно проблема решается:</p>
+  <ul>
+    <li>Обновлением страницы.</li>
+    <li>Очисткой кэша браузера.</li>
+    <li>Отключением расширений (например, адблоков), которые могут блокировать защищённые элементы.</li>
+  </ul>
+  <p>Если замочек пропадает на платежных страницах — <strong>не вводите данные карты</strong> и сообщите в поддержку.</p>
+</details>
+
+<details>
+  <summary>Как отличить настоящее письмо от Avito от фишинга?</summary>
+  <p>Настоящие письма от <em>Avito</em>:</p>
+  <ul>
+    <li>Приходят с адреса <code>@avito.ru</code> или <code>@mail.avito.ru</code>.</li>
+    <li>Не содержат ссылок для ввода логинов/паролей.</li>
+    <li>Не просят срочно «подтвердить аккаунт» или «обновить данные».</li>
+  </ul>
+  <p>Если сомневаетесь, не кликайте по ссылкам в письме. Вместо этого зайдите на <em>Avito.ru</em> вручную через браузер и проверьте уведомления в личном кабинете.</p>
+</details>
+
+<details>
+  <summary>Можно ли доверять мобильному приложению Avito? Оно тоже использует HTTPS?</summary>
+  <p>Да, официальное приложение <em>Avito</em> (из <em>App Store</em> или <em>Google Play</em>) всегда подключается к серверам по HTTPS. Кроме того, оно:</p>
+  <ul>
+    <li>Использует дополнительные механизмы защиты (например, привязку к устройству).</li>
+    <li>Автоматически проверяет сертификаты сервера.</li>
+    <li>Блокирует подозрительные действия (например, многократные попытки ввода пароля).</li>
+  </ul>
+  <p>Но даже в приложении будьте осторожны: мошенники могут просить перейти на «сайт для оплаты» или отправить деньги через сторонние сервисы.</p>
+</details>
+
+<details>
+  <summary>Что делать, если я уже ввёл данные на поддельном сайте Avito?</summary>
+  <p>Если вы ввели логин/пароль:</p>
+  <ol>
+    <li>Немедленно поменяйте пароль на <em>Avito.ru</em> (и на других сайтах, где использовали тот же пароль).</li>
+    <li>Проверьте историю входов в личном кабинете (<code>Настройки → Безопасность</code>).</li>
+    <li>Включите двухфакторную аутентификацию (через SMS или приложение <em>Google Authenticator</em>).</li>
+  </ol>
+  <p>Если ввели данные карты:</p>
+  <ol>
+    <li>Заблокируйте карту через мобильный банк.</li>
+    <li>Свяжитесь с банком и сообщите о возможной утечке данных.</li>
+    <li>Проверьте историю операций на подозрительные списания.</li>
+  </ol>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-https-и-почему-avitoru-перешёл-на-него-полностью">Что такое HTTPS и почему Avito.ru перешёл на него полностью</a></li><li><a href="#как-проверить-подлинность-https-на-avitoru-пошаговая-инструкция">Как проверить подлинность HTTPS на Avito.ru: пошаговая инструкция</a></li><li><a href="#фишинг-под-видом-https-как-мошенники-обманывают-пользователей-avito">Фишинг под видом HTTPS: как мошенники обманывают пользователей Avito</a></li><li><a href="#что-делать-если-https-на-avitoru-не-работает-или-пропадает">Что делать, если HTTPS на Avito.ru не работает или пропадает</a></li><li><a href="#безопасность-сделок-на-avito-как-https-защищает-ваши-деньги">Безопасность сделок на Avito: как HTTPS защищает ваши деньги</a></li><li><a href="#частые-мифы-о-https-на-avitoru-что-правда-а-что-нет">Частые мифы о HTTPS на Avito.ru: что правда, а что нет</a></li><li><a href="#faq-ответы-на-частые-вопросы-о-https-на-avitoru">FAQ: Ответы на частые вопросы о HTTPS на Avito.ru</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/t/te/test-transmissionnykh-masel-75w90-gl-5.html" class="related-card">Тест трансмиссионных масел 75w90 GL 5: Рейтинг и сравнение</a></li><li><a href="/articles/g/go/golden-eagle-luxury-trains.html" class="related-card">Golden Eagle Luxury Trains: роскошь на колесах по России и миру</a></li><li><a href="/articles/m/mc/mclaren-mp4-5.html" class="related-card">McLaren MP4/5: легендарный болид Формулы-1 с двигателем Honda V10</a></li><li><a href="/articles/m/me/mersedes-w123-foto.html" class="related-card">📸 Mercedes W123 фото: редкие снимки, модификации и советы по выбору</a></li><li><a href="/articles/m/me/mercedes-benz-611.html" class="related-card">Двигатель Mercedes OM 611: Ресурс, Надежность и Типичные Проблемы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/t/te/test-transmissionnykh-masel-75w90-gl-5.html" class="related-bottom-card"><span class="related-bottom-title">Тест трансмиссионных масел 75w90 GL 5: Рейтинг и сравнение</span><span class="related-bottom-desc">Независимый тест масел 75w90 GL 5. Анализ вязкости, присадок и защиты. Узнайте, какое масло выбрать </span></a><a href="/articles/g/go/golden-eagle-luxury-trains.html" class="related-bottom-card"><span class="related-bottom-title">Golden Eagle Luxury Trains: роскошь на колесах по России и миру</span><span class="related-bottom-desc">Узнайте о маршрутах, стоимости и особенностях поездок на Golden Eagle Luxury Trains — самых роскошны</span></a><a href="/articles/m/mc/mclaren-mp4-5.html" class="related-bottom-card"><span class="related-bottom-title">McLaren MP4/5: легендарный болид Формулы-1 с двигателем Honda V10</span><span class="related-bottom-desc">Технические характеристики, история побед и секреты конструкции McLaren MP4/5 — почему этот болид 19</span></a><a href="/articles/m/me/mersedes-w123-foto.html" class="related-bottom-card"><span class="related-bottom-title">📸 Mercedes W123 фото: редкие снимки, модификации и советы по выбору</span><span class="related-bottom-desc">Ищите фото Mercedes W123? У нас коллекция редких снимков всех модификаций (200D, 230E, 300D) с техни</span></a><a href="/articles/m/me/mercedes-benz-611.html" class="related-bottom-card"><span class="related-bottom-title">Двигатель Mercedes OM 611: Ресурс, Надежность и Типичные Проблемы</span><span class="related-bottom-desc">Полный обзор дизельного мотора Mercedes OM 611. Характеристика, типичные неисправности, ресурс турби</span></a><a href="/articles/m/me/mersedes-kupe-retro.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес Купе Ретро: История, Легенды и Выбор Классики</span><span class="related-bottom-desc">Полный гид по ретро купе Mercedes-Benz: от 300 SL до C107. Особенности эксплуатации, цены на рынке и</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

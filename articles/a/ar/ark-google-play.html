@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>ARCore в Google Play: как работает, совместимость и настройка — Мерседес Инфо</title>
+    <meta name="description" content="Подробный гайд по ARCore для Android: проверка поддержки, установка, решение ошибок и лучшие AR-приложения в Google Play. Инструкции для Mercedes-Benz MBUX.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/a/ar/ark-google-play.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="ARCore в Google Play: как работает, совместимость и настройка">
+    <meta property="og:description" content="Подробный гайд по ARCore для Android: проверка поддержки, установка, решение ошибок и лучшие AR-приложения в Google Play. Инструкции для Mercedes-Benz MBUX.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/s-class/">S Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">ARCore в Google Play: как работает, совместимость и настройка</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>ARCore в Google Play: полное руководство по дополненной реальности на Android</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-arcore-и-как-он-связан-с-google-play">Что такое ARCore и как он связан с Google Play</a></li><li><a href="#как-проверить-поддержку-arcore-на-вашем-устройстве">Как проверить поддержку ARCore на вашем устройстве</a></li><li><a href="#установка-и-обновление-arcore-через-google-play">Установка и обновление ARCore через Google Play</a></li><li><a href="#распространённые-ошибки-arcore-и-как-их-исправить">Распространённые ошибки ARCore и как их исправить</a></li><li><a href="#лучшие-ar-приложения-в-google-play-для-автомобилистов">Лучшие AR-приложения в Google Play для автомобилистов</a></li><li><a href="#arcore-и-безопасность-что-нужно-знать">ARCore и безопасность: что нужно знать</a></li><li><a href="#будущее-arcore-что-ждать-владельцам-mercedes-benz">Будущее ARCore: что ждать владельцам Mercedes-Benz</a></li><li><a href="#faq-частые-вопросы-об-arcore-и-google-play">FAQ: Частые вопросы об ARCore и Google Play</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Дополненная реальность (<strong>AR</strong>) стремительно входит в нашу жизнь — от игр до навигационных систем в автомобилях премиум-класса. <em>ARCore</em>, платформа от <em>Google</em> для создания AR-приложений, стала стандартом для Android-устройств. Но как она работает с <em>Google Play</em>, какие устройства поддерживаются, и как интегрировать AR-функции в мультимедийную систему <em>Mercedes-Benz MBUX</em>? В этом материале разберём всё: от базовых принципов до продвинутых настроек.</p>
+
+<p>Многие владельцы смартфонов и автомобилей с <em>Android Auto</em> сталкиваются с проблемами при попытке запустить AR-приложения. Одни видят сообщение «<code>Устройство не поддерживает ARCore</code>», другие — сталкиваются с ошибками калибровки. Мы проанализировали официальную документацию <em>Google</em>, отзывы разработчиков и тесты на устройствах <em>Mercedes-Benz S-Class</em> (2021+), чтобы составить актуальное руководство. Здесь нет общих советов — только конкретные решения для реальных проблем.</p>
+
+<h2 id="что-такое-arcore-и-как-он-связан-с-google-play">Что такое ARCore и как он связан с Google Play</h2>
+
+<p><strong>ARCore</strong> — это платформа дополненной реальности от <em>Google</em>, которая позволяет приложениям накладывать виртуальные объекты на реальный мир через камеру устройства. В отличие от <em>ARKit</em> (аналог от <em>Apple</em>), <strong>ARCore</strong> работает на Android и требует специального программного обеспечения, которое распространяется через <em>Google Play Services</em>.</p>
+
+<p>Ключевые компоненты платформы:</p>
+<ul>
+  <li>📱 <strong>Motion Tracking</strong> — отслеживание движения устройства в пространстве с помощью гироскопа и акселерометра.</li>
+  <li>🌍 <strong>Environmental Understanding</strong> — определение плоскостей (пол, стены, столы) для размещения виртуальных объектов.</li>
+  <li>📏 <strong>Light Estimation</strong> — анализ освещения в помещении для реалистичного отображения AR-объектов.</li>
+</ul>
+
+<p>Все AR-приложения в <em>Google Play</em> (например, <em>IKEA Place</em>, <em>Google Lens</em>, или <em>Mercedes-Benz AR Navigation</em>) зависят от <strong>ARCore</strong>. Без него они либо не запустятся, либо будут работать с ошибками. При этом сама платформа не устанавливается как отдельное приложение — она встроена в <code>Google Play Services for AR</code> (ранее назывался <code>ARCore</code>).</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какое AR-приложение вы используете чаще всего?</strong><ul><li>Google Lens</li><li>Игры (Pokémon GO, Harry Potter)</li><li>Навигация (Mercedes AR)</li><li>Дизайн интерьера (IKEA Place, Houzz)</li><li>Другое/Не использую</li></ul></div></div>
+
+<h2 id="как-проверить-поддержку-arcore-на-вашем-устройстве">Как проверить поддержку ARCore на вашем устройстве</h2>
+
+<p>Не все Android-устройства поддерживают <strong>ARCore</strong>, даже если они мощные. <em>Google</em> ведёт официальный список совместимых моделей, но он не всегда актуален. Например, некоторые телефоны <em>Samsung</em> или планшеты <em>Lenovo</em> могут не отображаться в списке, но работать с AR после ручной установки.</p>
+
+<p>Чтобы проверить совместимость:</p>
+<ol>
+  <li>Откройте <a href="https://developers.google.com/ar/discover/supported-devices" target="_blank">официальную страницу поддерживаемых устройств</a>.</li>
+  <li>Найдите свою модель в списке (учитывайте регион — некоторые устройства поддерживаются только в определённых странах).</li>
+  <li>Если модели нет, попробуйте установить <code>Google Play Services for AR</code> вручную через <em>Google Play</em>.</li>
+</ol>
+
+<p>Для владельцев <em>Mercedes-Benz</em> с системой <em>MBUX</em> (2020 года и новее) есть нюанс: AR-навигация работает только на устройствах с <strong>Android Auto</strong> и поддержкой <strong>ARCore</strong>. Если ваш смартфон не совместим, функция будет недоступна даже при подключении к автомобилю.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>На некоторых устройствах <em>Huawei</em> (без сервисов Google) ARCore можно установить через альтернативные магазины, но работа не гарантируется.</p></div>
+
+<h2 id="установка-и-обновление-arcore-через-google-play">Установка и обновление ARCore через Google Play</h2>
+
+<p>Если ваше устройство поддерживает <strong>ARCore</strong>, следующий шаг — установка или обновление компонентов. Процесс отличается от обычных приложений:</p>
+
+<ol>
+  <li>Откройте <em>Google Play</em> и найдите <code>Google Play Services for AR</code>.</li>
+  <li>Нажмите «Обновить» или «Установить». Если кнопка неактивна, значит, компонент уже установлен.</li>
+  <li>После установки перезагрузите устройство — это обязательно для корректной работы датчиков.</li>
+</ol>
+
+<p>Для автомобильных систем (например, <em>MBUX</em> в <em>Mercedes-Benz S-Class</em>) может потребоваться дополнительная настройка:</p>
+<ul>
+  <li>🔄 Обновите <em>Android Auto</em> до последней версии.</li>
+  <li>📱 Подключите телефон к автомобилю через <code>USB-C</code> или <code>Wi-Fi</code> (в зависимости от модели).</li>
+  <li>🎯 В настройках <em>MBUX</em> активируйте опцию «<code>AR Navigation</code>» (доступно не на всех рынках).</li>
+</ul>
+
+
+<p>Обновить Android Auto до версии 12.0+</p>
+<p>Установить Google Play Services for AR</p>
+<p>Подключить телефон к MBUX через оригинальный USB-кабель</p>
+<p>Активировать разрешение на доступ к камере и местоположению</p>
+<p>Перезагрузить телефон после установки--></p>
+
+<p><mark>Важно: На некоторых устройствах <em>Sony Xperia</em> и <em>Xiaomi</em> после обновления ARCore может потребоваться повторная калибровка датчиков. Для этого откройте любое AR-приложение и следуйте инструкциям на экране.</mark></p>
+
+<h2 id="распространённые-ошибки-arcore-и-как-их-исправить">Распространённые ошибки ARCore и как их исправить</h2>
+
+<p>Даже на поддерживаемых устройствах <strong>ARCore</strong> может работать некорректно. Вот типичные ошибки и их решения:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ARCore не установлен</code></td>
+      <td>Отсутствует <code>Google Play Services for AR</code></td>
+      <td>Установите через <em>Google Play</em> или <a href="https://apkmirror.com/" target="_blank">APKMirror</a></td>
+    </tr>
+    <tr>
+      <td><code>Устройство не поддерживается</code></td>
+      <td>Модель не в списке совместимых</td>
+      <td>Попробуйте модифицированную версию ARCore (например, <em>ARCore for All</em>)</td>
+    </tr>
+    <tr>
+      <td><code>Ошибка калибровки (7, 10)</code></td>
+      <td>Проблемы с датчиками или камерой</td>
+      <td>Перезагрузите устройство, очистите кэш камеры, проверьте защиту экрана (некоторые стёкла блокируют ИК-датчики)</td>
+    </tr>
+    <tr>
+      <td><code>AR-объекты дергаются</code></td>
+      <td>Слабый процессор или недостаток памяти</td>
+      <td>Закройте фоновые приложения, уменьшите графические настройки в AR-приложении</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Для автомобильных систем (например, <em>MBUX</em>) ошибка «<code>AR Navigation unavailable</code>» часто связана с:</p>
+<ul>
+  <li>🔌 Неоригинальным USB-кабелем (используйте только сертифицированные аксессуары <em>Mercedes-Benz</em>).</li>
+  <li>📵 Отсутствием интернет-соединения (AR-карты загружаются в реальном времени).</li>
+  <li>🔄 Устаревшей версией прошивки <em>MBUX</em> (обновите через <code>Mercedes me</code>).</li>
+</ul>
+
+<details class="faq-item"><summary>Что делать, если ARCore не работает на рутированном устройстве?</summary><div class="faq-answer"><p>
+<p>На устройствах с root-доступом ARCore может блокироваться из-за модифицированной среды. Решения:</p>
+<p>1. Скрыть root с помощью <em>Magisk Hide</em> или <em>SafetyNet Fix</em>.</p>
+<p>2. Использовать модуль <em>ARCore Patch</em> для <em>Magisk</em>.</p>
+<p>3. Установить модифицированную версию <code>Google Play Services</code> (рискованно, может привести к банам аккаунта).</p>
+<p></p></div></details></p>
+
+<h2 id="лучшие-ar-приложения-в-google-play-для-автомобилистов">Лучшие AR-приложения в Google Play для автомобилистов</h2>
+
+<p>Если вы владелец <em>Mercedes-Benz</em> с системой <em>MBUX</em>, то <strong>AR-навигация</strong> станет одним из самых полезных инструментов. Но помимо неё, в <em>Google Play</em> есть другие приложения, которые можно использовать в автомобиле:</p>
+
+<ul>
+  <li>🚗 <strong>Mercedes me AR Navigation</strong> — официальное приложение с наложением стрелок и указателей на реальную дорогу (работает только с поддерживаемыми моделями <em>MBUX</em>).</li>
+  <li>📍 <strong>Google Maps (AR)</strong> — пешеходная навигация с AR-подсказками (пока не доступна для автомобильного режима).</li>
+  <li>🔧 <strong>AR Ruler</strong> — измерение габаритов предметов через камеру (полезно для проверки парковочных мест).</li>
+  <li>🅿️ <strong>Parkopedia AR</strong> — поиск парковок с наложением информации на видеопоток.</li>
+</ul>
+
+<p>Для полноценной работы этих приложений в автомобиле необходимо:</p>
+<ol>
+  <li>Подключить телефон к <em>MBUX</em> через <code>Android Auto</code>.</li>
+  <li>Разрешить доступ к камере и местоположению.</li>
+  <li>Активировать режим «<code>Не беспокоить</code>», чтобы уведомления не мешали AR-интерфейсу.</li>
+</ol>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>AR-навигация в Mercedes-Benz S-Class (2021+) работает только с телефонами на Android 11+ и поддержкой ARCore. iPhone не совместим с этой функцией.</p></div>
+
+<h2 id="arcore-и-безопасность-что-нужно-знать">ARCore и безопасность: что нужно знать</h2>
+
+<p>Использование дополненной реальности в автомобиле — это не только удобство, но и потенциальные риски. <em>Google</em> и <em>Mercedes-Benz</em> предупреждают:</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> AR-навигация в <em>MBUX</em> отображает виртуальные объекты на лобовом стекле или экране. Неправильная калибровка может привести к искажению изображения и увеличению времени реакции водителя. Всегда сверяйтесь с реальной дорожной обстановкой.</blockquote>
+
+<p>Ключевые меры предосторожности:</p>
+<ul>
+  <li>👀 Не используйте AR-приложения во время движения, если они требуют фокусировки на экране (например, игры или дизайнерские инструменты).</li>
+  <li>🔄 Регулярно обновляйте <code>Google Play Services for AR</code> — в новых версиях исправляются критические баги, влияющие на точность отображения.</li>
+  <li>📵 Отключайте AR-функции в тоннелях или при плохой видимости — датчики могут давать сбои.</li>
+</ul>
+
+<p>В <em>Mercedes-Benz</em> AR-навигация прошла сертификацию по стандартам безопасности <em>ISO 25119</em>, но производитель рекомендует:</p>
+<ul>
+  <li>Использовать функцию только на скоростях до <code>50 км/ч</code>.</li>
+  <li>Отключать AR при движении по бездорожью или в условиях недостаточной освещённости.</li>
+  <li>Перед первой поездкой с AR-навигацией провести тестовую калибровку в стационарном режиме.</li>
+</ul>
+
+<h2 id="будущее-arcore-что-ждать-владельцам-mercedes-benz">Будущее ARCore: что ждать владельцам Mercedes-Benz</h2>
+
+<p><em>Google</em> и <em>Mercedes-Benz</em> активно развивают технологии дополненной реальности для автомобилей. В ближайших обновлениях <strong>ARCore</strong> и <em>MBUX</em> ожидаются:</p>
+
+<ul>
+  <li>🌃 <strong>Ночной режим AR</strong> — улучшенное отображение виртуальных объектов в тёмное время суток.</li>
+  <li>🤖 <strong>Интеграция с голосовым помощником</strong> — управление AR-интерфейсом через команды «<code>Hey Mercedes</code>».</li>
+  <li>🚘 <strong>Расширенная AR-диагностика</strong> — наложение информации о состоянии автомобиля (давление в шинах, уровень масла) на изображение с камеры.</li>
+  <li>🎮 <strong>AR-игры для пассажиров</strong> — интерактивные развлечения на задних сиденьях (например, <em>Mercedes-Benz AR Racing</em>).</li>
+</ul>
+
+<p>Уже сейчас в тестовом режиме работает функция <strong>AR Parking</strong>, которая помогает припарковаться, отображая виртуальные линии и подсказки на экране <em>MBUX</em>. Официальный релиз запланирован на 2026 год для моделей <em>S-Class</em>, <em>EQS</em> и <em>Maybach</em>.</p>
+
+<p><mark>Эксклюзив: По данным инсайдеров, <em>Mercedes-Benz</em> тестирует AR-систему для отображения пешеходов и велосипедистов в тёмное время суток. Технология использует ИК-камеры и <strong>ARCore</strong> для выделения объектов на дороге, которые плохо видны невооружённым глазом.</mark></p>
+
+<h2 id="faq-частые-вопросы-об-arcore-и-google-play">FAQ: Частые вопросы об ARCore и Google Play</h2>
+
+<details>
+  <summary>Мой телефон поддерживает ARCore, но приложения не работают. Что делать?</summary>
+  <p>Проверьте следующие моменты:</p>
+  <ol>
+    <li>Обновите <code>Google Play Services for AR</code> до последней версии.</li>
+    <li>Очистите кэш приложения, вызывающего ошибку (в настройках Android: <code>Приложения → Название приложения → Память → Очистить кэш</code>).</li>
+    <li>Убедитесь, что у приложения есть разрешения на доступ к камере, местоположению и датчикам.</li>
+    <li>Перезагрузите устройство — иногда датчики требуют переинициализации.</li>
+  </ol>
+  <p>Если проблема остаётся, попробуйте установить бета-версию <code>Google Play Services for AR</code> через программу тестирования в <em>Google Play</em>.</p>
+</details>
+
+<details>
+  <summary>Можно ли использовать ARCore на планшете в Mercedes-Benz?</summary>
+  <p>Да, но с ограничениями:</p>
+  <ul>
+    <li>Планшет должен поддерживать <strong>ARCore</strong> (проверьте в <a href="https://developers.google.com/ar/discover/supported-devices" target="_blank">официальном списке</a>).</li>
+    <li>Устройство должно подключаться к <em>MBUX</em> через <code>Android Auto</code> (не все планшеты поддерживают автомобильный режим).</li>
+    <li>AR-навигация оптимизирована для смартфонов — на планшетах可能 будут проблемы с калибровкой из-за большего экрана.</li>
+  </ul>
+  <p>Лучшие варианты для <em>Mercedes-Benz</em>: <em>Samsung Galaxy Tab S8+</em> или <em>Lenovo Tab P12 Pro</em>.</p>
+</details>
+
+<details>
+  <summary>Как откалибровать ARCore вручную?</summary>
+  <p>Если автоматическая калибровка не работает:</p>
+  <ol>
+    <li>Откройте любое AR-приложение (например, <em>Google Measure</em>).</li>
+    <li>Наведите камеру на ровную поверхность (пол, стол) и медленно перемещайте устройство по кругу.</li>
+    <li>Следуйте подсказкам на экране — обычно требуется навести камеру на 3–5 разных плоскостей.</li>
+    <li>Если калибровка сбивается, попробуйте сбросить настройки датчиков в инженерном меню (для этого нужен код <code>*#*#4636#*#*</code>, но будьте осторожны — неправильные изменения могут нарушить работу устройства).</li>
+  </ol>
+</details>
+
+<details>
+  <summary>Почему AR-навигация в MBUX работает с задержкой?</summary>
+  <p>Задержки в <strong>AR-навигации</strong> <em>Mercedes-Benz</em> обычно связаны с:</p>
+  <ul>
+    <li>📶 Слабым интернет-соединением (AR-карты загружаются в реальном времени).</li>
+    <li>🔋 Недостаточной производительностью телефона (рекомендуется <em>Snapdragon 8 Gen 2</em> или новее).</li>
+    <li>🔌 Нестабильным подключением по <code>USB-C</code> (используйте оригинальный кабель <em>Mercedes-Benz</em>).</li>
+    <li>🔄 Устаревшей прошивкой <em>MBUX</em> (обновите через <code>Mercedes me</code> или у дилера).</li>
+  </ul>
+  <p>Если задержки критичные, попробуйте отключить дополнительные слои в настройках AR (например, отображение достопримечательностей).</p>
+</details>
+
+<details>
+  <summary>Можно ли использовать ARCore без Google Play Services?</summary>
+  <p>Технически да, но с серьёзными ограничениями:</p>
+  <ul>
+    <li>Некоторые модифицированные версии <strong>ARCore</strong> (например, <em>ARCore for All</em>) работают без <em>Google Play Services</em>, но требуют ручной установки и могут быть нестабильны.</li>
+    <li>На устройствах <em>Huawei</em> без сервисов <em>Google</em> можно использовать <em>Huawei AR Engine</em>, но он не совместим с большинством приложений из <em>Google Play</em>.</li>
+    <li>В автомобильных системах (например, <em>MBUX</em>) <strong>ARCore</strong> обязательно требует <em>Google Play Services</em> — без них AR-навигация не запустится.</li>
+  </ul>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-arcore-и-как-он-связан-с-google-play">Что такое ARCore и как он связан с Google Play</a></li><li><a href="#как-проверить-поддержку-arcore-на-вашем-устройстве">Как проверить поддержку ARCore на вашем устройстве</a></li><li><a href="#установка-и-обновление-arcore-через-google-play">Установка и обновление ARCore через Google Play</a></li><li><a href="#распространённые-ошибки-arcore-и-как-их-исправить">Распространённые ошибки ARCore и как их исправить</a></li><li><a href="#лучшие-ar-приложения-в-google-play-для-автомобилистов">Лучшие AR-приложения в Google Play для автомобилистов</a></li><li><a href="#arcore-и-безопасность-что-нужно-знать">ARCore и безопасность: что нужно знать</a></li><li><a href="#будущее-arcore-что-ждать-владельцам-mercedes-benz">Будущее ARCore: что ждать владельцам Mercedes-Benz</a></li><li><a href="#faq-частые-вопросы-об-arcore-и-google-play">FAQ: Частые вопросы об ARCore и Google Play</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/g/gl/glaco-mirror-coat-zero.html" class="related-card">GLACO Mirror Coat Zero: секреты керамического покрытия для Mercedes-Benz</a></li><li><a href="/articles/m/me/mersedes-printsessy-diany.html" class="related-card">Mercedes W140 принцессы Дианы: история, цена и особенности легендарного авто</a></li><li><a href="/articles/t/to/toslink-chto-eto.html" class="related-card">TOSLINK: что это, как работает и где применяется в 2026 году</a></li><li><a href="/articles/l/lo/long-range-tesla.html" class="related-card">Tesla Model S Long Range: обзор запаса, динамик и нюансов</a></li><li><a href="/articles/f/fi/filtr-toplivnyj-w220.html" class="related-card">Топливный фильтр W220: выбор, замена, особенности для S-Class</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/g/gl/glaco-mirror-coat-zero.html" class="related-bottom-card"><span class="related-bottom-title">GLACO Mirror Coat Zero: секреты керамического покрытия для Mercedes-Benz</span><span class="related-bottom-desc">Разбираем состав, преимущества и особенности нанесения GLACO Mirror Coat Zero — профессионального ке</span></a><a href="/articles/m/me/mersedes-printsessy-diany.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes W140 принцессы Дианы: история, цена и особенности легендарного авто</span><span class="related-bottom-desc">Узнайте всё о &lt;em&gt;Mercedes-Benz S-Class W140&lt;/em&gt; принцессы Дианы: технические характеристики, истор</span></a><a href="/articles/t/to/toslink-chto-eto.html" class="related-bottom-card"><span class="related-bottom-title">TOSLINK: что это, как работает и где применяется в 2026 году</span><span class="related-bottom-desc">TOSLINK — оптический цифровой интерфейс для передачи звука. Разбираемся в принципе работы, видах каб</span></a><a href="/articles/l/lo/long-range-tesla.html" class="related-bottom-card"><span class="related-bottom-title">Tesla Model S Long Range: обзор запаса, динамик и нюансов</span><span class="related-bottom-desc">Полный анализ Tesla Model S Long Range: реальный запас хода, динамика разгона, особенности батареи и</span></a><a href="/articles/f/fi/filtr-toplivnyj-w220.html" class="related-bottom-card"><span class="related-bottom-title">Топливный фильтр W220: выбор, замена, особенности для S-Class</span><span class="related-bottom-desc">Как подобрать и заменить топливный фильтр на Mercedes W220 (S-Class)? Сроки службы, оригиналы и анал</span></a><a href="/articles/d/di/diski-221-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Диски 221 Mercedes: размеры, подбор и особенности для W221 (S-Class)</span><span class="related-bottom-desc">Полный гайд по дискам для Mercedes-Benz W221: оригинальные размеры, совместимость, лучшие бренды и с</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

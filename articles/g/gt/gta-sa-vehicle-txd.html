@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>GTA SA TXD файлы транспортных средств: полное руководство по модификации — Мерседес Инфо</title>
+    <meta name="description" content="Как редактировать текстуры машин в GTA San Andreas через TXD файлы: инструменты, инструкции и решения ошибок. Подробное руководство для моддеров.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/g/gt/gta-sa-vehicle-txd.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="GTA SA TXD файлы транспортных средств: полное руководство по модификации">
+    <meta property="og:description" content="Как редактировать текстуры машин в GTA San Andreas через TXD файлы: инструменты, инструкции и решения ошибок. Подробное руководство для моддеров.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">GTA SA TXD файлы транспортных средств: полное руководство по модификации</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>TXT файлы транспортных средств в GTA San Andreas: от теории к практике модификации</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-txd-файлы-и-как-они-работают-в-gta-san-andreas">Что такое TXD-файлы и как они работают в GTA San Andreas</a></li><li><a href="#инструменты-для-работы-с-txd-от-распаковки-до-редактирования">Инструменты для работы с TXD: от распаковки до редактирования</a></li><li><a href="#пошаговая-инструкция-как-изменить-текстуру-машины-в-gta-sa">Пошаговая инструкция: как изменить текстуру машины в GTA SA</a></li><li><a href="#типичные-ошибки-при-работе-с-txd-и-как-их-исправить">Типичные ошибки при работе с TXD и как их исправить</a></li><li><a href="#оптимизация-txd-как-уменьшить-размер-без-потери-качества">Оптимизация TXD: как уменьшить размер без потери качества</a></li><li><a href="#где-скачать-готовые-txd-паки-для-популярных-машин">Где скачать готовые TXD-паки для популярных машин</a></li><li><a href="#txd-для-кастомных-транспортных-средств-особенности-и-лайфхаки">TXD для кастомных транспортных средств: особенности и лайфхаки</a></li><li><a href="#faq-ответы-на-частые-вопросы-о-txd-в-gta-sa">FAQ: ответы на частые вопросы о TXD в GTA SA</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>GTA San Andreas</em> остаётся культовой игрой даже спустя 20 лет после релиза, и одной из ключевых причин её долголетия является активное моддинг-сообщество. Среди всех аспектов модификации особое место занимают <strong>TXD-файлы транспортных средств</strong> — архивы текстур, которые определяют внешний вид машин в игре. Без понимания работы с этими файлами невозможно создать качественный визуальный мод, будь то ретекстуринг классического <em>Lowrider</em> или полная замена текстур для <em>Monster Truck</em>.</p>
+
+<p>В этой статье мы разберём <strong>всё о TXD-файлах транспортных средств в GTA SA</strong>: от базовой теории (что такое TXD, как он устроен) до практических инструкций по редактированию, оптимизации и устранению типичных ошибок. Вы узнаете, какие инструменты используют профессиональные моддеры, как избежать распространённых багов (вроде "розовых машин" или вылетов игры), и где скачать готовые TXD-паки для популярных моделей. Особое внимание уделено <mark>совместимости с последними версиями игры, включая <em>GTA SA: Definitive Edition</em></mark>, где работа с текстурами имеет свои нюансы.</p>
+
+<h2 id="что-такое-txd-файлы-и-как-они-работают-в-gta-san-andreas">Что такое TXD-файлы и как они работают в GTA San Andreas</h2>
+
+<p>Файлы с расширением <strong>.txd</strong> (Texture Dictionary) — это контейнеры, хранящие текстуры для 3D-моделей в <em>GTA San Andreas</em>. Каждый транспорт в игре имеет свой уникальный TXD-файл, который содержит:</p>
+<ul>
+  <li>🎨 <strong>Диффузные текстуры</strong> (основной цвет и рисунок кузова, салона, колёс)</li>
+  <li>🔦 <strong>Спекулярные карты</strong> (отвечают за блики и отражения)</li>
+  <li>🖼️ <strong>Нормальные карты</strong> (для имитации рельефа поверхности)</li>
+  <li>🌑 <strong>Маски прозрачности</strong> (например, для стёкол или решёток)</li>
+</ul>
+
+<p>В отличие от современных игр, где текстуры часто хранятся в открытых форматах (например, <code>.png</code> или <code>.tga</code>), <em>GTA SA</em> использует проприетарный формат <strong>TXD</strong>, который требует специальных инструментов для распаковки и редактирования. Важно понимать, что один TXD-файл может содержать текстуры для нескольких моделей транспорта, если они используют общие элементы (например, колёса или фары).</p>
+
+<p>Файлы TXD хранятся в архиве <code>gta3.img</code> (для стандартных машин) или в папке <code>models\txd</code> (для модов). Путь к текстуре конкретного транспорта можно найти в файле <code>vehicles.ide</code>, где каждой модели присвоен уникальный ID. Например, строка:</p>
+<pre><code>120, nrgs500, nrgs500, bike, NRG500, NRG500, null, normal, 5000, 0, 0, -1</code></pre>
+<p>указывает, что мотоцикл <em>NRG-500</em> использует TXD-файл с именем <code>nrgs500.txd</code>.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Перед редактированием TXD всегда делайте резервную копию оригинального файла! Даже небольшая ошибка при сохранении может привести к крашу игры при загрузке транспорта.</p></div>
+
+<h2 id="инструменты-для-работы-с-txd-от-распаковки-до-редактирования">Инструменты для работы с TXD: от распаковки до редактирования</h2>
+
+<p>Для работы с TXD-файлами потребуется набор утилит, каждая из которых выполняет свою функцию. Ниже — проверенные инструменты, которые используют моддеры с 2000-х годов и по сей день:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Инструмент</th>
+      <th>Назначение</th>
+      <th>Ссылка на скачивание</th>
+      <th>Особенности</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>TXD Workshop</strong></td>
+      <td>Распаковка/упаковка TXD, просмотр текстур</td>
+      <td><a href="https://www.gtamodding.com/">GTAModding.com</a></td>
+      <td>Поддерживает форматы до <em>GTA V</em>, но для <em>SA</em> лучше использовать версию 3.1.1</td>
+    </tr>
+    <tr>
+      <td><strong>Magic.TXD</strong></td>
+      <td>Продвинутое редактирование текстур</td>
+      <td><a href="https://libertycity.net/">LibertyCity.net</a></td>
+      <td>Умеет работать с <code>.dff</code> и <code>.col</code>, но требует <strong>.NET Framework 4.8</strong></td>
+    </tr>
+    <tr>
+      <td><strong>GIMP + Plugin DFF/TXD</strong></td>
+      <td>Редактирование текстур в слоях</td>
+      <td><a href="https://www.gimp.org/">Официальный сайт GIMP</a></td>
+      <td>Бесплатная альтернатива Photoshop, но плагин нужно настраивать вручную</td>
+    </tr>
+    <tr>
+      <td><strong>RenderWare Analyzer</strong></td>
+      <td>Анализ структуры TXD, исправление ошибок</td>
+      <td><a href="https://www.mixmods.com.br/">MixMods</a></td>
+      <td>Полезен для диагностики "битых" текстур, но сложен для новичков</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Для большинства задач достаточно <strong>TXD Workshop</strong> + <em>Photoshop</em>/<em>GIMP</em>. Однако если вы планируете создавать TXD с нуля (например, для кастомного транспорта), потребуется <strong>Magic.TXD</strong> — он позволяет задавать параметры сжатия текстур и управлять альфа-каналами. Обратите внимание: некоторые инструменты (например, <em>RenderWare Analyzer</em>) могут конфликтовать с антивирусами из-за низкоуровневой работы с файлами игры.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой инструмент вы используете для редактирования TXD?</strong><ul><li>TXD Workshop</li><li>Magic.TXD</li><li>GIMP с плагином</li><li>Другой</li><li>Не редактировал TXD</li></ul></div></div>
+
+<h2 id="пошаговая-инструкция-как-изменить-текстуру-машины-в-gta-sa">Пошаговая инструкция: как изменить текстуру машины в GTA SA</h2>
+
+<p>Рассмотрим процесс на примере замены текстуры <em>Infernus</em> (спортивного автомобиля) на кастомный дизайн. Вам понадобится:</p>
+<ul>
+  <li>📁 Резервная копия файла <code>infernus.txd</code> (находится в <code>models\txd</code>)</li>
+  <li>🖌️ Графический редактор (например, <em>Photoshop</em> с плагином <strong>NVIDIA Texture Tools</strong>)</li>
+  <li>🔧 <strong>TXD Workshop</strong> или <strong>Magic.TXD</strong></li>
+</ul>
+
+<p><strong>Шаг 1. Извлечение текстур из TXD</strong></p>
+<p>Откройте <code>infernus.txd</code> в <strong>TXD Workshop</strong>. В левой панели вы увидите список текстур (обычно <code>vehicle_256</code>, <code>vehicle_lights</code> и т.д.). Кликните правой кнопкой по текстуре и выберите <code>Export</code> → сохраните в формате <code>.png</code> или <code>.tga</code> (рекомендуется <code>32-bit</code> для поддержки прозрачности).</p>
+
+<p><strong>Шаг 2. Редактирование текстур</strong></p>
+<p>Откройте экспортированный файл в <em>Photoshop</em>. Учтите:</p>
+<ul>
+  <li>🎨 Разрешение текстуры должно оставаться оригинальным (обычно <code>256×256</code> или <code>512×512</code>). Увеличение размера приведёт к артефактам!</li>
+  <li>🔄 Сохраняйте альфа-канал (если он есть) — он отвечает за прозрачные элементы (стёкла, фары).</li>
+  <li>🖼️ Для реалистичных бликов добавьте <strong>спекулярную карту</strong> (обычно это отдельная текстура с суффиксом <code>_s</code>).</li>
+</ul>
+
+
+<p>Сохранён оригинальный размер (256x256/512x512)|</p>
+<p>Формат файла — PNG/TGA с альфа-каналом (если нужен)|</p>
+<p>Имя файла совпадает с оригинальным (например, vehicle_256)|</p>
+<p>Спекулярная карта отредактирована синхронно с диффузной|--></p>
+
+<p><strong>Шаг 3. Импорт текстур обратно в TXD</strong></p>
+<p>В <strong>TXD Workshop</strong>:</p>
+<ol>
+  <li>Удалите старую текстуру (правая кнопка → <code>Remove</code>).</li>
+  <li>Нажмите <code>Add</code> → выберите отредактированный файл.</li>
+  <li>Убедитесь, что в настройках импорта стоит <code>DXT1</code> (для текстур без прозрачности) или <code>DXT5</code> (с прозрачностью).</li>
+  <li>Сохраните TXD-файл под оригинальным именем (<code>infernus.txd</code>).</li>
+</ol>
+
+<p><strong>Шаг 4. Тестирование в игре</strong></p>
+<p>Запустите <em>GTA SA</em> и проверьте внешний вид <em>Infernus</em> в игре. Если машина стала розовой или текстуры не отображаются:</p>
+<ul>
+  <li>🚨 Убедитесь, что формат сжатия текстур совпадает с оригиналом.</li>
+  <li>🔍 Проверьте путь к TXD-файлу в <code>vehicles.ide</code>.</li>
+  <li>🔄 Переустановите мод (возможно, конфликт с другими модификациями).</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Всегда тестируйте модифицированный TXD на чистой версии игры (без других модов) — это поможет быстро выявить источник проблем.</p></div>
+
+<h2 id="типичные-ошибки-при-работе-с-txd-и-как-их-исправить">Типичные ошибки при работе с TXD и как их исправить</h2>
+
+<p>Даже опытные моддеры сталкиваются с багами при редактировании TXD. Вот наиболее распространённые проблемы и их решения:</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если после замены TXD машина в игре отображается <strong>розовым цветом</strong>, это означает, что игра не может загрузить текстуру. Причины:</blockquote>
+<ul>
+  <li>🔴 Неправильный формат сжатия (например, <code>DXT3</code> вместо <code>DXT5</code> для текстур с прозрачностью).</li>
+  <li>🔴 Ошибка в имени файла (регистр важен! <code>Vehicle_256</code> ≠ <code>vehicle_256</code>).</li>
+  <li>🔴 TXD-файл сохранён в неправильной кодировке (должен быть <code>ANSI</code>, а не <code>UTF-8</code>).</li>
+</ul>
+
+<p><strong>"Вылет игры при загрузке транспорта"</strong></p>
+<p>Если игра крашится при появлении модифицированной машины, проверьте:</p>
+<ul>
+  <li>📏 Разрешение текстур: оно должно быть степенью двойки (<code>32×32</code>, <code>64×64</code>, <code>128×128</code> и т.д.).</li>
+  <li>🎨 Формат файла: <em>GTA SA</em> не поддерживает <code>.jpg</code> или <code>.bmp</code> — только <code>.png</code>/<code>.tga</code>.</li>
+  <li>🔧 Конфликты с другими модами: попробуйте отключить все моды, кроме вашего TXD.</li>
+</ul>
+
+<p><strong>"Текстуры мерцают или искажены"</strong></p>
+<p>Это типично для:</p>
+<ul>
+  <li>🖼️ Неправильных настроек мипмэппинга (в <strong>TXD Workshop</strong> отключите <code>Generate Mipmaps</code>, если оригинальный TXD их не использовал).</li>
+  <li>🎨 Чрезмерной компрессии текстур (попробуйте сохранить в <code>DXT1</code> без сжатия).</li>
+  <li>🔄 Конфликта с ENB-модами или графическими улучшениями (например, <em>VisualV</em>).</li>
+</ul>
+
+<details class="faq-item"><summary>Как проверить совместимость TXD с ENB-модами?</summary><div class="faq-answer"><p>
+<p>Многие ENB-моды (например, <em>ReShade</em> или <em>GTA IV Style</em>) переопределяют рендеринг текстур. Если после установки ENB ваш кастомный TXD отображается неправильно:</p>
+<p>1. Отключите ENB (переименуйте <code>d3d9.dll</code> в <code>d3d9_backup.dll</code>).</p>
+<p>2. Если проблема исчезла — настройте ENB через <code>ENBSeries.ini</code>, добавив строку:</p>
+   <pre><code>EnableTextureOverride=false</code></pre>
+<p>3. Для некоторых модов (например, <em>NaturalVision Remastered</em>) потребуется ручная правка шейдеров.</p>
+<p></p></div></details></p>
+
+<h2 id="оптимизация-txd-как-уменьшить-размер-без-потери-качества">Оптимизация TXD: как уменьшить размер без потери качества</h2>
+
+<p>Большие TXD-файлы могут замедлять загрузку игры, особенно если вы используете много высокодетализированных модов. Вот как оптимизировать текстуры:</p>
+
+<p><strong>1. Выбор правильного формата сжатия</strong></p>
+<p>В <em>GTA SA</em> поддерживаются следующие форматы:</p>
+<ul>
+  <li>🔹 <code>DXT1</code> — без прозрачности, минимальный размер (идеален для кузова).</li>
+  <li>🔹 <code>DXT3</code> — с прозрачностью, но больший размер, чем <code>DXT5</code>.</li>
+  <li>🔹 <code>DXT5</code> — оптимален для текстур с альфа-каналом (стёкла, фары).</li>
+  <li>🔹 <code>32-bit RGBA</code> — максимальное качество, но большой размер (используйте только для ключевых элементов).</li>
+</ul>
+
+<p><strong>2. Уменьшение разрешения</strong></p>
+<p>Стандартные текстуры в <em>GTA SA</em> имеют разрешение <code>256×256</code> или <code>512×512</code>. Увеличение до <code>1024×1024</code> даст минимальный прирост качества, но сильно увеличит нагрузку на видеокарту. Оптимальный баланс:</p>
+<ul>
+  <li>📏 Кузов машины: <code>512×512</code> (максимум).</li>
+  <li>📏 Колёса/фары: <code>256×256</code>.</li>
+  <li>📏 Детали салона: <code>128×128</code>.</li>
+</ul>
+
+<p><strong>3. Удаление ненужных текстур</strong></p>
+<p>Многие TXD-файлы содержат дублирующиеся или неиспользуемые текстуры (например, <code>vehicle_damage</code> для повреждённых частей). Если вы не планируете их редактировать, удалите их из TXD через <strong>Magic.TXD</strong> — это сократит размер файла на 20–40%.</p>
+
+<p><strong>4. Инструменты для пакетной оптимизации</strong></p>
+<p>Для обработки большого количества TXD используйте:</p>
+<ul>
+  <li>🛠️ <strong>TXD Batch Converter</strong> — конвертирует текстуры в нужный формат за один клик.</li>
+  <li>🛠️ <strong>NVIDIA Texture Tools Exporter</strong> (плагин для <em>Photoshop</em>) — оптимизирует текстуры под <em>GTA SA</em> с минимальными потерями.</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если вы создаёте TXD для <em>GTA SA: Definitive Edition</em>, используйте формат <code>BC7</code> вместо <code>DXT</code> — он лучше поддерживается современными видеокартами и даёт более чёткое изображение при том же размере файла.</p></div>
+
+<h2 id="где-скачать-готовые-txd-паки-для-популярных-машин">Где скачать готовые TXD-паки для популярных машин</h2>
+
+<p>Если вы не хотите создавать текстуры с нуля, можно воспользоваться готовыми модами. Лучшие ресурсы для скачивания TXD:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ресурс</th>
+      <th>Тип контента</th>
+      <th>Плюсы</th>
+      <th>Минусы</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://www.gtainside.com/">GTAInside</a></td>
+      <td>TXD для стандартных и кастомных машин</td>
+      <td>Большая база, есть рейтинг модов</td>
+      <td>Много устаревших файлов (проверяйте дату загрузки!)</td>
+    </tr>
+    <tr>
+      <td><a href="https://libertycity.net/">LibertyCity</a></td>
+      <td>Высококачественные ретекстуринги</td>
+      <td>Моды проходят модерацию</td>
+      <td>Регистрация обязательна для скачивания</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.mixmods.com.br/">MixMods</a></td>
+      <td>TXD для бразильских и европейских модов</td>
+      <td>Уникальные текстуры (например, для <em>Bus</em> или <em>Tractor</em>)</td>
+      <td>Интерфейс на португальском, но есть переводчик</td>
+    </tr>
+    <tr>
+      <td><a href="https://www.lcpdfr.com/">LCPDFR</a></td>
+      <td>TXD для полицейских и служебных машин</td>
+      <td>Реалистичные текстуры (например, для <em>Police</em> или <em>FBI Truck</em>)</td>
+      <td>Форум ориентирован на <em>GTA IV</em>, но есть раздел для <em>SA</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>При скачивании готовых TXD обращайте внимание на:</p>
+<ul>
+  <li>📌 <strong>Версию игры</strong>: некоторые моды работают только с <em>GTA SA 1.0 US</em>.</li>
+  <li>📌 <strong>Требования</strong>: часто нужны дополнительные файлы (например, <code>.dff</code> или <code>.col</code>).</li>
+  <li>📌 <strong>Отзывы</strong>: если в комментариях пишут о багах с текстурами, лучше поискать альтернативу.</li>
+</ul>
+
+<p>Популярные TXD-паки:</p>
+<ul>
+  <li>🚗 <strong>Realistic Vehicle Textures by DK22Pac</strong> — улучшенные текстуры для всех стандартных машин.</li>
+  <li>🚓 <strong>LCPD Pack by Officer Five-0</strong> — полный ретекстуринг полицейского транспорта.</li>
+  <li>🏁 <strong>NFS Underground Cars TXD</strong> — текстуры в стиле игры <em>Need for Speed</em>.</li>
+</ul>
+
+<h2 id="txd-для-кастомных-транспортных-средств-особенности-и-лайфхаки">TXD для кастомных транспортных средств: особенности и лайфхаки</h2>
+
+<p>Если вы создаёте <strong>кастомный транспорт</strong> (например, добавляете в игру <em>Lamborghini Aventador</em> или <em>Tesla Model S</em>), работа с TXD имеет свои нюансы:</p>
+
+<p><strong>1. Создание TXD с нуля</strong></p>
+<p>Для новой модели потребуется:</p>
+<ol>
+  <li>Сгенерировать текстуры в <em>3ds Max</em>/<em>Blender</em> (разрешение кратно 2, например <code>1024×1024</code>).</li>
+  <li>Экспортировать их в <code>.png</code> с альфа-каналом (если нужна прозрачность).</li>
+  <li>Собрать TXD в <strong>Magic.TXD</strong>, указав правильные имена текстур (например, <code>vehicle_1024</code> для кузова).</li>
+</ol>
+
+<p><strong>2. Привязка TXD к модели</strong></p>
+<p>В файле <code>vehicles.ide</code> для кастомной машины должна быть строка вида:</p>
+<pre><code>21000, aventador, aventador, car, AVENTADOR, AVENTADOR, null, normal, 50000, 0, 0, -1</code></pre>
+<p>Где <code>aventador</code> — это имя вашего <code>.dff</code> и <code>.txd</code> файлов. Убедитесь, что:</p>
+<ul>
+  <li>🔗 Имена <code>.dff</code> и <code>.txd</code> совпадают.</li>
+  <li>📁 Файлы лежат в правильных папках:
+    <pre><code>models\gta3\vehicles\aventador.dff
+<p>models\txd\aventador.txd</code></pre></p>
+  </li>
+</ul>
+
+<p><strong>3. Оптимизация для производительности</strong></p>
+<p>Кастомные машины часто имеют более детализированные текстуры, что может приводить к лагам. Чтобы избежать этого:</p>
+<ul>
+  <li>🖼️ Используйте <code>DXT1</code> для кузова и <code>DXT5</code> только для стёкол/фар.</li>
+  <li>🔧 Отключите ненужные эффекты в <code>vehicle.ide</code> (например, <code>reflection</code>, если машина не блестящая).</li>
+  <li>📉 Уменьшите количество уникальных текстур: например, используйте одну текстуру для передних и задних колёс.</li>
+</ul>
+
+<details class="faq-item"><summary>Как добавить анимацию текстур (например, мигающие фары)?</summary><div class="faq-answer"><p>
+<p>Для анимации текстур в <em>GTA SA</em> потребуется:</p>
+<p>1. Создать несколько кадров анимации (например, <code>light_on.tga</code> и <code>light_off.tga</code>).</p>
+<p>2. В <strong>TXD Workshop</strong> добавить их как отдельные текстуры с суффиксами <code>_0</code>, <code>_1</code> и т.д.</p>
+<p>3. В файле <code>carcols.dat</code> прописать параметры анимации:</p>
+   <pre><code>aventador, 1, 1, light_0, light_1, 500</code></pre>
+<p>где <code>500</code> — задержка между кадрами в миллисекундах.</p>
+<p>4. Для сложных анимаций (например, вращающихся колёс) потребуется правка <code>.dff</code>-модели в <em>3ds Max</em>.</p>
+<p></p></div></details></p>
+
+<h2 id="faq-ответы-на-частые-вопросы-о-txd-в-gta-sa">FAQ: ответы на частые вопросы о TXD в GTA SA</h2>
+
+<details>
+  <summary>🔧 Как узнать, какой TXD-файл соответствует конкретной машине?</summary>
+  <p>Откройте файл <code>vehicles.ide</code> в папке <code>data</code> и найдите строку с названием машины. Четвёртый параметр в строке — это имя TXD-файла. Например, для <em>Cheetah</em> строка выглядит так:</p>
+  <pre><code>145, cheetah, cheetah, car, CHEETAH, CHEETAH, null, normal, 5000, 0, 0, -1</code></pre>
+  <p>Значит, текстуры хранятся в <code>cheetah.txd</code>.</p>
+</details>
+
+<details>
+  <summary>🎨 Можно ли конвертировать TXD из GTA Vice City в San Andreas?</summary>
+  <p>Технически да, но с оговорками:</p>
+  <ol>
+    <li>Форматы TXD в <em>GTA VC</em> и <em>SA</em> совместимы, но разрешения текстур могут отличаться.</li>
+    <li>В <em>SA</em> используется другая система освещения, поэтому текстуры из <em>VC</em> могут выглядеть слишком тёмными или яркими.</li>
+    <li>Некоторые эффекты (например, отражения) работают иначе, поэтому придётся править спекулярные карты.</li>
+  </ol>
+  <p>Для конвертации используйте <strong>TXD Workshop</strong> с опцией <code>Convert to SA format</code>.</p>
+</details>
+
+<details>
+  <summary>🖥️ Почему после установки мода с TXD игра тормозит?</summary>
+  <p>Причины могут быть следующими:</p>
+  <ul>
+    <li>🔹 Слишком высокое разрешение текстур (оптимально — не более <code>512×512</code> для большинства машин).</li>
+    <li>🔹 Использование неподходящего формата сжатия (например, <code>32-bit</code> вместо <code>DXT1</code>).</li>
+    <li>🔹 Конфликт с другими модами, изменяющими графику (например, <em>VisualV</em> или <em>ENB</em>).</li>
+    <li>🔹 Недостаток видеопамяти (проверьте настройки игры в <code>gta_sa.set</code>).</li>
+  </ul>
+  <p>Решение: уменьшите разрешение текстур или отключите другие графические моды.</p>
+</details>
+
+<details>
+  <summary>🚗 Как сделать так, чтобы моя кастомная машина отображалась в меню выбора транспорта (например, в моде <em>Vehicle Spawner</em>)?</summary>
+  <p>Для этого нужно:</p>
+  <ol>
+    <li>Добавить строку с вашей машиной в <code>vehicles.ide</code> (см. пример выше).</li>
+    <li>Добавить строку в <code>carcols.dat</code> (для поддержки цветов):
+      <pre><code>aventador, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</code></pre>
+    </li>
+    <li>Добавить строку в <code>handling.cfg</code> для физики:
+      <pre><code>AVENTADOR 1200.0 2500.0 2.0 0.0 0.0 -0.3 55 0.85 0.85 0.5 5 220.0 30.0 5.0 P 8.0 0.45 0 35.0 1.2 0.15 0.0 30000 1 1 0.35</code></pre>
+    </li>
+    <li>Убедиться, что файлы <code>aventador.dff</code>, <code>aventador.txd</code> и <code>aventador.col</code> лежат в правильных папках.</li>
+  </ol>
+  <p>После этого машина будет доступна в любом спавнере транспорта.</p>
+</details>
+
+<details>
+  <summary>🔄 Можно ли вернуть оригинальные текстуры, если я удалил резервную копию TXD?</summary>
+  <p>Да, есть несколько способов:</p>
+  <ol>
+    <li>Переустановить игру (самый надёжный вариант).</li>
+    <li>Скачать оригинальные TXD с сайтов вроде <a href="https://www.gtamodding.com/">GTAModding</a> (раздел <code>Original Files</code>).</li>
+    <li>Использовать инструмент <strong>GTA SA File Restorer</strong>, который извлекает файлы из <code>gta3.img</code>.</li>
+  </ol>
+  <p>Если вы модифицировали <code>gta3.img</code>, восстановите его из резервной копии или скачайте чистый архив.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-txd-файлы-и-как-они-работают-в-gta-san-andreas">Что такое TXD-файлы и как они работают в GTA San Andreas</a></li><li><a href="#инструменты-для-работы-с-txd-от-распаковки-до-редактирования">Инструменты для работы с TXD: от распаковки до редактирования</a></li><li><a href="#пошаговая-инструкция-как-изменить-текстуру-машины-в-gta-sa">Пошаговая инструкция: как изменить текстуру машины в GTA SA</a></li><li><a href="#типичные-ошибки-при-работе-с-txd-и-как-их-исправить">Типичные ошибки при работе с TXD и как их исправить</a></li><li><a href="#оптимизация-txd-как-уменьшить-размер-без-потери-качества">Оптимизация TXD: как уменьшить размер без потери качества</a></li><li><a href="#где-скачать-готовые-txd-паки-для-популярных-машин">Где скачать готовые TXD-паки для популярных машин</a></li><li><a href="#txd-для-кастомных-транспортных-средств-особенности-и-лайфхаки">TXD для кастомных транспортных средств: особенности и лайфхаки</a></li><li><a href="#faq-ответы-на-частые-вопросы-о-txd-в-gta-sa">FAQ: ответы на частые вопросы о TXD в GTA SA</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/1/12/121-mersedes-foto.html" class="related-card">121 Mercedes: фото всех поколений, особенности и где найти редкие снимки</a></li><li><a href="/articles/v/vi/vin-decoder-mercedes.html" class="related-card">Vin decoder Mercedes: расшифровка кода, проверка комплектации</a></li><li><a href="/articles/k/kh/khronologiya-google-kart.html" class="related-card">Хронология Google Карт: от Where 2 до Street View и AI-картографии</a></li><li><a href="/articles/n/ne/ne-otkryvaetsya-mersedes-s-klyucha.html" class="related-card">Не открывается Мерседес с ключа: причины и решение</a></li><li><a href="/articles/m/mc/mclaren-eto-mercedes.html" class="related-card">McLaren и Mercedes: история альянса двигателей AMG</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/1/12/121-mersedes-foto.html" class="related-bottom-card"><span class="related-bottom-title">121 Mercedes: фото всех поколений, особенности и где найти редкие снимки</span><span class="related-bottom-desc">Подборка уникальных фото &lt;em&gt;Mercedes-Benz W121&lt;/em&gt; (190SL, 190D, 190c): редкие ракурсы, технически</span></a><a href="/articles/v/vi/vin-decoder-mercedes.html" class="related-bottom-card"><span class="related-bottom-title">Vin decoder Mercedes: расшифровка кода, проверка комплектации</span><span class="related-bottom-desc">Полный vin decoder Mercedes-Benz. Узнайте, как расшифровать код кузова, проверить комплектацию по VI</span></a><a href="/articles/k/kh/khronologiya-google-kart.html" class="related-bottom-card"><span class="related-bottom-title">Хронология Google Карт: от Where 2 до Street View и AI-картографии</span><span class="related-bottom-desc">Эволюция Google Maps с 2004 по 2026: ключевые обновления, технологии и как они изменили навигацию. П</span></a><a href="/articles/n/ne/ne-otkryvaetsya-mersedes-s-klyucha.html" class="related-bottom-card"><span class="related-bottom-title">Не открывается Мерседес с ключа: причины и решение</span><span class="related-bottom-desc">Мерседес не реагирует на ключ? Разбираем основные причины разрядки батарейки, неисправности замков и</span></a><a href="/articles/m/mc/mclaren-eto-mercedes.html" class="related-bottom-card"><span class="related-bottom-title">McLaren и Mercedes: история альянса двигателей AMG</span><span class="related-bottom-desc">Правда ли, что McLaren это Mercedes? Раскрываем детали сотрудничества, технические нюансы моторов V8</span></a><a href="/articles/k/ka/kak-vklyuchit-carplay-v-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Как включить CarPlay в Мерседес: инструкция для всех моделей</span><span class="related-bottom-desc">Пошаговое руководство, как активировать Apple CarPlay в Mercedes-Benz. Решения для A, C, E, S-Class </span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

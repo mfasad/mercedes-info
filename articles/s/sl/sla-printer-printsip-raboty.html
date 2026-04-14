@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>SLA-принтер: принцип работы, технология и особенности печати — Мерседес Инфо</title>
+    <meta name="description" content="Как работает SLA-принтер? Подробный разбор технологии стереолитографии, преимущества и недостатки, сравнение с другими 3D-методами.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/s/sl/sla-printer-printsip-raboty.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="SLA-принтер: принцип работы, технология и особенности печати">
+    <meta property="og:description" content="Как работает SLA-принтер? Подробный разбор технологии стереолитографии, преимущества и недостатки, сравнение с другими 3D-методами.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">SLA-принтер: принцип работы, технология и особенности печати</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>SLA-принтер: устройство, принцип работы и нюансы технологии</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-sla-печать-и-чем-она-отличается-от-других-технологий">Что такое SLA-печать и чем она отличается от других технологий</a></li><li><a href="#устройство-sla-принтера-основные-компоненты">Устройство SLA-принтера: основные компоненты</a></li><li><a href="#принцип-работы-sla-принтера-пошаговый-процесс">Принцип работы SLA-принтера: пошаговый процесс</a></li><li><a href="#виды-sla-принтеров-лазерные-vs-dlplcd">Виды SLA-принтеров: лазерные vs. DLP/LCD</a></li><li><a href="#преимущества-и-недостатки-sla-печати">Преимущества и недостатки SLA-печати</a></li><li><a href="#постобработка-sla-моделей-что-нужно-знать">Постобработка SLA-моделей: что нужно знать</a></li><li><a href="#сравнение-sla-с-другими-технологиями-3d-печати">Сравнение SLA с другими технологиями 3D-печати</a></li><li><a href="#faq-частые-вопросы-о-sla-печати">FAQ: Частые вопросы о SLA-печати</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>3D-печать революционизировала производство, но не все технологии одинаково эффективны. Если вам нужны детали с <strong>идеально гладкой поверхностью</strong> и <strong>высокой точностью</strong>, то <em>SLA-принтеры</em> (от англ. <em>Stereolithography Apparatus</em>) становятся одним из лучших решений. Эта технология, изобретённая ещё в 1980-х, до сих пор остаётся актуальной благодаря уникальному принципу работы: вместо плавления пластика здесь используется <strong>отверждение жидкой смолы под действием лазера</strong>.</p>
+
+<p>В отличие от <em>FDM-печати</em>, где слои накладываются друг на друга из расплавленной нити, SLA создаёт объекты путём последовательного "выращивания" их из фотополимерной ванны. Результат — модели с разрешением до <code>25 микрон</code>, которые не требуют постобработки для удаления видимых слоёв. Но как именно это работает? И почему <em>Formlabs</em>, <em>Anycubic</em> и другие производители до сих пор совершенствуют эту технологию?</p>
+
+<h2 id="что-такое-sla-печать-и-чем-она-отличается-от-других-технологий">Что такое SLA-печать и чем она отличается от других технологий</h2>
+
+<p>SLA (или <strong>стереолитография</strong>) — это аддитивная технология, где в качестве исходного материала используется <em>фотополимерная смола</em>. В отличие от <em>FDM</em> (плавление пластиковой нити) или <em>SLS</em> (спекание порошка), здесь процесс основывается на <strong>химической реакции</strong>: под воздействием ультрафиолетового (УФ) лазера смола полимеризуется, превращаясь из жидкости в твёрдый пластик.</p>
+
+<p>Ключевые отличия SLA от других методов 3D-печати:</p>
+<ul>
+  <li>🔹 <strong>Высокая детализация</strong>: минимальная толщина слоя — от <code>25 до 100 микрон</code> (против <code>100–300 микрон</code> у FDM).</li>
+  <li>🔹 <strong>Гладкая поверхность</strong>: не требуется шлифовка, в отличие от моделей с видимыми слоями (как у FDM).</li>
+  <li>🔹 <strong>Ограниченный выбор материалов</strong>: только фотополимерные смолы (нет возможности печатать ABS, PETG и т.д.).</li>
+  <li>🔹 <strong>Необходимость постобработки</strong>: промывка в изопропиловом спирте и УФ-отверждение — обязательные этапы.</li>
+</ul>
+
+<p>Технология SLA идеальна для <em>прототипирования</em>, <em>ювелирных изделий</em>, <em>стоматологических моделей</em> и деталей с сложной геометрией. Однако она не подходит для печати крупногабаритных изделий или функциональных прототипов, требующих высокой прочности (например, шестерёнок или корпусных деталей).</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какую технологию 3D-печати вы используете чаще?</strong><ul><li>FDM</li><li>SLA</li><li>SLS</li><li>DLP/LCD</li><li>Другую</li></ul></div></div>
+
+<h2 id="устройство-sla-принтера-основные-компоненты">Устройство SLA-принтера: основные компоненты</h2>
+
+<p>Конструкция SLA-принтера радикально отличается от FDM-аппаратов. Здесь нет экструдера, нагревательного стола или подачи нити. Вместо этого ключевыми элементами являются:</p>
+
+<ol>
+  <li><strong>УФ-лазер</strong> (или проектор в случае <em>DLP/LCD-принтеров</em>) — источник света, инициирующий полимеризацию смолы.</li>
+  <li><strong>Ванна со смолой</strong> — резервуар с жидким фотополимером, где формируется модель.</li>
+  <li><strong>Платформа построения</strong> — подвижная платформа, которая постепенно поднимается по мере отверждения слоёв.</li>
+  <li><strong>Система управления</strong> — контроллер, управляющий движением лазера и платформы (часто на базе <em>Raspberry Pi</em> или специализированных чипов).</li>
+  <li><strong>Механизм рециркуляции смолы</strong> — обеспечивает равномерное распределение материала в ванне.</li>
+</ol>
+
+<p>В современных моделях (например, <em>Formlabs Form 3+</em> или <em>Anycubic Photon Mono X</em>) также используются:</p>
+<ul>
+  <li>🛡️ <strong>Защитные фильтры</strong> для блокировки УФ-излучения.</li>
+  <li>🔄 <strong>Системы автоматической калибровки</strong> платформы.</li>
+  <li>🌡️ <strong>Подогрев смолы</strong> для поддержания оптимальной вязкости.</li>
+</ul>
+
+<p>Важно понимать, что <mark>SLA-принтеры требуют строгого контроля температуры и влажности в помещении</mark> — отклонения могут привести к деформации моделей или неполной полимеризации.</p>
+
+<h2 id="принцип-работы-sla-принтера-пошаговый-процесс">Принцип работы SLA-принтера: пошаговый процесс</h2>
+
+<p>Процесс печати на SLA-принтере можно разделить на <strong>5 ключевых этапов</strong>, каждый из которых критичен для конечного результата:</p>
+
+<ol>
+  <li>
+    <strong>Подготовка 3D-модели</strong>
+    <p>Файл в формате <code>.STL</code> или <code>.OBJ</code> загружается в слайсер (например, <em>PreForm</em> для <em>Formlabs</em> или <em>Chitubox</em> для LCD-принтеров). Программа нарезает модель на слои и рассчитывает <strong>опоры</strong> (supports), без которых деталь может деформироваться.</p>
+  </li>
+  <li>
+    <strong>Заливка смолы и калибровка</strong>
+    <p>Ванна заполняется фотополимером, платформа опускается на стартовую позицию (обычно на <code>0.1–0.3 мм</code> выше дна). Лазер или проектор проходит тестовую проверку фокусировки.</p>
+  </li>
+  <li>
+    <strong>Послойное отверждение</strong>
+    <p>Лазер (или УФ-проектор) "рисует" первый слой на поверхности смолы, вызывая её полимеризацию. Платформа поднимается на толщину слоя, и процесс повторяется. Скорость зависит от мощности лазера и вязкости смолы.</p>
+  </li>
+  <li>
+    <strong>Извлечение и промывка</strong>
+    <p>После печати модель извлекается из ванны и помещается в <em>ультразвуковую ванну</em> или контейнер с изопропиловым спиртом для удаления неотверждённой смолы.</p>
+  </li>
+  <li>
+    <strong>Финальное УФ-отверждение</strong>
+    <p>Деталь облучается УФ-лампой (например, в <em>Form Cure</em>) для достижения максимальной прочности. Без этого этапа модель останется хрупкой.</p>
+  </li>
+</ol>
+
+
+<p>Убедиться, что ванна чистая и без остатков старой смолы|</p>
+<p>Проверить уровень смолы (должен покрывать платформу на 10–15 мм)|</p>
+<p>Откалибровать платформу (зазор между платформой и дном ванны — 0.1 мм)|</p>
+<p>Закрыть крышку принтера (УФ-излучение опасно для глаз)|</p>
+<p>Подключить вытяжку или работать в проветриваемом помещении</p>
+<p>--></p>
+
+<p>Время печати зависит от высоты модели и настроек слоя. Например, фигурка высотой <code>5 см</code> с толщиной слоя <code>50 микрон</code> напечатается за <code>2–4 часа</code>, а та же модель с слоем <code>25 микрон</code> — за <code>6–8 часов</code>.</p>
+
+<h2 id="виды-sla-принтеров-лазерные-vs-dlplcd">Виды SLA-принтеров: лазерные vs. DLP/LCD</h2>
+
+<p>Хотя термин "SLA" часто используется как синоним любой смоловой печати, на практике выделяют <strong>два основных подвида</strong>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Лазерные SLA</th>
+      <th>DLP/LCD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Источник света</strong></td>
+      <td>УФ-лазер (точечное воздействие)</td>
+      <td>Проектор или LCD-экран (отверждение всего слоя сразу)</td>
+    </tr>
+    <tr>
+      <td><strong>Скорость печати</strong></td>
+      <td>Медленнее (лазер "рисует" каждый слой)</td>
+      <td>Быстрее (весь слой экспонируется за раз)</td>
+    </tr>
+    <tr>
+      <td><strong>Разрешение</strong></td>
+      <td>Выше (до <code>25 микрон</code>)</td>
+      <td>Зависит от разрешения экрана (обычно <code>50–100 микрон</code>)</td>
+    </tr>
+    <tr>
+      <td><strong>Стоимость</strong></td>
+      <td>Дороже (сложная оптика)</td>
+      <td>Дешевле (например, <em>Anycubic Photon</em> от 200$)</td>
+    </tr>
+    <tr>
+      <td><strong>Примеры моделей</strong></td>
+      <td><em>Formlabs Form 3+</em>, <em>3D Systems ProJet</em></td>
+      <td><em>Creality LD-002R</em>, <em>Elegoo Mars</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Лазерные SLA-принтеры обеспечивают <strong>лучшую детализацию</strong>, но требуют более сложного обслуживания. DLP/LCD-принтеры дешевле и проще в использовании, но уступают в точности из-за "пикселизации" слоёв (эффект видимых точек на наклонных поверхностях).</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если вам нужны миниатюрные детали (например, для настольных игр), выбирайте лазерный SLA. Для крупных моделей (маски, корпусные детали) подойдёт DLP/LCD — он быстрее и дешевле.</p></div>
+
+<h2 id="преимущества-и-недостатки-sla-печати">Преимущества и недостатки SLA-печати</h2>
+
+<p>Как и любая технология, SLA имеет свои сильные и слабые стороны. Рассмотрим их подробнее:</p>
+
+<h3>✅ Преимущества</h3>
+<ul>
+  <li>🎯 <strong>Высокое разрешение</strong>: идеально для ювелирных изделий, зубных протезов и миниатюр.</li>
+  <li>🖌️ <strong>Гладкая поверхность</strong>: не требуется постобработка абразивами.</li>
+  <li>🔄 <strong>Возможность печати сложных геометрий</strong>: полые структуры, решётки, тонкие стенки.</li>
+  <li>🧪 <strong>Биосовместимые смолы</strong>: подходят для медицинских применений (например, <em>Formlabs Dental SG</em>).</li>
+</ul>
+
+<h3>❌ Недостатки</h3>
+<ul>
+  <li>⚠️ <strong>Хрупкость готовых изделий</strong>: без УФ-отверждения модели ломаются от лёгкого давления.</li>
+  <li>🧴 <strong>Ограниченный срок хранения смолы</strong>: фотополимеры портятся под воздействием света и воздуха.</li>
+  <li>🚫 <strong>Токсичность</strong>: смола и растворители (изопропиловый спирт) требуют средств защиты.</li>
+  <li>💰 <strong>Высокая стоимость расходников</strong>: 1 литр смолы стоит от <code>50$</code> (против <code>20$</code> за килограмм FDM-пластика).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Некоторые смолы (например, <em>Standard Resin</em> от <em>Formlabs</em>) при неполной полимеризации могут вызывать раздражение кожи. Всегда используйте нитриловые перчатки и респиратор при работе с фотополимерами.</blockquote>
+
+<h2 id="постобработка-sla-моделей-что-нужно-знать">Постобработка SLA-моделей: что нужно знать</h2>
+
+<p>В отличие от FDM, где модель готова сразу после печати, SLA-детали требуют <strong>обязательной постобработки</strong>. Пропуск любого этапа приведёт к ухудшению прочностных или эстетических свойств.</p>
+
+<h3>1. Промывка в растворителе</h3>
+<p>Неотверждённая смола остаётся на поверхности модели и внутри полостей. Для её удаления используют:</p>
+<ul>
+  <li>🧪 <strong>Изопропиловый спирт (IPA)</strong> — классический вариант (концентрация <code>90%+</code>).</li>
+  <li>🧼 <strong>Специальные промывочные станции</strong> (например, <em>Form Wash</em>).</li>
+  <li>💦 <strong>Ультразвуковые ванны</strong> — ускоряют процесс для сложных деталей.</li>
+</ul>
+<p>Время промывки: <code>5–15 минут</code> в зависимости от размера модели.</p>
+
+<h3>2. УФ-отверждение</h3>
+<p>После промывки модель остаётся мягкой. Для достижения максимальной прочности её облучают УФ-лампой (<code>405 нм</code>) в течение <code>10–30 минут</code>. Примеры устройств:</p>
+<ul>
+  <li>💡 <em>Form Cure</em> (для профессиональных принтеров).</li>
+  <li>☀️ <em>Anycubic Wash & Cure</em> (комбинированная станция).</li>
+  <li>🔦 Самодельные решения (УФ-LED ленты + вращающаяся платформа).</li>
+</ul>
+
+<h3>3. Дополнительная обработка (опционально)</h3>
+<p>Для улучшения внешнего вида или функциональности применяют:</p>
+<ul>
+  <li>🎨 <strong>Покраску</strong> (акриловые краски после грунтовки).</li>
+  <li>✨ <strong>Полировку</strong> (восковые составы или УФ-отверждаемые лаки).</li>
+  <li>🔧 <strong>Сборку</strong> (склеивание частей цианоакрилатным клеем).</li>
+</ul>
+
+<details class="faq-item"><summary>Что будет, если пропустить УФ-отверждение?</summary><div class="faq-answer"><p>
+<p>Без финального облучения модель останется липкой и хрупкой. Через несколько дней она может деформироваться или покрыться трещинами из-за неполной полимеризации внутренних слоёв. Особенно критично это для функциональных деталей (например, шестерёнок или защёлок).</p>
+<p></p></div></details></p>
+
+<h2 id="сравнение-sla-с-другими-технологиями-3d-печати">Сравнение SLA с другими технологиями 3D-печати</h2>
+
+<p>Чтобы понять, подходит ли SLA для ваших задач, сравним её с самыми популярными альтернативами:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>SLA</th>
+      <th>FDM</th>
+      <th>SLS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Материалы</strong></td>
+      <td>Фотополимерные смолы</td>
+      <td>PLA, ABS, PETG, TPU и др.</td>
+      <td>Порошковые полимеры (нейлон, полипропилен)</td>
+    </tr>
+    <tr>
+      <td><strong>Точность</strong></td>
+      <td>±<code>0.01–0.05 мм</code></td>
+      <td>±<code>0.1–0.3 мм</code></td>
+      <td>±<code>0.1–0.2 мм</code></td>
+    </tr>
+    <tr>
+      <td><strong>Прочность</strong></td>
+      <td>Низкая (хрупкие детали)</td>
+      <td>Средняя (зависит от пластика)</td>
+      <td>Высокая (подходит для функциональных прототипов)</td>
+    </tr>
+    <tr>
+      <td><strong>Постобработка</strong></td>
+      <td>Промывка + УФ-отверждение</td>
+      <td>Удаление опор, шлифовка</td>
+      <td>Очистка от порошка, иногда инфильтрация</td>
+    </tr>
+    <tr>
+      <td><strong>Стоимость</strong></td>
+      <td>$$$ (дорогие принтеры и смолы)</td>
+      <td>$ (бюджетные варианты от <code>200$</code>)</td>
+      <td>$$$$ (промышленное оборудование)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Выбор технологии зависит от целей:</p>
+<ul>
+  <li>🎨 <strong>Дизайн, ювелирные изделия, стоматология</strong> → SLA.</li>
+  <li>🔧 <strong>Функциональные прототипы, корпусные детали</strong> → FDM или SLS.</li>
+  <li>⚙️ <strong>Серийное производство, сложные механизмы</strong> → SLS или MJF.</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>SLA — лучший выбор для деталей с высокими требованиями к детализации и гладкости поверхности, но не подходит для нагруженных конструкций.</p></div>
+
+<h2 id="faq-частые-вопросы-о-sla-печати">FAQ: Частые вопросы о SLA-печати</h2>
+
+<details>
+  <summary>🔍 Можно ли печатать на SLA-принтере без опор (supports)?</summary>
+  <p>Теоретически да, но только для моделей с очень простой геометрией (например, плоские диски). Большинство деталей требуют опор, так как:</p>
+  <ul>
+    <li>Угол наклона более <code>30°</code> от вертикали приведёт к "заваливанию" слоёв.</li>
+    <li>Свесы и мосты без опор деформируются под собственным весом.</li>
+    <li>Смола имеет высокую вязкость, и новые слои могут "отрывать" предыдущие.</li>
+  </ul>
+  <p>Используйте автоматические генераторы опор в слайсерах (например, в <em>PreForm</em> или <em>Lychee Slicer</em>).</p>
+</details>
+
+<details>
+  <summary>⚠️ Насколько токсична смола для SLA-принтера?</summary>
+  <p>Фотополимерные смолы содержат <strong>акриловые мономеры</strong> и другие химические соединения, которые могут:</p>
+  <ul>
+    <li>Вызывать <strong>раздражение кожи</strong> при прямом контакте.</li>
+    <li>Приводить к <strong>респираторным проблемам</strong> при вдыхании паров (особенно при нагреве).</li>
+    <li>Быть <strong>вредными для окружающей среды</strong> при неправильной утилизации.</li>
+  </ul>
+  <p>Меры предосторожности:</p>
+  <ul>
+    <li>Работайте в <strong>перчатках</strong> (нитрил или латекс).</li>
+    <li>Используйте <strong>респиратор</strong> с фильтром от органических паров.</li>
+    <li>Храните смолу в <strong>герметичных ёмкостях</strong> вдали от света.</li>
+    <li>Утилизируйте отходы согласно местным нормам (не сливайте в канализацию!).</li>
+  </ul>
+</details>
+
+<details>
+  <summary>💡 Как увеличить прочность SLA-моделей?</summary>
+  <p>Хотя SLA-детали изначально хрупкие, их прочность можно улучшить:</p>
+  <ol>
+    <li><strong>Полное УФ-отверждение</strong>: используйте профессиональные камеры (например, <em>Form Cure</em>) с вращением модели для равномерного облучения.</li>
+    <li><strong>Термообработка</strong>: нагрев до <code>60–80°C</code> в течение <code>1–2 часов</code> увеличивает жёсткость (но может привести к деформации!).</li>
+    <li><strong>Покрытие эпоксидной смолой</strong>: создаёт защитный слой и склеивает микротрещины.</li>
+    <li><strong>Выбор смолы</strong>: для прочных деталей используйте инженерные смолы (например, <em>Formlabs Tough 2000 Resin</em>).</li>
+  </ol>
+  <p>Важно: даже после обработки SLA-модели не сравнятся по прочности с FDM-деталями из <em>ABS</em> или <em>поликарбоната</em>.</p>
+</details>
+
+<details>
+  <summary>🔧 Как чистить ванну SLA-принтера от засохшей смолы?</summary>
+  <p>Засохшая смола в ванне — распространённая проблема. Для очистки:</p>
+  <ol>
+    <li>Слейте жидкую смолу обратно в бутылку (если она не застыла).</li>
+    <li>Залейте в ванну <strong>изопропиловый спирт</strong> и оставьте на <code>10–15 минут</code>.</li>
+    <li>Аккуратно соскребите размягчённую смолу <strong>пластиковым скребком</strong> (не металлическим!).</li>
+    <li>Протрите ванну <strong>безворсовой салфеткой</strong>, смоченной в IPA.</li>
+    <li>Для стойких загрязнений используйте <strong>ультразвуковую ванну</strong> с IPA.</li>
+  </ol>
+  <blockquote>⚠️ <strong>Внимание:</strong> Не используйте ацетон или другие агрессивные растворители — они могут повредить прозрачное дно ванны (особенно если оно из <em>PDMS</em> или <em>FEP-плёнки</em>).</blockquote>
+</details>
+
+<details>
+  <summary>📏 Какой минимальный размер деталей можно напечатать на SLA-принтере?</summary>
+  <p>SLA-печать позволяет создавать <strong>ультрамелкие детали</strong> с разрешением до <code>25 микрон</code> (0.025 мм). Практические ограничения:</p>
+  <ul>
+    <li><strong>Толщина стенок</strong>: минимум <code>0.3–0.5 мм</code> (тоньше — риск поломки).</li>
+    <li><strong>Отверстия</strong>: диаметр от <code>0.5 мм</code> (меньше заполнится смолой).</li>
+    <li><strong>Выступающие элементы</strong>: длиной не более <code>1–2 мм</code> без опор.</li>
+  </ul>
+  <p>Примеры минимальных деталей:</p>
+  <ul>
+    <li>🕰️ Шестерёнки модулем <code>0.2 мм</code> (для часовых механизмов).</li>
+    <li>💍 Ювелирные кольца с гравировкой <code>0.1 мм</code>.</li>
+    <li>🦟 Микроскопические модели насекомых (размером с рисовое зёрнышко).</li>
+  </ul>
+  <p>Для печати таких деталей критически важна <strong>калибровка принтера</strong> и использование смол с низкой вязкостью (например, <em>Anycubic Standard Resin</em>).</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-sla-печать-и-чем-она-отличается-от-других-технологий">Что такое SLA-печать и чем она отличается от других технологий</a></li><li><a href="#устройство-sla-принтера-основные-компоненты">Устройство SLA-принтера: основные компоненты</a></li><li><a href="#принцип-работы-sla-принтера-пошаговый-процесс">Принцип работы SLA-принтера: пошаговый процесс</a></li><li><a href="#виды-sla-принтеров-лазерные-vs-dlplcd">Виды SLA-принтеров: лазерные vs. DLP/LCD</a></li><li><a href="#преимущества-и-недостатки-sla-печати">Преимущества и недостатки SLA-печати</a></li><li><a href="#постобработка-sla-моделей-что-нужно-знать">Постобработка SLA-моделей: что нужно знать</a></li><li><a href="#сравнение-sla-с-другими-технологиями-3d-печати">Сравнение SLA с другими технологиями 3D-печати</a></li><li><a href="#faq-частые-вопросы-о-sla-печати">FAQ: Частые вопросы о SLA-печати</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/v/ve/vehicle-blackbox-dvr-1080-otzyvy.html" class="related-card">Vehicle Blackbox DVR 1080: честные отзывы владельцев 2026 года</a></li><li><a href="/articles/s/st/starukha-dlya-diagnostiki-mersedes.html" class="related-card">Старуха для диагностики Мерседес: полное руководство по Star Diagnosis</a></li><li><a href="/articles/m/me/mersedes-iz-brigady.html" class="related-card">Мерседес из бригады: как проверить статус и историю авто</a></li><li><a href="/articles/k/ka/kak-snesti-icloud-na-iphone.html" class="related-card">Как полностью удалить iCloud с iPhone: пошаговая инструкция 2026</a></li><li><a href="/articles/m/ml/ml-166-amg.html" class="related-card">Mercedes-Benz ML 166 AMG: История создания и технические детали</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/v/ve/vehicle-blackbox-dvr-1080-otzyvy.html" class="related-bottom-card"><span class="related-bottom-title">Vehicle Blackbox DVR 1080: честные отзывы владельцев 2026 года</span><span class="related-bottom-desc">Реальные отзывы о регистраторах &lt;em&gt;Vehicle Blackbox DVR 1080&lt;/em&gt;: плюсы и минусы, сравнение моделе</span></a><a href="/articles/s/st/starukha-dlya-diagnostiki-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Старуха для диагностики Мерседес: полное руководство по Star Diagnosis</span><span class="related-bottom-desc">Подробный обзор ПО Star Diagnosis (Star) для Mercedes-Benz. Установка, настройка, совместимость с мо</span></a><a href="/articles/m/me/mersedes-iz-brigady.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес из бригады: как проверить статус и историю авто</span><span class="related-bottom-desc">Полный разбор термина «Мерседес из бригады». Как проверить авто по ВИН, найти реальные фото с аукцио</span></a><a href="/articles/k/ka/kak-snesti-icloud-na-iphone.html" class="related-bottom-card"><span class="related-bottom-title">Как полностью удалить iCloud с iPhone: пошаговая инструкция 2026</span><span class="related-bottom-desc">Узнайте, как правильно снести iCloud с iPhone без потери данных. Официальные и альтернативные методы</span></a><a href="/articles/m/ml/ml-166-amg.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz ML 166 AMG: История создания и технические детали</span><span class="related-bottom-desc">Полный обзор Mercedes-Benz ML 166 AMG: двигатели V8, подвеска и скрытые возможности легендарного вне</span></a><a href="/articles/m/me/mersedes-tslk-amg.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz CLK AMG: обзор, характеристики и цена</span><span class="related-bottom-desc">Полный гид по Mercedes-Benz CLK AMG (W209). Двигатели C32 и C55, технические особенности, тюнинг и с</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

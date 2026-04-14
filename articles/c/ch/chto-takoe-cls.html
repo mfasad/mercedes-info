@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>CLS в SEO: что это, как измерять и исправлять сдвиг контента — Мерседес Инфо</title>
+    <meta name="description" content="CLS (Cumulative Layout Shift) — ключевой показатель Core Web Vitals. Узнайте, как сдвиг макета влияет на ранжирование и как его оптимизировать для ускорения сайта.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/c/ch/chto-takoe-cls.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="CLS в SEO: что это, как измерять и исправлять сдвиг контента">
+    <meta property="og:description" content="CLS (Cumulative Layout Shift) — ключевой показатель Core Web Vitals. Узнайте, как сдвиг макета влияет на ранжирование и как его оптимизировать для ускорения сайта.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/cls/">Cls</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">CLS в SEO: что это, как измерять и исправлять сдвиг контента</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>CLS: что это за метрика, почему она важна для SEO и как её исправить</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-cls-и-почему-google-его-учитывает">Что такое CLS и почему Google его учитывает</a></li><li><a href="#как-cls-влияет-на-seo-и-поведенческие-факторы">Как CLS влияет на SEO и поведенческие факторы</a></li><li><a href="#основные-причины-высокого-cls-и-как-их-диагностировать">Основные причины высокого CLS и как их диагностировать</a></li><li><a href="#топ-5-элементов-которые-чаще-всего-ломают-cls">Топ-5 элементов, которые чаще всего «ломают» CLS</a></li><li><a href="#практические-способы-уменьшить-cls-пошаговая-инструкция">Практические способы уменьшить CLS: пошаговая инструкция</a></li><li><a href="#cls-и-javascript-как-избежать-сдвигов-при-динамическом-контенте">CLS и JavaScript: как избежать сдвигов при динамическом контенте</a></li><li><a href="#faq-частые-вопросы-о-cls">FAQ: Частые вопросы о CLS</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Вы когда-нибудь сталкивались с ситуацией, когда на сайте внезапно «прыгают» кнопки, текст или баннеры в момент загрузки страницы? Это не просто раздражает пользователей — такой сдвиг контента напрямую влияет на <strong>позиции в поисковой выдаче</strong>. Метрика <em>CLS</em> (Cumulative Layout Shift) стала одним из трёх столпов <em>Core Web Vitals</em> от Google, наряду с <em>LCP</em> и <em>FID</em>. Если ваш сайт «подпрыгивает» при загрузке, поисковые системы снижают его рейтинг, считая неудобным для посетителей.</p>
+
+<p>В этой статье разберём, что такое <strong>CLS</strong> на практике: как он измеряется, какие элементы чаще всего вызывают сдвиги, и что делать, чтобы ваш сайт прошёл проверку Google без потерь в трафике. Мы не будем ограничиваться теорией — приведём конкретные примеры кода, инструменты для диагностики и пошаговые инструкции по оптимизации. Если вы владелец сайта, разработчик или SEO-специалист, эта информация поможет избежать типичных ошибок, которые «убивают» пользовательский опыт и ранжирование.</p>
+
+<h2 id="что-такое-cls-и-почему-google-его-учитывает">Что такое CLS и почему Google его учитывает</h2>
+
+<p><strong>CLS (Cumulative Layout Shift)</strong> — это метрика, которая измеряет <mark>суммарное смещение видимых элементов страницы во время её загрузки</mark>. Проще говоря, она показывает, насколько сильно «прыгает» контент, пока пользователь ждёт полной загрузки. Google ввёл этот показатель в 2020 году как часть инициативы <em>Core Web Vitals</em>, чтобы стимулировать владельцев сайтов улучшать юзабилити.</p>
+
+<p>Почему это важно? Исследования показывают, что <strong>70% пользователей покидают сайт</strong>, если его загрузка сопровождается неожиданными сдвигами элементов. Например, вы хотели нажать на кнопку «Купить», но в последний момент она сместилась вниз из-за подгрузившегося баннера — и вы случайно кликнули на рекламу. Такие ситуации ведут к росту отказов и падению конверсии. Google это учитывает: сайты с высоким CLS ранжируются ниже, даже если у них хороший контент.</p>
+
+<ul>
+  <li>🔍 <strong>Что именно измеряет CLS?</strong> — Суммарную площадь смещённых элементов и расстояние, на которое они сдвинулись.</li>
+  <li>⚡ <strong>Какое значение считается хорошим?</strong> — Менее <code>0.1</code> (или 10% от видимой области экрана).</li>
+  <li>⚠️ <strong>Что происходит при CLS > 0.25?</strong> — Google классифицирует сайт как «нуждающийся в улучшении».</li>
+</ul>
+
+<p>Метрика рассчитывается по формуле:</p>
+<pre><code>CLS = сумма (площадь смещённого элемента × расстояние сдвига) для всех неожиданных смещений</code></pre>
+<p>При этом учитываются только те сдвиги, которые происходят <em>после</em> первого рендера страницы и не вызваны действиями пользователя (например, кликом по кнопке).</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Как часто вы сталкиваетесь с "прыгающим" контентом на сайтах?</strong><ul><li>Постоянно</li><li>Иногда</li><li>Рядко</li><li>Никогда</li></ul></div></div>
+
+<h2 id="как-cls-влияет-на-seo-и-поведенческие-факторы">Как CLS влияет на SEO и поведенческие факторы</h2>
+
+<p>Google официально заявил, что <strong>Core Web Vitals</strong> (включая CLS) являются факторами ранжирования с мая 2021 года. Это значит, что два сайта с одинаково качественным контентом могут занимать разные позиции в выдаче из-за разницы в пользовательском опыте. При этом CLS влияет не только на органический трафик, но и на:</p>
+
+<ul>
+  <li>📉 <strong>Показатель отказов</strong> — пользователи быстрее покидают сайты с нестабильным макетом.</li>
+  <li>🛒 <strong>Конверсию</strong> — сдвиги кнопок «Купить» или форм заказа снижают продажи на 10–30%.</li>
+  <li>📱 <strong>Мобильный трафик</strong> — на телефонах CLS проявляется сильнее из-за меньшего экрана.</li>
+  <li>💰 <strong>Стоимость рекламы</strong> — Google Ads учитывает юзабилити при расчёте <em>Quality Score</em>.</li>
+</ul>
+
+<p>Пример из практики: интернет-магазин одежды после оптимизации CLS с <code>0.35</code> до <code>0.08</code> увеличил конверсию на 22% и снизил показатель отказов на 15%. Анализ <em>Google Search Console</em> показал рост позиций по коммерческим запросам на 3–5 строк в течение месяца.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Google анализирует CLS не только на десктопе, но и на мобильных устройствах. При этом <strong>70% сайтов имеют худшие показатели CLS на телефонах</strong> из-за адаптивных баннеров и медленной загрузки шрифтов.</blockquote>
+
+<table>
+  <thead>
+    <tr>
+      <th>Диапазон CLS</th>
+      <th>Оценка Google</th>
+      <th>Влияние на SEO</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>0.0–0.1</code></td>
+      <td>✅ Хорошо</td>
+      <td>Нет негативного влияния</td>
+    </tr>
+    <tr>
+      <td><code>0.1–0.25</code></td>
+      <td>⚠️ Требует улучшения</td>
+      <td>Возможны потери позиций в топ-10</td>
+    </tr>
+    <tr>
+      <td><code>>0.25</code></td>
+      <td>❌ Плохо</td>
+      <td>Риск выпадения из топ-30 по конкурентным запросам</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="основные-причины-высокого-cls-и-как-их-диагностировать">Основные причины высокого CLS и как их диагностировать</h2>
+
+<p>Большинство проблем со сдвигом макета возникают из-за <strong>трех ключевых факторов</strong>:</p>
+<ol>
+  <li><strong>Элементы без явных размеров</strong> (изображения, видео, iframe без атрибутов <code>width</code>/<code>height</code>).</li>
+  <li><strong>Динамически вставляемый контент</strong> (баннеры, виджеты, реклама).</li>
+  <li><strong>Шрифты и стили, загружаемые после рендера</strong> (FOUT/FOIT).</li>
+</ol>
+
+<p>Чтобы найти конкретные проблемы на своём сайте, используйте эти инструменты:</p>
+<ul>
+  <li>🛠️ <strong>Google PageSpeed Insights</strong> — показывает CLS и конкретные элементы, вызывающие сдвиги.</li>
+  <li>📊 <strong>Chrome DevTools (кладка Performance)</strong> — визуализирует смещения в процессе загрузки.</li>
+  <li>🔎 <strong>Web Vitals Extension для Chrome</strong> — отслеживает CLS в реальном времени.</li>
+  <li>📈 <strong>Google Search Console (отчёт Core Web Vitals)</strong> — данные по URL с плохими показателями.</li>
+</ul>
+
+<p>Пример диагностики в <em>Chrome DevTools</em>:</p>
+<ol>
+  <li>Откройте сайт в Chrome.</li>
+  <li>Нажмите <code>F12</code> → перейдите на вкладку <code>Performance</code>.</li>
+  <li>Нажмите <code>Record</code> и перезагрузите страницу.</li>
+  <li>После загрузки найдите секцию <code>Layout Shifts</code> — там будут подсвечены проблемные элементы.</li>
+</ol>
+
+
+<p>Запустить тест в PageSpeed Insights|</p>
+<p>Проанализировать отчёт Core Web Vitals в Search Console|</p>
+<p>Проверить мобильную и десктопную версии|</p>
+<p>Исключить влияние расширений браузера (тестировать в инкогнито)--></p>
+
+<h2 id="топ-5-элементов-которые-чаще-всего-ломают-cls">Топ-5 элементов, которые чаще всего «ломают» CLS</h2>
+
+<p>Некоторые части страницы почти гарантированно вызовут сдвиги, если их не оптимизировать. Вот <strong>самые проблемные элементы</strong> и способы их исправления:</p>
+
+<h3>1. Изображения и видео без фиксированных размеров</h3>
+<p>Браузер не знает, сколько места занять под картинку, пока она не загрузится. Решение:</p>
+<ul>
+  <li>✅ Указывайте <code>width</code> и <code>height</code> в HTML или через CSS <code>aspect-ratio</code>.</li>
+  <li>✅ Используйте <code>loading="lazy"</code> для отложенной загрузки.</li>
+</ul>
+<pre><code>&lt;img src="photo.jpg" width="600" height="400" alt="..." loading="lazy"&gt;</code></pre>
+
+<h3>2. Рекламные баннеры и виджеты</h3>
+<p>Баннеры часто подгружаются после основного контента, сдвигая его. Решение:</p>
+<ul>
+  <li>✅ Резервируйте место под баннер с помощью <code>&lt;div&gt;&lt;/div&gt;</code>.</li>
+  <li>✅ Используйте <em>Google Publisher Tag</em> с атрибутом <code>data-loading="eager"</code>.</li>
+</ul>
+
+<h3>3. Кастомные шрифты (FOUT/FOIT)</h3>
+<p>Текст может «прыгать», когда загружается шрифт. Решение:</p>
+<ul>
+  <li>✅ Применяйте <code>font-display: swap</code> в CSS.</li>
+  <li>✅ Предзагружайте шрифты с помощью <code>&lt;link rel="preload"&gt;</code>.</li>
+</ul>
+
+<h3>4. Всплывающие окна и куки-баннеры</h3>
+<p>Эти элементы часто появляются после загрузки страницы. Решение:</p>
+<ul>
+  <li>✅ Отображайте их только после взаимодействия пользователя (клика).</li>
+  <li>✅ Используйте <code>position: fixed</code> вместо <code>absolute</code>, чтобы не сдвигать контент.</li>
+</ul>
+
+<h3>5. Динамически подгружаемый контент (AJAX, бесконечная прокрутка)</h3>
+<p>Новые элементы могут «выталкивать» старые. Решение:</p>
+<ul>
+  <li>✅ Добавьте <code>margin-bottom</code> к последнему элементу списка.</li>
+  <li>✅ Используйте скелетные загрузчики (skeleton screens).</li>
+</ul>
+
+<details class="faq-item"><summary>Почему CLS может отличаться на десктопе и мобильной версии?</summary><div class="faq-answer"><p>
+<p>На мобильных устройствах сдвиги сильнее из-за:</p>
+<p>1) Медленного интернета (3G/4G) — контент грузится дольше, и сдвиги заметнее.</p>
+<p>2) Меньшего экрана — даже небольшое смещение занимает большую часть видимой области.</p>
+<p>3) Адаптивных баннеров — они часто меняют размеры под разрешение экрана.</p></div></details></p>
+
+<h2 id="практические-способы-уменьшить-cls-пошаговая-инструкция">Практические способы уменьшить CLS: пошаговая инструкция</h2>
+
+<p>Оптимизация CLS требует системного подхода. Вот <strong>проверенный алгоритм</strong> для снижения показателя до <code>0.1</code>:</p>
+
+<h3>Шаг 1. Зарезервируйте пространство для медиафайлов</h3>
+<p>Добавьте атрибуты размеров ко всем изображениям, видео и iframe:</p>
+<pre><code>&lt;img src="banner.jpg" width="1200" height="300" alt="..."&gt;
+<p>&lt;iframe width="560" height="315" src="..." frameborder="0"&gt;&lt;/iframe&gt;</code></pre></p>
+
+<h3>Шаг 2. Оптимизируйте загрузку шрифтов</h3>
+<p>Добавьте в <code>&lt;head&gt;</code>:</p>
+<pre><code>&lt;link rel="preload" href="font.woff2" as="font" type="font/woff2" crossorigin&gt;
+<p>&lt;style&gt;</p>
+<p>@font-face {</p>
+<p>font-family: 'MyFont';</p>
+<p>src: url('font.woff2') format('woff2');</p>
+<p>font-display: swap;</p>
+<p>}</p>
+<p>&lt;/style&gt;</code></pre></p>
+
+<h3>Шаг 3. Стабилизируйте рекламные блоки</h3>
+<p>Используйте контейнеры с фиксированной высотой:</p>
+<pre><code>&lt;div&gt;
+<p>&lt;!-- Рекламный код --&gt;</p>
+<p>&lt;/div&gt;</code></pre></p>
+
+<h3>Шаг 4. Отложите загрузку некритичных виджетов</h3>
+<p>Для чатов, соцсетей и аналитики используйте <code>defer</code> или <code>async</code>:</p>
+<pre><code>&lt;script src="chat.js" defer&gt;&lt;/script&gt;</code></pre>
+
+<h3>Шаг 5. Тестируйте на реальных устройствах</h3>
+<p>Эмуляторы в DevTools не всегда показывают реальную картину. Используйте:</p>
+<ul>
+  <li>📱 <strong>WebPageTest</strong> на мобильных устройствах.</li>
+  <li>🌍 <strong>Google Lighthouse</strong> в режиме «Mobile».</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если вы используете WordPress, установите плагин <em>WP Rocket</em> или <em>Perfmatters</em> — они автоматически резервируют место под изображения и оптимизируют загрузку шрифтов.</p></div>
+
+<h2 id="cls-и-javascript-как-избежать-сдвигов-при-динамическом-контенте">CLS и JavaScript: как избежать сдвигов при динамическом контенте</h2>
+
+<p>JavaScript часто становится причиной неожиданных сдвигов, особенно при:</p>
+<ul>
+  <li>🔄 <strong>Асинхронной подгрузке контента</strong> (AJAX, Fetch API).</li>
+  <li>📊 <strong>Обновлении DOM после загрузки</strong> (React, Vue, Angular).</li>
+  <li>🎯 <strong>Добавлении элементов по таймауту</strong> (setTimeout).</li>
+</ul>
+
+<p>Чтобы минимизировать влияние JS на CLS:</p>
+
+<h3>1. Используйте скелетные загрузчики</h3>
+<p>Показывайте «заглушки» вместо динамического контента:</p>
+<pre><code>&lt;div&gt;&lt;/div&gt;
+<p>&lt;script&gt;</p>
+<p>fetch('/api/data')</p>
+<p>.then(data => {</p>
+<p>document.querySelector('.skeleton').innerHTML = data;</p>
+<p>});</p>
+<p>&lt;/script&gt;</code></pre></p>
+
+<h3>2. Избегайте форсированного рефлоу</h3>
+<p>Не изменяйте стили, которые влияют на макет (например, <code>width</code>, <code>height</code>, <code>margin</code>), после загрузки. Вместо этого:</p>
+<pre><code>// Плохо (вызывает рефлоу)
+<p>element.style.width = '100%';</p>
+
+<p>// Хорошо (используйте классы)</p>
+<p>element.classList.add('expanded');</code></pre></p>
+
+<h3>3. Откладывайте некритичные обновления</h3>
+<p>Используйте <code>requestIdleCallback</code> для операций, не влияющих на UX:</p>
+<pre><code>requestIdleCallback(() => {
+<p>// Обновление аналитики или логов</p>
+<p>});</code></pre></p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Библиотеки вроде <em>jQuery</em> или <em>Bootstrap</em> могут добавлять неявные стили, вызывающие сдвиги. Всегда проверяйте их влияние на CLS после подключения.</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Динамический контент должен загружаться в зарезервированные контейнеры. Никогда не вставляйте элементы "на лету" без предварительного выделения места под них.</p></div>
+
+<h2 id="faq-частые-вопросы-о-cls">FAQ: Частые вопросы о CLS</h2>
+
+<details>
+  <summary>Может ли CLS быть отрицательным?</summary>
+  <p>Нет, CLS всегда положительное число, так как измеряет площадь сдвигов. Однако в редких случаях инструменты могут показывать <code>0</code>, если сдвигов не было или они произошли до первого рендера.</p>
+</details>
+
+<details>
+  <summary>Как CLS связан с LCP (Largest Contentful Paint)?</summary>
+  <p>LCP измеряет скорость загрузки основного контента, а CLS — его стабильность. Оптимизируя LCP (например, ускоряя загрузку изображений), вы косвенно улучшаете и CLS, так как элементы быстрее занимают свои места.</p>
+</details>
+
+<details>
+  <summary>Влияет ли CLS на мобильные приложения?</summary>
+  <p>Нет, CLS — метрика веб-страниц. Однако в мобильных приложениях есть аналогичные проблемы (например, сдвиги при загрузке изображений), которые также ухудшают UX.</p>
+</details>
+
+<details>
+  <summary>Можно ли полностью устранить CLS?</summary>
+  <p>Теоретически да, если все элементы имеют фиксированные размеры и загружаются синхронно. Но на практике небольшие сдвиги (<code>0.05–0.1</code>) считаются нормой.</p>
+</details>
+
+<details>
+  <summary>Как часто Google обновляет данные по CLS в Search Console?</summary>
+  <p>Данные в отчёте <em>Core Web Vitals</em> обновляются раз в 28 дней. Для оперативного мониторинга используйте <em>Google Analytics 4</em> или <em>CrUX Dashboard</em>.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-cls-и-почему-google-его-учитывает">Что такое CLS и почему Google его учитывает</a></li><li><a href="#как-cls-влияет-на-seo-и-поведенческие-факторы">Как CLS влияет на SEO и поведенческие факторы</a></li><li><a href="#основные-причины-высокого-cls-и-как-их-диагностировать">Основные причины высокого CLS и как их диагностировать</a></li><li><a href="#топ-5-элементов-которые-чаще-всего-ломают-cls">Топ-5 элементов, которые чаще всего «ломают» CLS</a></li><li><a href="#практические-способы-уменьшить-cls-пошаговая-инструкция">Практические способы уменьшить CLS: пошаговая инструкция</a></li><li><a href="#cls-и-javascript-как-избежать-сдвигов-при-динамическом-контенте">CLS и JavaScript: как избежать сдвигов при динамическом контенте</a></li><li><a href="#faq-частые-вопросы-о-cls">FAQ: Частые вопросы о CLS</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/me/mersedes-dvukhdvernyj-kupe.html" class="related-card">Двухдверные купе Mercedes: модели, цены и особенности 2026 года</a></li><li><a href="/articles/m/me/mersedes-cls-2012-goda.html" class="related-card">Мерседес CLS 2012 года: обзор, двигатели и реальные расходы</a></li><li><a href="/articles/m/me/mersedes-kls-63.html" class="related-card">Mercedes CLS 63 AMG: обзор, технические характеристики и тюнинг</a></li><li><a href="/articles/m/me/mersedes-tsls-2006.html" class="related-card">Mercedes CLS 2006: обзор, характеристики и проблемы модели</a></li><li><a href="/articles/c/cl/cls-218-kuzov.html" class="related-card">Mercedes CLS 218 кузов: характеристики, проблемы и тюнинг (2011-2018)</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/me/mersedes-dvukhdvernyj-kupe.html" class="related-bottom-card"><span class="related-bottom-title">Двухдверные купе Mercedes: модели, цены и особенности 2026 года</span><span class="related-bottom-desc">Обзор всех двухдверных купе Mercedes-Benz: технические характеристики, сравнение моделей &lt;em&gt;CLA&lt;/em</span></a><a href="/articles/m/me/mersedes-cls-2012-goda.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес CLS 2012 года: обзор, двигатели и реальные расходы</span><span class="related-bottom-desc">Полный гид по Mercedes-Benz CLS 2012 года (W218). Технические характеристики, выбор двигателя, типич</span></a><a href="/articles/m/me/mersedes-kls-63.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes CLS 63 AMG: обзор, технические характеристики и тюнинг</span><span class="related-bottom-desc">Полный гид по Mercedes CLS 63 AMG. Двигатель, разгон, расход, типичные поломки и особенности тюнинга</span></a><a href="/articles/m/me/mersedes-tsls-2006.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes CLS 2006: обзор, характеристики и проблемы модели</span><span class="related-bottom-desc">Подробный разбор Mercedes-Benz CLS 2006 года: технические данные, слабые места, советы по выбору и э</span></a><a href="/articles/c/cl/cls-218-kuzov.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes CLS 218 кузов: характеристики, проблемы и тюнинг (2011-2018)</span><span class="related-bottom-desc">Подробный обзор Mercedes CLS 218 (C218): технические данные, слабые места, отзывы владельцев, рекоме</span></a><a href="/articles/c/cl/cls-amg-218.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-CLS AMG: Характеристики, двигатели и особенности CLS 53 и 63</span><span class="related-bottom-desc">Полный обзор Mercedes-CLS AMG. Технические характеристики, сравнение версий C257, разгон, расход топ</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

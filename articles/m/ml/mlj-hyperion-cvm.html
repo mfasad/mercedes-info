@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>MLJ Hyperion CVM: обзор, настройка и оптимизация для Mercedes-Benz — Мерседес Инфо</title>
+    <meta name="description" content="Подробный гайд по MLJ Hyperion CVM: функции, установка, прошивка и решение проблем для мультимедийных систем Mercedes-Benz. Экспертные советы и инструкции.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/m/ml/mlj-hyperion-cvm.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="MLJ Hyperion CVM: обзор, настройка и оптимизация для Mercedes-Benz">
+    <meta property="og:description" content="Подробный гайд по MLJ Hyperion CVM: функции, установка, прошивка и решение проблем для мультимедийных систем Mercedes-Benz. Экспертные советы и инструкции.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/s-class/">S Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">MLJ Hyperion CVM: обзор, настройка и оптимизация для Mercedes-Benz</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>MLJ Hyperion CVM: полное руководство по установке и настройке для Mercedes-Benz</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-такое-mlj-hyperion-cvm-и-зачем-он-нужен">Что такое MLJ Hyperion CVM и зачем он нужен?</a></li><li><a href="#сравнение-mlj-hyperion-cvm-с-аналогами-что-лучше">Сравнение MLJ Hyperion CVM с аналогами: что лучше?</a></li><li><a href="#совместимость-mlj-hyperion-cvm-подходит-ли-ваш-mercedes">Совместимость MLJ Hyperion CVM: подходит ли ваш Mercedes?</a></li><li><a href="#пошаговая-инструкция-по-установке-mlj-hyperion-cvm">Пошаговая инструкция по установке MLJ Hyperion CVM</a></li><li><a href="#настройка-и-оптимизация-mlj-hyperion-cvm">Настройка и оптимизация MLJ Hyperion CVM</a></li><li><a href="#обновление-прошивки-и-решение-распространённых-проблем">Обновление прошивки и решение распространённых проблем</a></li><li><a href="#скрытые-возможности-mlj-hyperion-cvm-что-не-расскажут-в-инструкции">Скрытые возможности MLJ Hyperion CVM: что не расскажут в инструкции</a></li><li><a href="#faq-ответы-на-частые-вопросы-о-mlj-hyperion-cvm">FAQ: ответы на частые вопросы о MLJ Hyperion CVM</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>MLJ Hyperion CVM</em> — это революционное решение для владельцев <strong>Mercedes-Benz</strong>, позволяющее трансформировать штатную мультимедийную систему в современный инфотейнмент с поддержкой <strong>Android Auto</strong>, <strong>Apple CarPlay</strong> и расширенными функциями. Если вы ищете способ обновить <em>COMAND</em> или <em>MBUX</em> без потери оригинального функционала, этот модуль станет идеальным выбором.</p>
+
+<p>В отличие от стандартных решений вроде <em>Carlinkit</em> или <em>AAWireless</em>, <em>Hyperion CVM</em> от <strong>MLJ</strong> интегрируется на аппаратном уровне, обеспечивая стабильную работу без задержек и "вылетов". В этой статье мы разберём <strong>все аспекты</strong>: от выбора модели до тонкой настройки, а также раскроем <mark>уникальные возможности модуля, которые не документированы производителем</mark> (например, скрытые режимы диагностики и кастомизация интерфейса).</p>
+
+<h2 id="что-такое-mlj-hyperion-cvm-и-зачем-он-нужен">Что такое MLJ Hyperion CVM и зачем он нужен?</h2>
+
+<p><em>MLJ Hyperion CVM</em> (Carplay Video Module) — это аппаратный модуль, который подключается к штатной мультимедийной системе <strong>Mercedes-Benz</strong> (включая модели с <em>COMAND APS NTG4.5/5.1/5.5</em> и <em>MBUX</em>) и добавляет поддержку беспроводного/проводного <strong>Android Auto</strong> и <strong>Apple CarPlay</strong>. В отличие от программных решений (вроде <em>AAEmulator</em>), он не требует взлома системы и работает на уровне сигнала видео, что гарантирует:</p>
+
+<ul>
+  <li>🔹 <strong>Мгновенный отклик</strong> — нет задержек при управлении голосом или тачем.</li>
+  <li>🔹 <strong>Совместимость с оригинальными кнопками</strong> руля и джойстиком <em>Touchpad</em>.</li>
+  <li>🔹 <strong>Поддержку всех приложений</strong>, включая <em>Google Maps</em>, <em>Waze</em>, <em>Spotify</em> и <em>YouTube Music</em>.</li>
+  <li>🔹 <strong>Работу в фоновом режиме</strong> — можно одновременно использовать штатную навигацию и <em>CarPlay</em>.</li>
+</ul>
+
+<p>Важно понимать, что <em>Hyperion CVM</em> — это не просто адаптер, а полноценный процессор, который декодирует и реконвертирует видеосигнал. Это позволяет обойти ограничения штатной системы, где <em>CarPlay</em> часто доступен только в упрощённом виде (например, без видео в <em>NTG4.5</em>). Модуль поддерживает разрешения до <code>1280×720</code> и работает с большинством моделей <strong>Mercedes-Benz</strong> 2010–2023 годов выпуска.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой мультимедийной системой оснащён ваш Mercedes-Benz?</strong><ul><li>COMAND NTG4.5/5.1</li><li>MBUX (первое поколение)</li><li>MBUX (второе поколение)</li><li>Другая система</li><li>Не знаю</li></ul></div></div>
+
+<h2 id="сравнение-mlj-hyperion-cvm-с-аналогами-что-лучше">Сравнение MLJ Hyperion CVM с аналогами: что лучше?</h2>
+
+<p>На рынке существует несколько альтернатив для добавления <em>CarPlay</em> в <strong>Mercedes-Benz</strong>: от дешёвых китайских адаптеров до фирменных решений вроде <em>Mercedes Me Adaptor</em>. Однако <em>MLJ Hyperion CVM</em> выделяется по ряду параметров. Ниже — сравнительная таблица ключевых характеристик:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>MLJ Hyperion CVM</th>
+      <th>Carlinkit 4.0</th>
+      <th>AAWireless</th>
+      <th>Mercedes Me Adaptor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Тип подключения</td>
+      <td>Aппаратный (видео)</td>
+      <td>Программный (USB)</td>
+      <td>Программный (Wi-Fi)</td>
+      <td>Aппаратный (OBD)</td>
+    </tr>
+    <tr>
+      <td>Задержка отклика</td>
+      <td>0 мс</td>
+      <td>100–300 мс</td>
+      <td>200–500 мс</td>
+      <td>50–150 мс</td>
+    </tr>
+    <tr>
+      <td>Поддержка штатных кнопок</td>
+      <td>Да (включая голосовое управление)</td>
+      <td>Частично</td>
+      <td>Нет</td>
+      <td>Да</td>
+    </tr>
+    <tr>
+      <td>Разрешение видео</td>
+      <td>До <code>1280×720</code></td>
+      <td>Ограничено системой</td>
+      <td>Ограничено системой</td>
+      <td>До <code>1920×720</code></td>
+    </tr>
+    <tr>
+      <td>Стоимость (2026)</td>
+      <td>~$400–$600</td>
+      <td>~$100–$150</td>
+      <td>~$80–$120</td>
+      <td>~$300–$500</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Главное преимущество <em>Hyperion CVM</em> — <strong>аппаратная интеграция</strong>. В то время как <em>Carlinkit</em> и <em>AAWireless</em> эмулируют подключение по USB, что часто приводит к конфликтам с штатным ПО, <em>MLJ</em> работает на уровне видеосигнала, что исключает "вылеты" и ошибки синхронизации. Однако у решения есть и минусы:</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Модуль требует физического подключения к экрану через <code>LVDS</code>-кабель, что может потребовать разбора торпедо. В некоторых моделях (например, <em>W222 S-Class</em>) для этого придётся снимать центральную консоль.</blockquote>
+
+<h2 id="совместимость-mlj-hyperion-cvm-подходит-ли-ваш-mercedes">Совместимость MLJ Hyperion CVM: подходит ли ваш Mercedes?</h2>
+
+<p>Производитель заявляет поддержку более 150 моделей <strong>Mercedes-Benz</strong>, но на практике есть нюансы. Ниже — список проверенных платформ и поколений:</p>
+
+<ul>
+  <li>🚗 <strong>S-Class (W221, W222, W223)</strong> — полная совместимость с <em>COMAND NTG4.5/5.1/5.5</em> и <em>MBUX</em>.</li>
+  <li>🚙 <strong>E-Class (W212, W213)</strong> — требует дополнительного адаптера для <em>NTG5.1</em>.</li>
+  <li>🚐 <strong>GLE (W166, W167)</strong> и <strong>GLS (X166, X167)</strong> — поддержка только с <em>MBUX</em> 2019+.</li>
+  <li>🚓 <strong>C-Class (W204, W205)</strong> — ограниченная функциональность на <em>NTG4.5</em> (нет видео в <em>CarPlay</em>).</li>
+  <li>🏎️ <strong>AMG GT (C190)</strong> — требует кастомной прошивки модуля.</li>
+</ul>
+
+<p>Перед покупкой <strong>обязательно проверьте</strong> версию вашей мультимедийной системы. Сделать это можно через меню <code>Настройки → Система → Версия ПО</code>. Если у вас <em>NTG4.5</em>, обратите внимание на ревизию: модули до 2015 года могут требовать доработки разъёмов.</p>
+
+<details class="faq-item"><summary>Как узнать точную версию COMAND/MBUX?</summary><div class="faq-answer"><p>Откройте скрытое меню, удерживая кнопки <code>1 + 6 + Набор</code> (для NTG4.5) или <code>Mute + Назад</code> (для MBUX) в течение 10 секунд. В появившемся окне будет указана полная версия прошивки, например <code>NTG5.1_2018_03</code>.</p></div></details>
+
+<p>Для моделей с <em>MBUX второго поколения</em> (2021+) <em>Hyperion CVM</em> работает только в паре с дополнительным <strong>CAN-фильтром</strong>, так как новая система использует шифрованный протокол обмена данными. Это увеличивает стоимость установки на ~$100–$150.</p>
+
+<h2 id="пошаговая-инструкция-по-установке-mlj-hyperion-cvm">Пошаговая инструкция по установке MLJ Hyperion CVM</h2>
+
+<p>Установка модуля требует аккуратности и базовых навыков работы с автомобильной электрикой. Если вы не уверены в своих силах, лучше обратиться к профессионалам. Ниже — <strong>пошаговый алгоритм</strong> для большинства моделей:</p>
+
+<ol>
+  <li><strong>Отключите аккумулятор</strong> (снимите минусовую клемму) во избежание короткого замыкания.</li>
+  <li>Снимите центральную консоль и доберитесь до задней панели экрана. В <em>S-Class W222</em> для этого нужно открутить 4 болта под декоративной панелью.</li>
+  <li>Отсоедините <code>LVDS-кабель</code> (плоский шлейф) от экрана и подключите его к разъёму <code>IN</code> на модуле <em>Hyperion CVM</em>.</li>
+  <li>Подключите кабель от модуля к разъёму <code>OUT</code> на экране. Убедитесь, что контакты не погнуты.</li>
+  <li>Подсоедините <code>USB-кабель</code> к порту <em>COMAND/MBUX</em> (обычно расположен сзади головного устройства).</li>
+  <li>Подключите питание модуля к <code>12V</code> (можно взять с прикуривателя или напрямую от блока предохранителей).</li>
+  <li>Включите зажигание и проверьте работу системы. При первом запуске может потребоваться калибровка тачскрина.</li>
+</ol>
+
+
+<p>- Все разъёмы плотно подключены</p>
+<p>- Полярность питания соблюдена (красный — плюс, чёрный — минус)</p>
+<p>- USB-кабель подключён к правильному порту (не к диагностическому)</p>
+<p>- Экран не имеет физических повреждений--></p>
+
+<p>Если после установки <em>CarPlay</em> не запускается, проверьте:</p>
+<ul>
+  <li>🔌 Правильность подключения <code>LVDS</code> (перепутанные контакты могут привести к артефактам на экране).</li>
+  <li>📱 Совместимость вашего смартфона (некоторые модели <em>Samsung</em> требуют включения режима разработчика).</li>
+  <li>🔄 Обновление прошивки модуля (актуальную версию можно скачать на <a href="https://mljauto.com" target="_blank">официальном сайте MLJ</a>).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На моделях с <em>MBUX</em> после установки <em>Hyperion CVM</em> может сработать ошибка <code>B1001</code> (неисправность дисплея). Чтобы её сбросить, выполните полный сброс системы через меню <code>Настройки → Система → Сброс до заводских</code>.</blockquote>
+
+<h2 id="настройка-и-оптимизация-mlj-hyperion-cvm">Настройка и оптимизация MLJ Hyperion CVM</h2>
+
+<p>После успешной установки модуля его нужно <strong>правильно настроить</strong>, чтобы избежать проблем с производительностью. Основные параметры конфигурируются через скрытое меню, которое открывается комбинацией кнопок:</p>
+
+<pre><code>Нажмите и удерживайте:
+<p>1. Кнопку голосового управления (если есть)</p>
+<p>2. Кнопку "Назад" на руле</p>
+<p>3. Одновременно коснитесь экрана в левом верхнем углу</p>
+</code></pre>
+
+<p>В открывшемся меню вы сможете:</p>
+<ul>
+  <li>🎛️ Настроить <strong>чувствительность тачскрина</strong> (полезно, если экран реагирует с задержкой).</li>
+  <li>🔊 Отрегулировать <strong>уровень звука</strong> для <em>CarPlay</em> (по умолчанию он может быть тише штатной системы).</li>
+  <li>📶 Включить/отключить <strong>Wi-Fi модуль</strong> (если используете проводное подключение).</li>
+  <li>🔄 Обновить прошивку <strong>по воздуху</strong> (требует подключения к интернету через смартфон).</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если после обновления прошивки <em>Hyperion CVM</em> перестал реагировать на команды с руля, выполните сброс настроек модуля через скрытое меню (пункт <code>Factory Reset</code>). Это вернёт стандартные профили совместимости с <em>COMAND/MBUX</em>.</p></div>
+
+<p>Для продвинутых пользователей доступны <strong>скрытые функции</strong>:</p>
+<ul>
+  <li>🖥️ <strong>Режим диагностики</strong> — позволяет выводить на экран данные с <code>CAN-шины</code> (скорость, обороты, температуру). Активируется командой <code>*#06#</code> в поле ввода телефона (при подключённом <em>CarPlay</em>).</li>
+  <li>🎨 <strong>Кастомизация интерфейса</strong> — можно заменить заставку <em>CarPlay</em> на логотип вашего автомобиля (файл <code>bootlogo.png</code> загружается через USB).</li>
+  <li>🔒 <strong>Блокировка штатной навигации</strong> — полезно, если вы используете только <em>Google Maps</em> и хотите убрать лишние элементы с экрана.</li>
+</ul>
+
+<h2 id="обновление-прошивки-и-решение-распространённых-проблем">Обновление прошивки и решение распространённых проблем</h2>
+
+<p>Прошивка <em>MLJ Hyperion CVM</em> обновляется примерно раз в 2–3 месяца. Новые версии добавляют поддержку новых моделей <strong>Mercedes-Benz</strong>, исправляют баги и улучшают совместимость со смартфонами. Обновиться можно двумя способами:</p>
+
+<ol>
+  <li><strong>По воздуху (OTA)</strong>:
+    <ul>
+      <li>Подключите смартфон к модулю через <em>CarPlay</em>.</li>
+      <li>Зайдите в скрытое меню <em>Hyperion CVM</em> (см. предыдущий раздел).</li>
+      <li>Выберите пункт <code>System Update → Check Online</code>.</li>
+      <li>Подтвердите загрузку и дождитесь перезагрузки (~5 минут).</li>
+    </ul>
+  </li>
+  <li><strong>Через USB</strong>:
+    <ul>
+      <li>Скачайте прошивку с <a href="https://mljauto.com/firmware" target="_blank">официального сайта</a>.</li>
+      <li>Распакуйте архив и скопируйте файл <code>update.bin</code> на флешку (FAT32).</li>
+      <li>Подключите флешку к USB-порту модуля (не к штатному порту автомобиля!).</li>
+      <li>В скрытом меню выберите <code>System Update → Update from USB</code>.</li>
+    </ol>
+  </li>
+</ol>
+
+<p>Если после обновления модуль перестал работать, попробуйте:</p>
+<ul>
+  <li>🔄 Выполнить <strong>жёсткий сброс</strong> (отключите питание на 30 секунд).</li>
+  <li>📥 Переустановить прошивку через USB (иногда файлы скачиваются с ошибками).</li>
+  <li>📞 Обратиться в поддержку <em>MLJ</em> с логом ошибки (его можно экспортировать через скрытое меню).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На моделях с <em>MBUX</em> после обновления прошивки может потребоваться повторная активация <em>CarPlay</em> через меню <code>Настройки → Apple CarPlay → Подключить устройство</code>. Если опция неактивна, проверьте подключение <code>USB-хаба</code> к головному устройству.</blockquote>
+
+<p>Распространённые ошибки и их решения:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>No Signal</code> на экране</td>
+      <td>Неправильное подключение <code>LVDS</code></td>
+      <td>Проверьте плотность контактов, переподключите кабель</td>
+    </tr>
+    <tr>
+      <td><em>CarPlay</em> подключается, но нет звука</td>
+      <td>Конфликт с штатной аудиосистемой</td>
+      <td>В меню <em>Hyperion CVM</em> выберите <code>Audio Output → Mercedes Audio</code></td>
+    </tr>
+    <tr>
+      <td>Зависание при запуске навигации</td>
+      <td>Нехватка оперативной памяти модуля</td>
+      <td>Закройте фоновые приложения на смартфоне</td>
+    </tr>
+    <tr>
+      <td>Артефакты на экране (полосы, мерцание)</td>
+      <td>Плохой контакт <code>LVDS</code> или несовместимое разрешение</td>
+      <td>Проверьте кабель, в меню модуля выберите <code>Display → Auto Detect</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="скрытые-возможности-mlj-hyperion-cvm-что-не-расскажут-в-инструкции">Скрытые возможности MLJ Hyperion CVM: что не расскажут в инструкции</h2>
+
+<p>Производитель не афиширует все функции модуля, но энтузиасты нашли несколько <strong>скрытых возможностей</strong>, которые значительно расширяют функционал:</p>
+
+<ul>
+  <li>🎮 <strong>Игровой режим</strong> — позволяет выводить изображение с <em>Nintendo Switch</em> или <em>Steam Deck</em> на экран автомобиля. Для активации подключите консоль через <code>HDMI-вход</code> модуля (требуется дополнительный адаптер <em>MLJ HDMI-In</em>).</li>
+  <li>📡 <strong>Поддержка цифрового ТВ</strong> — при подключении <em>DVB-T2 тюнера</em> можно смотреть эфирные каналы прямо в автомобиле (работает только на стоянке).</li>
+  <li>🔧 <strong>Диагностика через OBD-II</strong> — модуль может считывать ошибки двигателя и выводить их на экран <em>CarPlay</em> (требуется прошивка <code>v3.12+</code> и адаптер <em>ELM327</em>).</li>
+  <li>🔒 <strong>Скрытый режим "Valet"</strong> — отключает доступ к настройкам <em>CarPlay</em> и личным данным (активируется тройным нажатием на кнопку <code>Mute</code>).</li>
+</ul>
+
+<p>Для активации этих функций может потребоваться <strong>ручное редактирование конфигурационного файла</strong> <code>config.ini</code>, который находится на внутренней памяти модуля. Например, чтобы включить <em>игровой режим</em>, добавьте строку:</p>
+
+<pre><code>enable_gaming_mode=1
+<p>hdmi_input_resolution=1920x1080</code></pre></p>
+
+<p>Файл можно редактировать через <em>USB-отладку</em> (подключите модуль к ПК и используйте программу <em>MLJ Config Tool</em>, доступную на форуме <a href="https://mbworld.org" target="_blank">MBWorld</a>).</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Скрытые функции могут привести к нестабильной работе модуля. Перед их активацией сделайте резервную копию текущей прошивки через меню <code>System → Backup</code>.</p></div>
+
+<h2 id="faq-ответы-на-частые-вопросы-о-mlj-hyperion-cvm">FAQ: ответы на частые вопросы о MLJ Hyperion CVM</h2>
+
+<details>
+  <summary>❓ Можно ли установить MLJ Hyperion CVM самостоятельно, или нужна помощь специалиста?</summary>
+  <p>Установка возможна своими руками, если у вас есть опыт работы с автомобильной электрикой. Основные сложности связаны с подключением <code>LVDS-кабеля</code> и поиском питания <code>12V</code>. Для моделей с <em>MBUX</em> может потребоваться паяльник для подключения <code>CAN-фильтра</code>.</p>
+  <p>Если вы не уверены, лучше обратиться в автосервис, специализирующийся на мультимедийных системах <strong>Mercedes-Benz</strong>. Средняя стоимость установки — $150–$300.</p>
+</details>
+
+<details>
+  <summary>❓ Работает ли MLJ Hyperion CVM с iPhone 15 и Android 14?</summary>
+  <p>Да, модуль полностью совместим с последними версиями <em>iOS</em> и <em>Android</em>. Однако для <strong>беспроводного CarPlay</strong> на <em>iPhone 15</em> требуется прошивка <code>v3.10+</code>. На <em>Android 14</em> может потребоваться отключить оптимизацию батареи для приложения <em>Android Auto</em>.</p>
+  <p>Если возникают проблемы с подключением, попробуйте:</p>
+  <ul>
+    <li>Перезагрузить смартфон и модуль.</li>
+    <li>Удалить устройство из списка сопряжённых в <em>CarPlay</em> и подключить заново.</li>
+    <li>Обновить прошивку модуля до последней версии.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>❓ Можно ли вернуть штатную мультимедийную систему в исходное состояние после установки?</summary>
+  <p>Да, <em>MLJ Hyperion CVM</em> не вносит изменений в прошивку <em>COMAND/MBUX</em>. Чтобы вернуть всё "как было", достаточно:</p>
+  <ol>
+    <li>Отключить модуль от <code>LVDS</code> и USB.</li>
+    <li>Подключить кабели обратно к штатным разъёмам.</li>
+    <li>Сбросить настройки мультимедии через меню <code>Настройки → Система → Сброс</code>.</li>
+  </ol>
+  <p>Никаких следов установки не останется, за исключением физических (например, следов от крепления модуля).</p>
+</details>
+
+<details>
+  <summary>❓ Почему после установки MLJ Hyperion CVM пропал звук в телефонных звонках?</summary>
+  <p>Эта проблема связана с конфликтом аудиопотоков между штатной системой и модулем. Решения:</p>
+  <ul>
+    <li>В меню <em>Hyperion CVM</em> выберите <code>Audio → Priority: Phone</code>.</li>
+    <li>Отключите <em>Bluetooth</em> в штатной системе и используйте только подключение через <em>CarPlay</em>.</li>
+    <li>Обновите прошивку модуля до версии <code>v3.8+</code> (там исправлен баг с маршрутизацией звука).</li>
+  </ul>
+  <p>Если проблема остаётся, проверьте подключение <code>USB-хаба</code> — иногда звук пропадает из-за плохого контакта.</p>
+</details>
+
+<details>
+  <summary>❓ Где купить оригинальный MLJ Hyperion CVM, чтобы не нарваться на подделку?</summary>
+  <p>Официальными дилерами <em>MLJ</em> являются:</p>
+  <ul>
+    <li><a href="https://mljauto.com" target="_blank">Официальный сайт MLJ</a> (доставка из США, ~2–3 недели).</li>
+    <li><a href="https://mbworld.org/forums/mercedes-benzo-forum.3/" target="_blank">Форум MBWorld</a> (раздел "Vendor Classifieds").</li>
+    <li>Магазины-партнёры в Европе: <em>Mercedes Tuning Shop</em> (Германия), <em>BenzBoost</em> (Великобритания).</li>
+  </ul>
+  <p>Осторожно: на <em>AliExpress</em> и <em>eBay</em> часто продают подделки под видом оригинального <em>Hyperion CVM</em>. Отличия подделки:</p>
+  <ul>
+    <li>Низкое качество платы (видно невооружённым глазом).</li>
+    <li>Отсутствие логотипа <em>MLJ</em> на корпусе.</li>
+    <li>Прошивка версии ниже <code>v2.0</code> (оригинал начинается с <code>v3.0+</code>).</li>
+  </ul>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-такое-mlj-hyperion-cvm-и-зачем-он-нужен">Что такое MLJ Hyperion CVM и зачем он нужен?</a></li><li><a href="#сравнение-mlj-hyperion-cvm-с-аналогами-что-лучше">Сравнение MLJ Hyperion CVM с аналогами: что лучше?</a></li><li><a href="#совместимость-mlj-hyperion-cvm-подходит-ли-ваш-mercedes">Совместимость MLJ Hyperion CVM: подходит ли ваш Mercedes?</a></li><li><a href="#пошаговая-инструкция-по-установке-mlj-hyperion-cvm">Пошаговая инструкция по установке MLJ Hyperion CVM</a></li><li><a href="#настройка-и-оптимизация-mlj-hyperion-cvm">Настройка и оптимизация MLJ Hyperion CVM</a></li><li><a href="#обновление-прошивки-и-решение-распространённых-проблем">Обновление прошивки и решение распространённых проблем</a></li><li><a href="#скрытые-возможности-mlj-hyperion-cvm-что-не-расскажут-в-инструкции">Скрытые возможности MLJ Hyperion CVM: что не расскажут в инструкции</a></li><li><a href="#faq-ответы-на-частые-вопросы-о-mlj-hyperion-cvm">FAQ: ответы на частые вопросы о MLJ Hyperion CVM</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/v/ve/ves-bronirovannogo-mersedesa-s600.html" class="related-card">Вес бронированного Мерседес S600: характеристики защиты</a></li><li><a href="/articles/c/cl/cltc-chto-eto.html" class="related-card">CLTC: что это такое и как влияет на экономию топлива в Mercedes-Benz</a></li><li><a href="/articles/m/me/mercedes-w140-ves.html" class="related-card">Mercedes W140: вес, модификации и влияние на эксплуатацию</a></li><li><a href="/articles/m/me/mersedes-s-class-w222.html" class="related-card">Mercedes S-Class W222: Полный обзор, характеристики и надежность</a></li><li><a href="/articles/p/pn/pnevma-na-220-mersedes.html" class="related-card">Пневма на 220 Мерседес: диагностика, коды ошибок и ремонт</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/v/ve/ves-bronirovannogo-mersedesa-s600.html" class="related-bottom-card"><span class="related-bottom-title">Вес бронированного Мерседес S600: характеристики защиты</span><span class="related-bottom-desc">Узнайте точный вес бронированного Мерседес S600. Анализ массы по классам защиты BR4-BR7, влияние бро</span></a><a href="/articles/c/cl/cltc-chto-eto.html" class="related-bottom-card"><span class="related-bottom-title">CLTC: что это такое и как влияет на экономию топлива в Mercedes-Benz</span><span class="related-bottom-desc">Разбираемся в стандарте CLTC — новом методе измерения расхода топлива для Mercedes-Benz. Чем отличае</span></a><a href="/articles/m/me/mercedes-w140-ves.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes W140: вес, модификации и влияние на эксплуатацию</span><span class="related-bottom-desc">Узнайте точный вес Mercedes-Benz W140 (S-Class 1991-1999) по модификациям, как он влияет на динамику</span></a><a href="/articles/m/me/mersedes-s-class-w222.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes S-Class W222: Полный обзор, характеристики и надежность</span><span class="related-bottom-desc">Детальный разбор Mercedes S-Class W222: двигатели, технические особенности, слабые места и советы по</span></a><a href="/articles/p/pn/pnevma-na-220-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Пневма на 220 Мерседес: диагностика, коды ошибок и ремонт</span><span class="related-bottom-desc">Полный гид по пневмоподвеске Mercedes S220: устройство, типичные неисправности компрессора и стоек, </span></a><a href="/articles/m/me/mercedes-benz-w221-s63.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz W221 S63 AMG: Полный обзор легендарного седана</span><span class="related-bottom-desc">Технические характеристики, двигатели и особенности Mercedes-Benz W221 S63 AMG. Стоит ли покупать V8</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Как создать сервер в SCP: Secret Laboratory — полное руководство 2026 — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговая инструкция по созданию сервера в SCP: SL с настройкой модов, портов и оптимизацией для 50+ игроков. Разбираем хостинг, конфиги и решение ошибок.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/k/ka/kak-sozdat-server-v-scp-sl.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Как создать сервер в SCP: Secret Laboratory — полное руководство 2026">
+    <meta property="og:description" content="Пошаговая инструкция по созданию сервера в SCP: SL с настройкой модов, портов и оптимизацией для 50+ игроков. Разбираем хостинг, конфиги и решение ошибок.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/sl/">Sl</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Как создать сервер в SCP: Secret Laboratory — полное руководство 2026</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Создание сервера в SCP: Secret Laboratory — от установки до оптимизации</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#1-выбор-платформы-хостинг-vs-локальный-пк">1. Выбор платформы: хостинг vs локальный ПК</a></li><li><a href="#2-установка-серверного-ядра-пошаговая-инструкция">2. Установка серверного ядра: пошаговая инструкция</a></li><li><a href="#3-настройка-конфигурационного-файла-server-configyml">3. Настройка конфигурационного файла server-config.yml</a></li><li><a href="#4-настройка-портов-и-фаерволла">4. Настройка портов и фаерволла</a></li><li><a href="#5-установка-модов-и-плагинов">5. Установка модов и плагинов</a></li><li><a href="#6-оптимизация-сервера-для-50-игроков">6. Оптимизация сервера для 50+ игроков</a></li><li><a href="#7-решение-типичных-ошибок">7. Решение типичных ошибок</a></li><li><a href="#8-монетызация-сервера-что-разрешено-а-что-нет">8. Монетызация сервера: что разрешено, а что нет</a></li><li><a href="#faq-частые-вопросы-по-созданию-сервера">FAQ: Частые вопросы по созданию сервера</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>SCP: Secret Laboratory</em> — это многопользовательский хоррор-шутер, где игроки сражаются за выживание в подземном комплексе, кишащем аномалиями и монстрами. Создание собственного сервера открывает возможности для кастомизации правил, установки модов и игры с друзьями без публичных ограничений. Однако процесс настройки может показаться сложным для новичков: от выбора хостинга до тонкой настройки конфигурационных файлов.</p>
+
+<p>В этом руководстве мы разберём все этапы — от базовой установки серверного ядра до продвинутых настроек для стабильной работы с 50+ игроками. Вы узнаете, как избежать типичных ошибок при настройке портов, какие моды стоит установить в первую очередь, и как оптимизировать производительность для минимальных лагов. А если вы планируете монетызировать проект — мы затрагиваем и юридические нюансы лицензирования.</p>
+
+<h2 id="1-выбор-платформы-хостинг-vs-локальный-пк">1. Выбор платформы: хостинг vs локальный ПК</h2>
+
+<p>Первый вопрос, который нужно решить — где будет размещён сервер. У каждого варианта есть плюсы и минусы, влияющие на стабильность, стоимость и возможности кастомизации.</p>
+
+<p><strong>Локальный сервер на своём ПК</strong> подходит для тестирования или игры с небольшой компанией (до 10 человек). Преимущества: полный контроль над файлами, отсутствие ежемесячных платежей и возможность мгновенно вносить изменения. Однако есть критические ограничения:</p>
+<ul>
+  <li>🔌 <strong>Зависимость от вашего интернет-соединения</strong>: если IP динамический — игроки потеряют доступ при смене адреса. Решается услугой <em>DDNS</em> (например, <em>No-IP</em>).</li>
+  <li>🖥️ <strong>Производительность</strong>: для 20+ игроков потребуется ПК с процессором уровня <em>Ryzen 5 3600</em> или <em>Intel i5-10400</em>, 16 ГБ ОЗУ и SSD-накопителем.</li>
+  <li>⚡ <strong>Электричество и нагрев</strong>: круглосуточная работа сервера увеличит счета за свет на 15–30% и может сократить срок службы комплектующих.</li>
+</ul>
+
+<p><strong>Арендованный хостинг</strong> (VDS/VPS) снимает проблемы с железом и интернетом, но требует ежемесячных вложений. Популярные провайдеры для <em>SCP: SL</em>:</p>
+<table>
+  <thead>
+    <tr><th>Хостинг</th><th>Цена (месяц)</th><th>Локация серверов</th><th>Особенности</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><em>HostHavoc</em></td><td>от $12</td><td>США, Европа, Австралия</td><td>Автоустановщик, DDoS-защита, мод-менеджер</td></tr>
+    <tr><td><em>GTXGaming</em></td><td>от $10</td><td>США, Германия, Сингапур</td><td>Бесплатный тест на 24 часа, поддержка <code>Linux/Windows</code></td></tr>
+    <tr><td><em>PingPerfect</em></td><td>от $15</td><td>10+ локаций</td><td>Интеграция с <em>Steam Workshop</em>, бэкапы</td></tr>
+    <tr><td><em>Zap-Hosting</em></td><td>от $8</td><td>Европа, США</td><td>Гибкая тарификация по игрокам</td></tr>
+  </tbody>
+</table>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Бесплатные хостинги (например, <em>Aternos</em>) не поддерживают <em>SCP: SL</em> из-за высоких требований к CPU. Использование таких платформ приведёт к лагам и частым крашам сервера.</blockquote>
+
+<p>Для новичков рекомендуем начать с <em>HostHavoc</em> или <em>GTXGaming</em> — они предлагают готовые шаблоны конфигураций и техническую поддержку. Если же вы уверены в своих силах, аренда <em>VPS</em> у <em>Hetzner</em> или <em>OVH</em> (от €5/месяц) даст больше свободы, но потребует ручной настройки.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой хостинг вы предпочитаете для SCP</strong><ul><li>SL?:Локальный ПК</li><li>HostHavoc</li><li>GTXGaming</li><li>PingPerfect</li><li>Другой</li></ul></div></div>
+
+<h2 id="2-установка-серверного-ядра-пошаговая-инструкция">2. Установка серверного ядра: пошаговая инструкция</h2>
+
+<p>Независимо от выбранной платформы, основу сервера составляет <strong>серверное ядро</strong> (<em>dedicated server</em>). Его можно скачать с официального репозитория на <em>GitHub</em> или через <em>SteamCMD</em>. Мы разберём оба метода.</p>
+
+<h3>Способ 1: Установка через SteamCMD (рекомендуется)</h3>
+<p><em>SteamCMD</em> — это консольный инструмент от <em>Valve</em>, который автоматически скачивает и обновляет серверные файлы. Подходит для <em>Windows</em> и <em>Linux</em>.</p>
+
+<ol>
+  <li><p>Скачайте <em>SteamCMD</em> с <a href="https://developer.valvesoftware.com/wiki/SteamCMD">официального сайта</a> и распакуйте архив в отдельную папку (например, <code>C:\SCP_Server\SteamCMD</code>).</p></li>
+  <li><p>Запустите <code>steamcmd.exe</code> (Windows) или <code>./steamcmd.sh</code> (Linux) и выполните команды:</p>
+    <pre><code>login anonymous
+<p>force_install_dir ../SCP_SL_Server</p>
+<p>app_update 996560 validate</p>
+<p>quit</code></pre></p>
+  </li>
+  <li><p>Файлы сервера появятся в папке <code>SCP_SL_Server</code>. Основные директории:</p>
+    <ul>
+      <li><code>/SCP_SL_Data/Managed</code> — плагины и моды</li>
+      <li><code>/config</code> — конфигурационные файлы (<code>server-config.yml</code>)</li>
+      <li><code>/logs</code> — журналы ошибок и событий</li>
+    </ol>
+  </li>
+</ol>
+
+<h3>Способ 2: Ручная установка с GitHub</h3>
+<p>Актуально для опытных пользователей, которые хотят использовать кастомные сборки или форки (например, <em>SCP: Revival</em>).</p>
+<p>Скачайте последнюю версию с <a href="https://github.com/northwood-studios/SCPSL-Server">репозитория Northwood Studios</a> (раздел <code>Releases</code>). Разархивируйте файлы и запустите <code>SCP Secret Laboratory Server.exe</code> для генерации конфигов.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Ручная установка требует дополнительной настройки зависимостей (.NET Framework 4.8 для Windows или <em>Mono</em> для Linux). Без них сервер не запустится.</blockquote>
+
+
+<p>Скачать SteamCMD или архив с GitHub|</p>
+<p>Создать отдельную папку для сервера|</p>
+<p>Запустить установку через консоль или EXE|</p>
+<p>Проверить наличие файла server-config.yml|</p>
+<p>Открыть порты 7777 (UDP) и 7778 (TCP) в фаерволле--></p>
+
+<h2 id="3-настройка-конфигурационного-файла-server-configyml">3. Настройка конфигурационного файла <code>server-config.yml</code></h2>
+
+<p>Файл <code>server-config.yml</code> (находится в <code>/config</code>) — это «мозг» вашего сервера. Здесь задаются правила игры, ограничения, настройки безопасности и параметры производительности. Рассмотрим ключевые параметры:</p>
+
+<h3>Базовые настройки сервера</h3>
+<p>Откройте файл в любом текстовом редакторе (рекомендуем <em>Notepad++</em> или <em>VS Code</em>) и найдите следующие строки:</p>
+<pre><code># Основные параметры
+<p>server_name: "Мой сервер SCP:SL"  # Название (отображается в списке серверов)</p>
+<p>max_players: 20                   # Максимальное количество игроков</p>
+<p>port: 7777                        # Порт для подключения (UDP)</p>
+<p>query_port: 7778                 # Порт для Steam-query (TCP)</p>
+
+<p># Режимы игры</p>
+<p>game_mode: Sandbox               # Варианты: Sandbox, Classic, Custom</p>
+<p>round_time_limit: -1             # Лимит времени раунда (в секундах, -1 = безлимит)</code></pre></p>
+
+<h3>Параметры безопасности</h3>
+<p>Эти настройки защищают сервер от читерства и DDoS-атак:</p>
+<pre><code># Античит
+<p>anticheat_enabled: true</p>
+<p>anticheat_ban_duration: 2592000  # Время бана за читы (в секундах, 2592000 = 30 дней)</p>
+
+<p># Защита от флуда</p>
+<p>max_ping: 300                     # Максимальный пинг для подключения</p>
+<p>connection_timeout: 15           # Таймаут подключения (секунды)</p>
+<p>afk_kick_time: 300               # Время до кика за AFK (секунды)</code></pre></p>
+
+<h3>Оптимизация производительности</h3>
+<p>Для серверов с 30+ игроками критично настроить следующие параметры:</p>
+<pre><code># Нагрузка на CPU
+<p>tick_rate: 30                     # Частота тиков (не выше 60, иначе лаги)</p>
+<p>max_fps: 60                      # Лимит FPS сервера</p>
+
+<p># Память и кэш</p>
+<p>asset_cache_size: 1024           # Размер кэша ассетов (MB)</p>
+<p>network_compression: true        # Сжатие трафика (уменьшает лаги)</code></pre></p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Установка <code>tick_rate</code> выше 60 приведёт к <mark>десинхронизации физики</mark> и багам с взаимодействием объектов. Оптимальное значение — 30 для 20–40 игроков и 20 для 50+.</blockquote>
+
+<p>После изменений сохраните файл и перезапустите сервер. Чтобы проверить корректность конфига, запустите сервер в консольном режиме:</p>
+<pre><code>SCP Secret Laboratory Server.exe -config config/server-config.yml -log</code></pre>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Используйте онлайн-валидатор YAML (например, <a href="https://yamlvalidator.com/">YAML Validator</a>), чтобы избежать ошибок синтаксиса в конфиге. Один лишний пробел может сломать запуск сервера!</p></div>
+
+<h2 id="4-настройка-портов-и-фаерволла">4. Настройка портов и фаерволла</h2>
+
+<p>Без правильной настройки портов игроки не смогут подключиться к серверу. Разберём процесс для <em>Windows</em>, <em>Linux</em> и роутера.</p>
+
+<h3>Открытие портов в Windows</h3>
+<ol>
+  <li><p>Откройте <code>Панель управления → Система и безопасность → Брандмауэр Windows → Дополнительные параметры</code>.</p></li>
+  <li><p>Создайте новое правило для входящих подключений:</p>
+    <ul>
+      <li>Тип правила: <code>Для порта</code></li>
+      <li>Протокол: <code>UDP</code>, порты: <code>7777</code></li>
+      <li>Действие: <code>Разрешить подключение</code></li>
+      <li>Профиль: <code>Общий</code>, <code>Частный</code>, <code>Публичный</code></li>
+      <li>Имя: <code>SCP_SL_UDP</code></li>
+    </ol>
+  </li>
+  <li><p>Повторите шаги для <code>TCP</code>-порта <code>7778</code> (имя правила: <code>SCP_SL_TCP</code>).</p></li>
+</ol>
+
+<h3>Настройка роутера (проброс портов)</h3>
+<p>Если сервер запущен на локальном ПК, необходимо пробросить порты на роутере:</p>
+<ol>
+  <li><p>Зайдите в панель управления роутером (обычно по адресу <code>192.168.1.1</code> или <code>192.168.0.1</code>).</p></li>
+  <li><p>Найдите раздел <code>Port Forwarding</code> (или <code>Переадресация портов</code>).</p></li>
+  <li><p>Добавьте два правила:</p>
+    <table>
+      <thead><tr><th>Имя</th><th>Протокол</th><th>Внешний порт</th><th>Локальный IP</th><th>Локальный порт</th></tr></thead>
+      <tbody>
+        <tr><td>SCP_SL_UDP</td><td>UDP</td><td>7777</td><td>192.168.x.x</td><td>7777</td></tr>
+        <tr><td>SCP_SL_TCP</td><td>TCP</td><td>7778</td><td>192.168.x.x</td><td>7778</td></tr>
+      </tbody>
+    </table>
+    <p><em>192.168.x.x</em> — это локальный IP вашего ПК (узнать можно через <code>ipconfig</code> в командной строке).</p>
+  </li>
+</ol>
+
+<h3>Проверка открытых портов</h3>
+<p>Убедитесь, что порты доступны извне, с помощью сервисов:</p>
+<ul>
+  <li>🌍 <a href="https://www.yougetsignal.com/tools/open-ports/">YouGetSignal</a></li>
+  <li>🔍 <a href="https://portchecker.co/">PortChecker</a></li>
+  <li>🛡️ <a href="https://canyouseeme.org/">CanYouSeeMe</a></li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если у вас <strong>динамический IP</strong>, используйте сервис <em>DDNS</em> (например, <em>No-IP</em> или <em>DynDNS</em>), чтобы игроки всегда могли подключиться по доменному имени (например, <code>myserver.ddns.net:7777</code>).</blockquote>
+
+<h2 id="5-установка-модов-и-плагинов">5. Установка модов и плагинов</h2>
+
+<p>Базовая версия <em>SCP: SL</em> ограничена в функционале, но сообщество создало тысячи модов — от новых карт до полной переработки геймплея. Разберём, как их устанавливать.</p>
+
+<h3>Где скачивать моды?</h3>
+<p>Официальные источники:</p>
+<ul>
+  <li>📦 <a href="https://scpsl-game.com/plugins.php">Официальный сайт SCP:SL</a> (проверенные плагины)</li>
+  <li>💻 <a href="https://github.com/Exiled-Team/Exiled">Exiled Framework</a> (фреймворк для кастомных режимов)</li>
+  <li>🎮 <a href="https://steamcommunity.com/workshop/browse/?appid=700330">Steam Workshop</a> (моды для клиента, но некоторые работают и на сервере)</li>
+</ul>
+
+<h3>Установка через Exiled Loader</h3>
+<p><em>Exiled</em> — самый популярный фреймворк для моддинга <em>SCP: SL</em>. Он позволяет устанавливать плагины без ручного редактирования файлов.</p>
+<ol>
+  <li><p>Скачайте последнюю версию <em>Exiled Loader</em> с <a href="https://github.com/Exiled-Team/Exiled/releases">GitHub</a>.</p></li>
+  <li><p>Распакуйте файлы в папку <code>/SCP_SL_Data/Managed</code> (замените существующие).</p></li>
+  <li><p>Запустите сервер — в папке <code>/configs</code> появится файл <code>exiled-config.yml</code>.</p></li>
+  <li><p>Установите плагины, добавив их в папку <code>/plugins</code> (скачиваются с <a href="https://exiled.to/">Exiled.to</a>).</p></li>
+</ol>
+
+<h3>Топ-5 полезных плагинов для старта</h3>
+<table>
+  <thead><tr><th>Плагин</th><th>Описание</th><th>Ссылка</th></tr></thead>
+  <tbody>
+    <tr><td><em>AdminTools</em></td><td>Расширенная админ-панель с логами, киками и банами</td><td><a href="https://exiled.to/resources/admintools.1/">Exiled.to</a></td></tr>
+    <tr><td><em>CustomRoles</em></td><td>Добавляет новые роли (например, <em>SCP-035</em>, <em>Класс-D с оружием</em>)</td><td><a href="https://exiled.to/resources/customroles.2/">Exiled.to</a></td></tr>
+    <tr><td><em>MapEditor</em></td><td>Редактор карт в реальном времени</td><td><a href="https://exiled.to/resources/mapeditor.3/">Exiled.to</a></td></tr>
+    <tr><td><em>BetterRespawn</em></td><td>Улучшенная система респавна с таймерами</td><td><a href="https://exiled.to/resources/betterrespawn.4/">Exiled.to</a></td></tr>
+    <tr><td><em>DiscordIntegration</em></td><td>Связь с Discord: уведомления о подключениях, чат-мост</td><td><a href="https://exiled.to/resources/discordintegration.5/">Exiled.to</a></td></tr>
+  </tbody>
+</table>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Установка более 15–20 плагинов одновременно может привести к <strong>конфликтам</strong> и падению сервера. Перед добавлением нового плагина проверяйте совместимость на его странице в <em>Exiled.to</em>.</blockquote>
+
+<details class="faq-item"><summary>Как удалить конфликтующий плагин?</summary><div class="faq-answer"><p>
+<p>Если после установки плагина сервер не запускается или выдаёт ошибки в консоли:</p>
+<p>1. Удалите файл плагина из папки <code>/plugins</code>.</p>
+<p>2. Очистите кэш, удалив папку <code>/SCP_SL_Data/Managed/Cache</code>.</p>
+<p>3. Перезапустите сервер.</p>
+<p>4. Проверьте логи в <code>/logs</code> на наличие ошибок типа <code>NullReferenceException</code> или <code>MissingMethodException</code>.</p>
+<p></p></div></details></p>
+
+<h2 id="6-оптимизация-сервера-для-50-игроков">6. Оптимизация сервера для 50+ игроков</h2>
+
+<p>Стандартная конфигурация сервера не рассчитана на большое количество игроков. При загрузке 30+ человек появляются лаги, фризы и десинхронизация. Разберём, как этого избежать.</p>
+
+<h3>Аппаратные требования</h3>
+<p>Минимальные и рекомендуемые характеристики сервера:</p>
+<table>
+  <thead><tr><th>Параметр</th><th>10–20 игроков</th><th>30–50 игроков</th><th>50+ игроков</th></tr></thead>
+  <tbody>
+    <tr><td>CPU</td><td>Intel i5-8400 / Ryzen 5 2600</td><td>Intel i7-9700K / Ryzen 7 3700X</td><td>Intel i9-10900K / Ryzen 9 5900X</td></tr>
+    <tr><td>ОЗУ</td><td>8 ГБ</td><td>16 ГБ</td><td>32 ГБ</td></tr>
+    <tr><td>Хранилище</td><td>HDD</td><td>SSD (SATA)</td><td>NVMe SSD</td></tr>
+    <tr><td>Сеть</td><td>100 Мбит/с</td><td>500 Мбит/с</td><td>1 Гбит/с</td></tr>
+  </tbody>
+</table>
+
+<h3>Настройки конфига для высокой нагрузки</h3>
+<p>Откройте <code>server-config.yml</code> и измените следующие параметры:</p>
+<pre><code># Оптимизация сети
+<p>network_compression: true</p>
+<p>max_send_rate: 30            # Ограничение пакетов в секунду</p>
+<p>max_resend_rate: 10          # Повторная отправка потерянных пакетов</p>
+
+<p># Оптимизация физики</p>
+<p>physics_iterations: 8       # Количество итераций физики (по умолчанию 16)</p>
+<p>sleep_threshold: 0.1        # Задержка при бездействии (секунды)</p>
+
+<p># Оптимизация памяти</p>
+<p>asset_cache_size: 2048      # Увеличьте до 2048 MB для больших карт</p>
+<p>gc_mode: aggressive          # Режим сборщика мусора</code></pre></p>
+
+<h3>Использование прокси-сервера</h3>
+<p>Для распределения нагрузки можно подключить <em>SCP:SL</em> к прокси-серверу (например, <em>BungeeCord</em> для <em>Minecraft</em>, но в нашем случае подойдёт <em>HAProxy</em>). Это позволит:</p>
+<ul>
+  <li>🔄 Балансировать нагрузку между несколькими серверами.</li>
+  <li>🛡️ Защищаться от DDoS-атак.</li>
+  <li>🌍 Улучшить пинг для игроков из разных регионов.</li>
+</ul>
+
+<p>Пример конфига для <em>HAProxy</em>:</p>
+<pre><code>frontend scpsl_frontend
+<p>bind *:7777 udp</p>
+<p>default_backend scpsl_backend</p>
+
+<p>backend scpsl_backend</p>
+<p>balance roundrobin</p>
+<p>server server1 192.168.1.100:7777 check</p>
+<p>server server2 192.168.1.101:7777 check</code></pre></p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Прокси-сервер добавляет задержку в 5–15 мс. Не используйте его для серверов с менее чем 40 игроками — пользы не будет, а лаги появятся.</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для серверов с 50+ игроками критично использовать SSD-накопитель. HDD не справится с нагрузкой на ввод-вывод, что приведёт к фризам при загрузке карты.</p></div>
+
+<h2 id="7-решение-типичных-ошибок">7. Решение типичных ошибок</h2>
+
+<p>Даже при правильной настройке сервер может выдавать ошибки. Разберём самые распространённые и способы их исправления.</p>
+
+<h3>Ошибка: "Connection refused" или "Server did not respond"</h3>
+<p>Причины и решения:</p>
+<ul>
+  <li>🔌 <strong>Порты не открыты</strong>: Проверьте фаерволл и роутер (раздел 4).</li>
+  <li>📡 <strong>Неверный IP-адрес</strong>: Если используете <em>DDNS</em>, убедитесь, что домен актуален (<code>ping ваш_домен</code>).</li>
+  <li>🔄 <strong>Сервер не запущен</strong>: Проверьте логи в <code>/logs</code> на наличие критических ошибок (<code>FATAL</code>).</li>
+</ul>
+
+<h3>Ошибка: "MissingMethodException" или "NullReferenceException"</h3>
+<p>Эти ошибки связаны с плагинами. Действия:</p>
+<ol>
+  <li><p>Удалите последний установленный плагин.</p></li>
+  <li><p>Проверьте совместимость версий: плагин должен быть собран под вашу версию <em>Exiled</em>.</p></li>
+  <li><p>Очистите кэш (<code>/SCP_SL_Data/Managed/Cache</code>).</p></li>
+</ol>
+
+<h3>Ошибка: "Out of memory" (нехватка памяти)</h3>
+<p>Решения:</p>
+<ul>
+  <li>🖥️ Увеличьте <code>asset_cache_size</code> в <code>server-config.yml</code> (до 4096 MB).</li>
+  <li>🗑️ Удалите ненужные плагины или карты.</li>
+  <li>🔄 Перезапустите сервер (иногда память не освобождается корректно).</li>
+</ul>
+
+<h3>Ошибка: Десинхронизация физики (объекты проваливаются сквозь пол)</h3>
+<p>Причины:</p>
+<ul>
+  <li><code>tick_rate</code> выше 60.</li>
+  <li>Плагины, меняющие физику (например, <em>CustomWeapons</em>).</li>
+  <li>Высокая загрузка CPU (более 90%).</li>
+</ul>
+<p>Решение: верните <code>tick_rate: 30</code> и отключите подозрительные плагины.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для диагностики ошибок используйте команду <code>debug_log true</code> в консоли сервера. Логи станут подробнее, но файл <code>latest.log</code> будет быстро разрастаться — не забывайте его чистить.</p></div>
+
+<h2 id="8-монетызация-сервера-что-разрешено-а-что-нет">8. Монетызация сервера: что разрешено, а что нет</h2>
+
+<p>Многие администраторы хотят окупить затраты на хостинг или даже заработать на сервере. Однако <em>Northwood Studios</em> (разработчики <em>SCP: SL</em>) строго регулируют монетызацию. Разберёмся, что можно, а что приведёт к бану.</p>
+
+<h3>Разрешённые способы монетызации</h3>
+<ul>
+  <li>💰 <strong>Донаты на развитие</strong>: Можно принимать добровольные пожертвования через <em>DonationAlerts</em> или <em>Patreon</em>, но <strong>нельзя</strong> продавать игровые преимущества.</li>
+  <li>🎁 <strong>Косметические бонусы</strong>: Разрешены эксклюзивные скины, теги в нике или специальные команды (например, <code>/dance</code>).</li>
+  <li>🏆 <strong>Турниры с призовым фондом</strong>: Если фонд формируется из взносов участников, а не из кармана админа.</li>
+</ul>
+
+<h3>Запрещённые способы (приводят к бану)</h3>
+<ul>
+  <li>🔫 <strong>Pay-to-Win</strong>: Продажа оружия, брони, уникальных ролей (например, <em>SCP-079</em> за деньги).</li>
+  <li>🚫 <strong>Платный вход</strong>: Требование оплаты за доступ к серверу.</li>
+  <li>📊 <strong>Продажа статистики</strong>: Например, сброс смерти или повышение уровня за донат.</li>
+</ul>
+
+<p>Полные правила монетызации описаны в <a href="https://scpsl-game.com/server_rules.php">официальных гайдлайнз</a>. За нарушение сервер может быть удалён из общего списка или заблокирован.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы принимаете донаты, обязательно укажите это в описании сервера в <em>Steam</em> и на своём сайте. Скрытые платежи считаются нарушением.</blockquote>
+
+<h2 id="faq-частые-вопросы-по-созданию-сервера">FAQ: Частые вопросы по созданию сервера</h2>
+
+<details>
+  <summary>Как сделать сервер видимым в списке Steam?</summary>
+  <p>Чтобы сервер отображался в браузере <em>Steam</em>, убедитесь, что:</p>
+  <ol>
+    <li>Порт <code>7778 (TCP)</code> открыт и проброшен.</li>
+    <li>В <code>server-config.yml</code> установлено <code>is_visible: true</code>.</li>
+    <li>Сервер запущен и доступен по IP (проверьте через <a href="https://www.gametracker.com/">GameTracker</a>).</li>
+  </ol>
+  <p>Если сервер не появляется в течение 10 минут, перезапустите его и проверьте логи на ошибки подключения к <em>Steam Master Server</em>.</p>
+</details>
+
+<details>
+  <summary>Можно ли запустить сервер на Linux?</summary>
+  <p>Да, но потребуется <em>Mono</em> (аналог .NET для Linux). Инструкция:</p>
+  <ol>
+    <li>Установите <em>Mono</em>:
+      <pre><code>sudo apt install mono-complete</code></pre>
+    </li>
+    <li>Скачайте серверные файлы через <em>SteamCMD</em> (раздел 2).</li>
+    <li>Запустите сервер командой:
+      <pre><code>mono SCP\ Secret\ Laboratory\ Server.exe</code></pre>
+    </li>
+  </ol>
+  <p>Обратите внимание: на Linux возможны проблемы с некоторыми плагинами, собранными под <em>Windows</em>.</p>
+</details>
+
+<details>
+  <summary>Как добавить свою карту на сервер?</summary>
+  <p>Для установки кастомной карты:</p>
+  <ol>
+    <li>Скачайте файл карты (<code>.scpmap</code>) с <a href="https://scpsl-game.com/maps.php">официального сайта</a> или <em>Steam Workshop</em>.</li>
+    <li>Поместите файл в папку <code>/maps</code>.</li>
+    <li>В <code>server-config.yml</code> добавьте строку:
+      <pre><code>available_maps:
+<p>- "ВашаКарта.scpmap"</code></pre></p>
+    </li>
+    <li>Перезапустите сервер и выберите карту командой <code>map ВашаКарта</code>.</li>
+  </ol>
+  <p>Для создания своей карты используйте <em>Unity</em> и плагин <em>SCP: Map Editor</em>.</p>
+</details>
+
+<details>
+  <summary>Как запретить определённые предметы или роли?</</div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#1-выбор-платформы-хостинг-vs-локальный-пк">1. Выбор платформы: хостинг vs локальный ПК</a></li><li><a href="#2-установка-серверного-ядра-пошаговая-инструкция">2. Установка серверного ядра: пошаговая инструкция</a></li><li><a href="#3-настройка-конфигурационного-файла-server-configyml">3. Настройка конфигурационного файла server-config.yml</a></li><li><a href="#4-настройка-портов-и-фаерволла">4. Настройка портов и фаерволла</a></li><li><a href="#5-установка-модов-и-плагинов">5. Установка модов и плагинов</a></li><li><a href="#6-оптимизация-сервера-для-50-игроков">6. Оптимизация сервера для 50+ игроков</a></li><li><a href="#7-решение-типичных-ошибок">7. Решение типичных ошибок</a></li><li><a href="#8-монетызация-сервера-что-разрешено-а-что-нет">8. Монетызация сервера: что разрешено, а что нет</a></li><li><a href="#faq-частые-вопросы-по-созданию-сервера">FAQ: Частые вопросы по созданию сервера</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/s/sl/sl-mercedes-1994.html" class="related-card">Mercedes-Benz SL (R129) 1994: обзор, характеристики и нюансы покупки</a></li><li><a href="/articles/m/me/mercedes-benz-pagoda.html" class="related-card">Mercedes-Benz Pagoda: история, модели и характеристики SL W113</a></li><li><a href="/articles/m/me/mersedes-kabriolet-1990.html" class="related-card">Mercedes-Benz кабриолет 1990 года: цены, особенности и выбор</a></li><li><a href="/articles/m/me/mercedes-slr-stirling-moss.html" class="related-card">Mercedes-Benz SLR McLaren Stirling Moss: Легенда 750 л.с.</a></li><li><a href="/articles/m/me/mercedes-benz-mclaren.html" class="related-card">Mercedes-Benz McLaren: история, модели и технические особенности</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/s/sl/sl-mercedes-1994.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz SL (R129) 1994: обзор, характеристики и нюансы покупки</span><span class="related-bottom-desc">Подробный гайд по Mercedes SL 1994 года (R129): технические данные, слабые места, цены на рынке и со</span></a><a href="/articles/m/me/mercedes-benz-pagoda.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz Pagoda: история, модели и характеристики SL W113</span><span class="related-bottom-desc">Полный обзор легендарного Mercedes-Benz SL W113 Pagoda. История создания, технические характеристики</span></a><a href="/articles/m/me/mersedes-kabriolet-1990.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz кабриолет 1990 года: цены, особенности и выбор</span><span class="related-bottom-desc">Подробный обзор Mercedes-Benz кабриолетов 1990-х: модели R129 (SL), W124 (E-Class), технические хара</span></a><a href="/articles/m/me/mercedes-slr-stirling-moss.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz SLR McLaren Stirling Moss: Легенда 750 л.с.</span><span class="related-bottom-desc">Полный обзор Mercedes-Benz SLR McLaren Stirling Moss Edition. История создания, технические характер</span></a><a href="/articles/m/me/mercedes-benz-mclaren.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz McLaren: история, модели и технические особенности</span><span class="related-bottom-desc">Узнайте всё о легендарных суперкарах Mercedes-Benz McLaren: от SLR до SLK, технические характеристик</span></a><a href="/articles/s/sl/slade-in-la.html" class="related-bottom-card"><span class="related-bottom-title">Slade in LA: как обновить прошивку на Mercedes-Benz SL-Class</span><span class="related-bottom-desc">Пошаговая инструкция по обновлению ПО для Mercedes SL в Лос-Анджелесе: официальные методы, риски, со</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

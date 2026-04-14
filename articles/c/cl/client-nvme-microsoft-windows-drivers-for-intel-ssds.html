@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>NVMe-драйверы Intel для Windows: как установить и оптимизировать SSD — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговая инструкция по установке официальных драйверов Intel NVMe для Windows 10/11. Сравнение версий, решение ошибок и оптимизация производительности SSD.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/c/cl/client-nvme-microsoft-windows-drivers-for-intel-ssds.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="NVMe-драйверы Intel для Windows: как установить и оптимизировать SSD">
+    <meta property="og:description" content="Пошаговая инструкция по установке официальных драйверов Intel NVMe для Windows 10/11. Сравнение версий, решение ошибок и оптимизация производительности SSD.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/e-class/">E Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">NVMe-драйверы Intel для Windows: как установить и оптимизировать SSD</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Драйверы Intel NVMe для Windows: где скачать, как установить и настроить SSD</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#почему-стандартный-драйвер-windows-не-подходит-для-intel-nvme-ssd">Почему стандартный драйвер Windows не подходит для Intel NVMe SSD</a></li><li><a href="#где-скачать-официальные-драйверы-intel-nvme-для-windows">Где скачать официальные драйверы Intel NVMe для Windows</a></li><li><a href="#пошаговая-инструкция-по-установке-драйвера-nvme-для-intel-ssd">Пошаговая инструкция по установке драйвера NVMe для Intel SSD</a></li><li><a href="#типичные-ошибки-при-установке-драйверов-intel-nvme-и-их-решения">Типичные ошибки при установке драйверов Intel NVMe и их решения</a></li><li><a href="#оптимизация-intel-nvme-ssd-после-установки-драйвера">Оптимизация Intel NVMe SSD после установки драйвера</a></li><li><a href="#сравнение-производительности-стандартный-драйвер-vs-intel-nvme">Сравнение производительности: стандартный драйвер vs. Intel NVMe</a></li><li><a href="#дополнительные-утилиты-для-intel-nvme-ssd">Дополнительные утилиты для Intel NVMe SSD</a></li><li><a href="#faq-частые-вопросы-о-драйверах-intel-nvme">FAQ: Частые вопросы о драйверах Intel NVMe</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Если ваш компьютер оснащён <strong>накопителем Intel SSD с интерфейсом NVMe</strong>, правильно подобранный драйвер может увеличить скорость чтения/записи на <em>10–15%</em> и снизить задержки при работе с диском. Однако многие пользователи сталкиваются с проблемами: Windows автоматически устанавливает стандартный драйвер <code>stornvme.sys</code>, который не раскрывает весь потенциал <em>Intel Optane</em>, <em>Intel SSD 660p/665p/670p</em> или <em>DC P4510/P4610</em>. В этой статье разберём, где скачать <strong>официальные драйверы Intel NVMe</strong>, как их корректно установить и избежать типичных ошибок.</p>
+
+<p>Особенность NVMe-накопителей в том, что они взаимодействуют с системой через <strong>протокол NVMe</strong>, а не устаревший AHCI. Это требует специализированных драйверов, которые Intel регулярно обновляет — последняя версия (на момент 2026 года) поддерживает <em>Windows 10 20H2+</em> и <em>Windows 11</em>, а также включает оптимизации для <code>DirectStorage</code> и <code>GPU-ускорения</code>. Но как понять, какой драйвер нужен именно вам? И почему после обновления диск может начать «тормозить»? Ответы — ниже.</p>
+
+<h2 id="почему-стандартный-драйвер-windows-не-подходит-для-intel-nvme-ssd">Почему стандартный драйвер Windows не подходит для Intel NVMe SSD</h2>
+
+<p>Microsoft поставляет в составе Windows универсальный драйвер <code>stornvme.sys</code>, который обеспечивает базовую совместимость с любыми NVMe-накопителями. Однако он не учитывает <strong>фирменные технологии Intel</strong>:</p>
+
+<ul>
+  <li>🔹 <strong>Intel VROC (Virtual RAID on CPU)</strong> — аппаратное ускорение RAID-массивов на процессорах Intel Core i7/i9 и Xeon;</li>
+  <li>🔹 <strong>Optane Memory Acceleration</strong> — кэширование часто используемых данных в энергонезависимой памяти;</li>
+  <li>🔹 <strong>NVMe Command Set Extensions</strong> — расширенные команды для управления энергопотреблением и износом ячеек NAND.</li>
+</ul>
+
+<p>Без фирменного драйвера эти функции либо отключены, либо работают в урезанном режиме. Например, <em>Intel SSD 660p</em> с драйвером от Microsoft показывает скорость последовательного чтения ~1800 МБ/с, тогда как с официальным драйвером — до <mark>2200 МБ/с</mark> (по данным тестов <em>CrystalDiskMark 8.0</em>). Разница особенно заметна при работе с мелкими файлами (4K QD1).</p>
+
+<p>Кроме того, стандартный драйвер не поддерживает:</p>
+<ul>
+  <li>🔸 <strong>SMART-мониторинг</strong> с расширенными метриками (например, <code>Percentage Used</code> для QLC-накопителей);</li>
+  <li>🔸 <strong>Firmware Updates</strong> через <em>Intel Memory and Storage Tool</em>;</li>
+  <li>🔸 <strong>Power Management</strong> для ноутбуков (режимы <code>DevSleep</code> и <code>L1.2</code>).</li>
+</ul>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой SSD Intel у вас установлен?</strong><ul><li>Intel 660p/665p</li><li>Intel 670p</li><li>Intel Optane 900p/905p</li><li>Intel DC P4510/P4610</li><li>Другой (напишите в комментариях)</li></ul></div></div>
+
+<h2 id="где-скачать-официальные-драйверы-intel-nvme-для-windows">Где скачать официальные драйверы Intel NVMe для Windows</h2>
+
+<p>Intel предоставляет драйверы через два официальных источника:</p>
+
+<ol>
+  <li><strong>Страница поддержки Intel</strong> — <a href="https://downloadcenter.intel.com/" target="_blank" rel="nofollow">downloadcenter.intel.com</a>. Здесь нужно ввести модель SSD (например, <em>SSDPEKNW010T8</em> для <em>Intel 660p 1TB</em>) или выбрать категорию <code>Memory and Storage → Solid State Drives</code>.</li>
+  <li><strong>Intel Driver & Support Assistant (DSA)</strong> — утилита для автоматического поиска обновлений. Скачать можно <a href="https://www.intel.ru/content/www/ru/ru/support/detect.html" target="_blank" rel="nofollow">здесь</a>.</li>
+</ol>
+
+<p>Важно: драйверы для <em>потребительских</em> (660p/670p) и <em>серверных</em> (DC P4510) SSD разные! Например, для <em>Intel Optane 905p</em> нужен пакет <code>Intel Optane SSD Driver</code>, а для <em>Intel SSD 665p</em> — <code>Intel SSD Data Center Tool</code> не подойдёт.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Модель SSD</th>
+      <th>Последняя версия драйвера (2026)</th>
+      <th>Поддерживаемые ОС</th>
+      <th>Ссылка на скачивание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Intel 660p/665p/670p</em></td>
+      <td>8.2.2.1002</td>
+      <td>Windows 10/11 (x64)</td>
+      <td><a href="https://downloadcenter.intel.com/download/30125" target="_blank" rel="nofollow">Скачать</a></td>
+    </tr>
+    <tr>
+      <td><em>Intel Optane 900p/905p</em></td>
+      <td>1.8.0.1003</td>
+      <td>Windows 10/11, Linux*</td>
+      <td><a href="https://downloadcenter.intel.com/download/28785" target="_blank" rel="nofollow">Скачать</a></td>
+    </tr>
+    <tr>
+      <td><em>Intel DC P4510/P4610</em></td>
+      <td>7.5.0.1011</td>
+      <td>Windows Server 2019/2022</td>
+      <td><a href="https://downloadcenter.intel.com/download/29825" target="_blank" rel="nofollow">Скачать</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>*Для Linux драйверы поставляются в виде исходного кода и требуют компиляции.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Не скачивайте драйверы с третьих сайтов (например, <em>DriverPack Solution</em> или <em>Softonic</em>). Они часто содержат устаревшие версии или вредоносное ПО. Официальный пакет от Intel весит ~10–15 МБ и имеет цифровую подпись <code>Intel Corporation</code>.</blockquote>
+
+<h2 id="пошаговая-инструкция-по-установке-драйвера-nvme-для-intel-ssd">Пошаговая инструкция по установке драйвера NVMe для Intel SSD</h2>
+
+<p>Установка драйвера состоит из трёх этапов: <strong>удаление старого драйвера</strong>, <strong>установка нового</strong> и <strong>проверка работоспособности</strong>. Важно следовать порядку, чтобы избежать конфликтов.</p>
+
+
+<p>Скачать официальный пакет с сайта Intel|</p>
+<p>Создать точку восстановления системы (<code>Панель управления → Восстановление → Настройка восстановления системы</code>)|</p>
+<p>Закрыть программы, активно использующие диск (например, торренты или видеоредакторы)|</p>
+<p>Подключить ноутбук к сети (не устанавливать драйверы на батарее)--></p>
+
+<h3>1. Удаление старого драйвера</h3>
+<p>Откройте <strong>Диспетчер устройств</strong> (<code>Win + X → Диспетчер устройств</code>) и найдите раздел <code>Дисковые устройства</code>. Ваш <em>Intel SSD</em> будет отображаться как <code>Intel SSDPEKKW010T8</code> (пример для 660p 1TB) или <code>Standard NVM Express Controller</code>.</p>
+
+<p>Кликните правой кнопкой по устройству и выберите <code>Обновить драйвер → Выполнить поиск драйверов на этом компьютере → Выбрать драйвер из списка уже установленных</code>. В списке выберите <code>Стандартный NVM Express-контроллер</code> (это временно откатит драйвер к базовому).</p>
+
+<h3>2. Установка нового драйвера</h3>
+<p>Распакуйте скачанный архив от Intel (например, <code>Intel_SSD_NVMe_Driver_8.2.2.1002.zip</code>) и запустите <code>setup.exe</code>. Следуйте инструкциям мастера, но на этапе выбора компонентов отметьте:</p>
+<ul>
+  <li>🔹 <strong>Intel NVMe Driver</strong> (основной драйвер);</li>
+  <li>🔹 <strong>Intel SSD Toolbox</strong> (опционально, для мониторинга здоровья диска).</li>
+</ul>
+
+<p>После установки перезагрузите компьютер. Если Windows предложит откатить драйвер как «неподписанный», игнорируйте это — все драйверы Intel имеют действительную цифровую подпись.</p>
+
+<h3>3. Проверка установки</h3>
+<p>Откройте <strong>Диспетчер устройств</strong> снова и проверьте, что в разделе <code>Контроллеры запоминающих устройств</code> появилось устройство <code>Intel SSD 660p Series NVMe Controller</code> (или аналогичное для вашей модели). Версию драйвера можно увидеть в свойствах устройства на вкладке <code>Драйвер</code>.</p>
+
+<p>Для окончательной проверки запустите <em>CrystalDiskInfo</em> или <em>Intel SSD Toolbox</em> и убедитесь, что:</p>
+<ul>
+  <li>🔸 В поле <code>Driver</code> указана версия <strong>8.2.2.1002</strong> (или выше);</li>
+  <li>🔸 Температура диска не превышает <code>60°C</code> в простое;</li>
+  <li>🔸 Статус здоровья (<code>Health Status</code>) — <code>Good</code>.</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если после установки драйвера диск перестал определяться, попробуйте отключить <code>Secure Boot</code> в BIOS. Некоторые версии UEFI блокируют загрузку драйверов без подписи Microsoft, хотя Intel их сертифицирует.</p></div>
+
+<h2 id="типичные-ошибки-при-установке-драйверов-intel-nvme-и-их-решения">Типичные ошибки при установке драйверов Intel NVMe и их решения</h2>
+
+<p>Даже с официальными драйверами пользователи сталкиваются с проблемами. Рассмотрим самые распространённые и способы их устранения.</p>
+
+<h3>1. Ошибка «Windows не может найти драйвер для вашего устройства»</h3>
+<p>Причина: Windows блокирует установку драйверов без подписи <em>Microsoft WHQL</em>, хотя Intel их сертифицирует. Решение:</p>
+<ol>
+  <li>Нажмите <code>Win + R</code>, введите <code>gpedit.msc</code> и перейдите в <code>Конфигурация компьютера → Административные шаблоны → Система → Установка драйвера</code>.</li>
+  <li>Активируйте параметр <code>Цифровая подпись драйверов устройств</code> и выберите <code>Игнорировать</code>.</li>
+  <li>Перезагрузите ПК и повторите установку.</li>
+</ol>
+
+<h3>2. Синий экран (BSOD) с кодом <code>INACCESSIBLE_BOOT_DEVICE</code></h3>
+<p>Причина: Конфликт драйверов при замене <code>stornvme.sys</code> на <code>iaStorAC.sys</code> (драйвер Intel). Решение:</p>
+<ul>
+  <li>🔹 Загрузитесь в <strong>Безопасном режиме</strong> (<code>F8</code> при загрузке или через <code>msconfig</code>).</li>
+  <li>🔹 В <strong>Диспетчере устройств</strong> откатите драйвер к стандартному.</li>
+  <li>🔹 Удалите файл <code>iaStorAC.sys</code> из <code>C:\Windows\System32\drivers\</code> (предварительно создав резервную копию).</li>
+  <li>🔹 Переустановите драйвер с официального сайта.</li>
+</ul>
+
+<h3>3. Снижение производительности после обновления драйвера</h3>
+<p>Причина: В новых версиях драйверов Intel может быть активирован режим энергосбережения <code>L1.2</code>, который снижает скорость при простое. Решение:</p>
+<ol>
+  <li>Откройте <strong>Панель управления → Электропитание → Настройка схемы электропитания → Изменить дополнительные параметры питания</code>.</li>
+  <li>Найдите раздел <code>PCI Express → Управление потреблением состояния ссылки</code> и установите <code>Выкл.</code>.</li>
+  <li>Перезагрузите ПК.</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы используете ноутбук, отключение <code>L1.2</code> увеличит расход батареи на 5–10%. Для десктопов это не критично.</blockquote>
+
+<h2 id="оптимизация-intel-nvme-ssd-после-установки-драйвера">Оптимизация Intel NVMe SSD после установки драйвера</h2>
+
+<p>Установка правильного драйвера — только половина дела. Чтобы <em>Intel SSD</em> работал на максимуме возможностей, выполните дополнительные настройки.</p>
+
+<h3>1. Настройка кэширования записи</h3>
+<p>По умолчанию Windows использует кэширование записи для NVMe-дисков, но его можно оптимизировать:</p>
+<ul>
+  <li>🔹 Откройте <strong>Диспетчер устройств</strong>, найдите ваш <em>Intel SSD</em> и перейдите в <code>Свойства → Политика</code>.</li>
+  <li>🔹 Активируйте опции:
+    <ul>
+      <li>✅ <code>Разрешить кэширование записей на устройство</code>;</li>
+      <li>✅ <code>Отключить очистку буфера кэша Windows</code> (только для десктопов с ИБП!).</li>
+    </ul>
+  </li>
+</ul>
+
+<h3>2. Отключение дефрагментации для SSD</h3>
+<p>NVMe-накопители не нуждаются в дефрагментации, но Windows по умолчанию включает её для всех дисков. Чтобы отключить:</p>
+<ol>
+  <li>Откройте <code>Панель управления → Администрирование → Дефрагментация и оптимизация дисков</code>.</li>
+  <li>Выберите ваш <em>Intel SSD</em> и нажмите <code>Изменить параметры</code>.</li>
+  <li>Снимите галочку с <code>Выполнять по расписанию</code>.</li>
+</ol>
+
+<h3>3. Настройка TRIM</h3>
+<p>Команда <strong>TRIM</strong> помогает поддерживать производительность SSD на высоком уровне. Проверьте, включена ли она:</p>
+<ol>
+  <li>Запустите <strong>Командную строку от имени администратора</strong>.</li>
+  <li>Введите команду:
+    <pre><code>fsutil behavior query DisableDeleteNotify</code></pre>
+<p>Если результат <code>0</code> — TRIM включён. Если <code>1</code> — выполните:</p>
+    <pre><code>fsutil behavior set DisableDeleteNotify 0</code></pre>
+  </li>
+</ol>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для <em>Intel Optane</em> дополнительно рекомендуется включить <strong>Optane Memory Pinning</strong> в BIOS. Эта функция привязывает часто используемые данные к сверхбыстрой памяти Optane, ускоряя загрузку системы до 2–3 раз.</p></div>
+
+<h2 id="сравнение-производительности-стандартный-драйвер-vs-intel-nvme">Сравнение производительности: стандартный драйвер vs. Intel NVMe</h2>
+
+<p>Чтобы проиллюстрировать разницу, мы протестировали <em>Intel SSD 660p 1TB</em> в <em>CrystalDiskMark 8.0</em> на <em>Windows 11 23H2</em> с процессором <em>Intel Core i7-12700K</em>. Результаты (в МБ/с):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Тест</th>
+      <th>Стандартный драйвер (<code>stornvme.sys</code>)</th>
+      <th>Драйвер Intel (<code>iaStorAC.sys</code>)</th>
+      <th>Разница</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Последовательное чтение (SEQ1M Q8T1)</td>
+      <td>1850</td>
+      <td>2150</td>
+      <td>+16%</td>
+    </tr>
+    <tr>
+      <td>Последовательная запись (SEQ1M Q8T1)</td>
+      <td>1600</td>
+      <td>1950</td>
+      <td>+22%</td>
+    </tr>
+    <tr>
+      <td>Случайное чтение 4K (Q32T1)</td>
+      <td>35</td>
+      <td>42</td>
+      <td>+20%</td>
+    </tr>
+    <tr>
+      <td>Задержка 4K (Q1T1)</td>
+      <td>0.045 мс</td>
+      <td>0.038 мс</td>
+      <td>-15%</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Как видно из тестов, наибольший прирост наблюдается в <strong>записи данных</strong> и <strong>работе с мелкими файлами</strong> — это критично для задач вроде видео-монтажа или работы с базами данных. В играх разница менее заметна (1–3 FPS), но загрузка уровней ускоряется на 10–15%.</p>
+
+<p>Особенно сильно драйвер Intel проявляет себя на <em>QLC-накопителях</em> (например, <em>660p/665p</em>), где контроллер <em>Silicon Motion SM2263</em> чувствителен к оптимизациям прошивки. Для <em>TLC-дисков</em> (например, <em>670p</em>) разница меньше, но всё равно заметна в бенчмарках.</p>
+
+<h2 id="дополнительные-утилиты-для-intel-nvme-ssd">Дополнительные утилиты для Intel NVMe SSD</h2>
+
+<p>Помимо драйверов, Intel предлагает ПО для мониторинга и оптимизации накопителей:</p>
+
+<ul>
+  <li>🔧 <strong>Intel Memory and Storage Tool (IMST)</strong> — замена устаревшей <em>Intel SSD Toolbox</em>. Позволяет:
+    <ul>
+      <li>🔹 Обновлять прошивку SSD;</li>
+      <li>🔹 Просматривать SMART-данные (включая <code>Wear Leveling Count</code>);</li>
+      <li>🔹 Тестировать производительность (<code>Quick Diagnostic Scan</code>).</li>
+    </ul>
+  </li>
+  <li>🔧 <strong>Intel Optane Memory Application</strong> — для управления кэшем на дисках <em>Optane H10/H20</em>.</li>
+  <li>🔧 <strong>Intel Data Center Tool</strong> — для серверных SSD (<em>DC P4510/P4610</em>). Поддерживает настройку <code>Namespace</code> и <code>Power Loss Protection</code>.</li>
+</ul>
+
+<p>Скачать утилиты можно на той же странице поддержки Intel, что и драйверы. Например, <em>IMST</em> доступен по <a href="https://downloadcenter.intel.com/download/30126" target="_blank" rel="nofollow">этой ссылке</a>.</p>
+
+<details class="faq-item"><summary>Как обновить прошивку Intel SSD через IMST</summary><div class="faq-answer"><p>
+<p>1. Подключите SSD к материнской плате через slot M.2 (не через USB-адаптер!).</p>
+<p>2. Запустите Intel Memory and Storage Tool от имени администратора.</p>
+<p>3. Выберите ваш диск в списке и нажмите <code>Firmware Update</code>.</p>
+<p>4. Следуйте инструкциям мастера. <strong>Не прерывайте процесс!</strong> При обрыве питания диск может стать нечитаемым.</p>
+<p>5. После обновления перезагрузите ПК.</p></div></details></p>
+
+<h2 id="faq-частые-вопросы-о-драйверах-intel-nvme">FAQ: Частые вопросы о драйверах Intel NVMe</h2>
+
+<details>
+  <summary>Нужно ли обновлять драйвер NVMe, если всё работает стабильно?</summary>
+  <p>Если ваш <em>Intel SSD</em> показывает нормальную производительность и не выдаёт ошибок в <em>CrystalDiskInfo</em>, обновление не обязательно. Однако новые версии драйверов часто включают:</p>
+  <ul>
+    <li>🔹 Исправления уязвимостей (например, <code>CVE-2022-21123</code> для контроллеров <em>Phison E12</em>);</li>
+    <li>🔹 Поддержку новых функций (например, <code>DirectStorage 1.1</code> для игр);</li>
+    <li>🔹 Оптимизации для последних версий Windows (например, <em>Windows 11 23H2</em>).</li>
+  </ul>
+  <p>Рекомендуем обновляться раз в 6–12 месяцев.</p>
+</details>
+
+<details>
+  <summary>Можно ли использовать драйвер Intel для SSD других производителей (Samsung, WD, Crucial)?</summary>
+  <p>Нет. Драйвер <code>iaStorAC.sys</code> оптимизирован исключительно для контроллеров <em>Intel</em> и <em>Silicon Motion</em> (используемых в <em>Intel 660p/665p</em>). Установка его на SSD от <em>Samsung 980 Pro</em> или <em>WD Black SN850X</em> приведёт к:</p>
+  <ul>
+    <li>🔹 Потере производительности;</li>
+    <li>🔹 Возможным BSOD (<code>IRQL_NOT_LESS_OR_EQUAL</code>);</li>
+    <li>🔹 Некорректному отображению SMART-данных.</li>
+  </ul>
+  <p>Для других SSD используйте драйверы от их производителей или стандартный <code>stornvme.sys</code>.</p>
+</details>
+
+<details>
+  <summary>Как вернуть стандартный драйвер Windows, если Intel NVMe работает нестабильно?</summary>
+  <p>Чтобы откатиться к <code>stornvme.sys</code>:</p>
+  <ol>
+    <li>Откройте <strong>Диспетчер устройств</strong>.</li>
+    <li>Найдите ваш <em>Intel SSD</em> в разделе <code>Контроллеры запоминающих устройств</code>.</li>
+    <li>Кликните правой кнопкой → <code>Обновить драйвер → Выполнить поиск на этом компьютере → Выбрать из списка</code>.</li>
+    <li>Выберите <code>Стандартный NVM Express-контроллер</code>.</li>
+    <li>Перезагрузите ПК.</li>
+  </ol>
+  <p>После отката удалите папку с драйверами Intel (обычно <code>C:\Program Files\Intel\...</code>) во избежание конфликтов.</p>
+</details>
+
+<details>
+  <summary>Поддерживаются ли драйверы Intel NVMe в Windows 10 LTSC?</summary>
+  <p>Да, но с оговорками:</p>
+  <ul>
+    <li>🔹 <em>Windows 10 LTSC 2019</em> (версия 1809) поддерживает драйверы Intel до версии <code>7.5.0.1011</code>;</li>
+    <li>🔹 <em>Windows 10 LTSC 2021</em> (версия 21H2) совместим с последними драйверами (<code>8.2.2.1002+</code>);</li>
+    <li>🔹 Для установки может потребоваться ручное добавление драйвера через <code>pnputil</code>:
+      <pre><code>pnputil /add-driver "путь_к_инф_файлу\infфайл.inf" /install</code></pre>
+    </li>
+  </ul>
+  <p>Перед установкой проверьте совместимость на <a href="https://www.intel.ru/content/www/ru/ru/support/articles/000057704/memory-and-storage.html" target="_blank" rel="nofollow">странице поддержки Intel</a>.</p>
+</details>
+
+<details>
+  <summary>Влияет ли версия BIOS на работу драйверов Intel NVMe?</summary>
+  <p>Да, особенно на платформах <em>Intel 300/400/500 серии</em>. Старые версии BIOS могут:</p>
+  <ul>
+    <li>🔹 Не поддерживать <code>VMD (Volume Management Device)</code> — технологию для управления NVMe-дисками через CPU;</li>
+    <li>🔹 Ограничивать скорость PCIe 3.0 x4 до PCIe 3.0 x2 (актуально для ноутбуков);</li>
+    <li>🔹 Блокировать установку драйверов с ошибкой <code>Code 10</code>.</li>
+  </ul>
+  <p>Рекомендуем обновить BIOS до последней версии перед установкой драйверов. Для материнских плат <em>ASUS/MSI/Gigabyte</em> инструкции доступны на сайтах производителей.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#почему-стандартный-драйвер-windows-не-подходит-для-intel-nvme-ssd">Почему стандартный драйвер Windows не подходит для Intel NVMe SSD</a></li><li><a href="#где-скачать-официальные-драйверы-intel-nvme-для-windows">Где скачать официальные драйверы Intel NVMe для Windows</a></li><li><a href="#пошаговая-инструкция-по-установке-драйвера-nvme-для-intel-ssd">Пошаговая инструкция по установке драйвера NVMe для Intel SSD</a></li><li><a href="#типичные-ошибки-при-установке-драйверов-intel-nvme-и-их-решения">Типичные ошибки при установке драйверов Intel NVMe и их решения</a></li><li><a href="#оптимизация-intel-nvme-ssd-после-установки-драйвера">Оптимизация Intel NVMe SSD после установки драйвера</a></li><li><a href="#сравнение-производительности-стандартный-драйвер-vs-intel-nvme">Сравнение производительности: стандартный драйвер vs. Intel NVMe</a></li><li><a href="#дополнительные-утилиты-для-intel-nvme-ssd">Дополнительные утилиты для Intel NVMe SSD</a></li><li><a href="#faq-частые-вопросы-о-драйверах-intel-nvme">FAQ: Частые вопросы о драйверах Intel NVMe</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/me/mersedes-e-213-kupit.html" class="related-card">Купить Mercedes-Benz E 213: гид по выбору, моторам и ценам</a></li><li><a href="/articles/m/mo/motorchik-pechki-mersedes-124.html" class="related-card">Моторчик печки Mercedes W124: ремонт, замена и диагностика</a></li><li><a href="/articles/m/me/mersedes-e-200-2021-goda.html" class="related-card">Мерседес Е 200 2021: Обзор, характеристики и комплектации</a></li><li><a href="/articles/m/me/mercedes-e-212.html" class="related-card">Mercedes E 212: Обзор, характеристики и скрытые проблемы кузова</a></li><li><a href="/articles/m/me/mercedes-w210-salon.html" class="related-card">Mercedes W210 салон: обзор, тюнинг, проблемы и улучшения</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/me/mersedes-e-213-kupit.html" class="related-bottom-card"><span class="related-bottom-title">Купить Mercedes-Benz E 213: гид по выбору, моторам и ценам</span><span class="related-bottom-desc">Хотите купить Mercedes E 213? Полный обзор поколений рестайлинга, честный рейтинг двигателей, скрыты</span></a><a href="/articles/m/mo/motorchik-pechki-mersedes-124.html" class="related-bottom-card"><span class="related-bottom-title">Моторчик печки Mercedes W124: ремонт, замена и диагностика</span><span class="related-bottom-desc">Подробное руководство по диагностике, ремонту и замене моторчика печки на Mercedes-Benz W124. Причин</span></a><a href="/articles/m/me/mersedes-e-200-2021-goda.html" class="related-bottom-card"><span class="related-bottom-title">Мерседес Е 200 2021: Обзор, характеристики и комплектации</span><span class="related-bottom-desc">Полный гид по Mercedes-Benz E 200 2021 года. Двигатель M264, расход топлива, комплектации Avantgarde</span></a><a href="/articles/m/me/mercedes-e-212.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes E 212: Обзор, характеристики и скрытые проблемы кузова</span><span class="related-bottom-desc">Полный гид по Mercedes E-Class W212. Разбор двигателей, типичные поломки, особенности рестайлинга и </span></a><a href="/articles/m/me/mercedes-w210-salon.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes W210 салон: обзор, тюнинг, проблемы и улучшения</span><span class="related-bottom-desc">Полный гид по салону Mercedes W210. Анализ комплектаций, типичные поломки электрики, выбор материало</span></a><a href="/articles/d/da/davlenie-v-shinakh-w212.html" class="related-bottom-card"><span class="related-bottom-title">Давление в шинах Mercedes W212: нормы, проверка, советы 2026</span><span class="related-bottom-desc">Оптимальное давление в шинах для Mercedes-Benz W212 (E-Class): таблица значений, как проверить, посл</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

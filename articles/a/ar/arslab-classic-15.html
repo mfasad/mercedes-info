@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Arslab Classic 1.5: полный гайд по прошивке и настройке — Мерседес Инфо</title>
+    <meta name="description" content="Подробная инструкция по установке Arslab Classic 1.5 на Mercedes: особенности версии, совместимость с моделями, пошаговый процесс прошивки и решения ошибок.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/a/ar/arslab-classic-15.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Arslab Classic 1.5: полный гайд по прошивке и настройке">
+    <meta property="og:description" content="Подробная инструкция по установке Arslab Classic 1.5 на Mercedes: особенности версии, совместимость с моделями, пошаговый процесс прошивки и решения ошибок.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/e-class/">E Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Arslab Classic 1.5: полный гайд по прошивке и настройке</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Arslab Classic 1.5: как прошить и настроить мультимедиа в Mercedes</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#совместимость-arslab-classic-15-какие-модели-mercedes-поддерживаются">Совместимость Arslab Classic 1.5: какие модели Mercedes поддерживаются</a></li><li><a href="#подготовка-к-прошивке-что-нужно-сделать-до-установки">Подготовка к прошивке: что нужно сделать до установки</a></li><li><a href="#пошаговая-инструкция-как-прошить-arslab-classic-15">Пошаговая инструкция: как прошить Arslab Classic 1.5</a></li><li><a href="#настройка-после-прошивки-активация-скрытых-функций">Настройка после прошивки: активация скрытых функций</a></li><li><a href="#решение-распространённых-ошибок-после-прошивки">Решение распространённых ошибок после прошивки</a></li><li><a href="#откат-на-заводскую-прошивку-когда-это-необходимо">Откат на заводскую прошивку: когда это необходимо</a></li><li><a href="#сравнение-arslab-classic-15-с-другими-прошивками">Сравнение Arslab Classic 1.5 с другими прошивками</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>Arslab Classic 1.5</em> — одна из самых популярных прошивок для мультимедийных систем <strong>Mercedes-Benz</strong> поколений <code>NTG4/4.5/4.7</code> и <code>NTG5*</code>. Эта версия стала эталоном стабильности среди энтузиастов, предлагая расширенный функционал при сохранении заводской эстетики интерфейса. Но перед установкой важно разобраться в нюансах: от проверки совместимости с конкретной моделью до тонкостей настройки после прошивки.</p>
+
+<p>В отличие от более новых версий (вроде <em>Arslab Xentry</em> или <em>Monterey</em>), <em>Classic 1.5</em> оптимизирована для работы на "железе" начала 2010-х без потери производительности. Здесь нет избыточных анимаций или ресурсоёмких виджетов — только проверенные годами решения: поддержка <code>Apple CarPlay</code>/<code>Android Auto</code> (в том числе беспроводных), интеграция с <code>Mercedes Me</code>, и даже возможность активации скрытых функций оригинального ПО (например, <code>360° камера</code> на моделях, где она аппаратно присутствует, но заблокирована программно).</p>
+
+<p>Однако у этой прошивки есть и подводные камни. Например, <mark>на некоторых моделях <strong>E-Class (W212)</strong> с системой <code>NTG4.7</code> после обновления до 1.5 может пропадать звук в телефонных звонках через Bluetooth — проблема решается только ручным патчем конфигурационного файла</mark>. В этом гайде мы разберём всё: от подготовки к прошивке до восстановления системы после неудачного обновления.</p>
+
+<h2 id="совместимость-arslab-classic-15-какие-модели-mercedes-поддерживаются">Совместимость Arslab Classic 1.5: какие модели Mercedes поддерживаются</h2>
+
+<p>Прошивка <em>Arslab Classic 1.5</em> официально тестировалась на следующих платформах:</p>
+
+<ul>
+  <li>🚗 <strong>W204 (C-Class)</strong> — <code>NTG4.0/4.5</code> (2007–2014 гг.)</li>
+  <li>🚙 <strong>W212 (E-Class)</strong> — <code>NTG4.5/4.7</code> (2009–2016 гг.)</li>
+  <li>🚐 <strong>W164 (ML-Class)</strong> — <code>NTG4.0</code> (2005–2011 гг.)</li>
+  <li>🚓 <strong>W218 (CLS-Class)</strong> — <code>NTG4.5</code> (2010–2018 гг.)</li>
+  <li>🏎️ <strong>C218 (CL-Class)</strong> — <code>NTG4.7</code> (2006–2014 гг.)</li>
+</ul>
+
+<p>Важно: даже если ваша модель входит в список, необходимо уточнить версию <strong>аппаратной платформы</strong> (HU — Head Unit). Например, в <strong>E-Class W212</strong> встречаются три варианта:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Модель HU</th>
+      <th>Поддержка Arslab 1.5</th>
+      <th>Особенности</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>NTG4.0</code></td>
+      <td>Да</td>
+      <td>Требуется патч для работы <code>Android Auto</code></td>
+    </tr>
+    <tr>
+      <td><code>NTG4.5</code></td>
+      <td>Да</td>
+      <td>Полная поддержка, включая <code>Wireless CarPlay</code></td>
+    </tr>
+    <tr>
+      <td><code>NTG4.7</code></td>
+      <td>Частично</td>
+      <td>Возможны проблемы с микрофоном (решается заменой <code>audio_config.xml</code>)</td>
+    </tr>
+    <tr>
+      <td><code>NTG5.0</code></td>
+      <td>Нет</td>
+      <td>Требуется <em>Arslab Monterey</em> или <em>Xentry</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Чтобы точно определить версию HU, перейдите в меню <code>Настройки → Система → Версия ПО</code>. Если в номере прошивки есть обозначения <code>HU_NTG4</code> или <code>HU_NTG4.5</code>, то <em>Classic 1.5</em> подойдёт. Для <code>NTG5*</code> придётся искать альтернативы.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На моделях с <code>NTG4.7</code> и установленным <em>Comand Online</em> (опция <code>UHI</code>) прошивка <em>Arslab Classic 1.5</em> может блокировать доступ к сервисам <code>Mercedes Me</code>. Решение — откат на заводскую прошивку или установка патча <code>UHI_fix</code>.</blockquote>
+
+<div class="attention-box attention-info"><div><strong>📊 Какая модель Mercedes у вас?</strong><ul><li>C-Class (W204)</li><li>E-Class (W212)</li><li>ML-Class (W164)</li><li>CLS-Class (W218)</li><li>Другая</li></ul></div></div>
+
+<h2 id="подготовка-к-прошивке-что-нужно-сделать-до-установки">Подготовка к прошивке: что нужно сделать до установки</h2>
+
+<p>Прошивка мультимедийной системы — это не обновление смартфона. Здесь ошибка может привести к <strong>"кирпичу"</strong> (полной неработоспособности головного устройства). Поэтому подготовка занимает 70% успеха.</p>
+
+<p>Список обязательных действий:</p>
+
+<p>Скачать прошивку <em>Arslab Classic 1.5</em> с официального источника (например, <code>arslab-team.ru</code>)</p>
+<p>Проверить контрольную сумму файла (MD5: <code>a1b2c3d4e5f6...</code>)</p>
+<p>Подготовить USB-накопитель формата <code>FAT32</code> объёмом до 32 ГБ</p>
+<p>Сделать бэкап текущей прошивки через <code>Xentry/DAS</code> или <code>Vediamo</code></p>
+<p>Отключить все потребители энергии (фары, климат-контроль) и подключить зарядное устройство к аккумулятору--></p>
+
+<p>Особое внимание уделите USB-накопителю. Он должен быть:</p>
+<ul>
+  <li>🔹 Отформатирован в <code>FAT32</code> (не <code>exFAT</code> или <code>NTFS</code>!) с размером кластера <code>4096 байт</code>.</li>
+  <li>🔹 Пустым (кроме файлов прошивки). Даже скрытые файлы (например, <code>Thumbs.db</code>) могут вызвать ошибку.</li>
+  <li>🔹 Подключённым напрямую к USB-порту головного устройства (не через хаб!).</li>
+</ul>
+
+<p>Если у вас <strong>E-Class W212</strong> с системой <code>NTG4.7</code>, дополнительно скачайте патч <code>audio_fix_47.zip</code> — он понадобится для восстановления звука в телефонных звонках после прошивки. Файл нужно будет скопировать на ту же флешку <strong>после</strong> основного обновления.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если ваш Mercedes оснащён системой <code>Harmon Kardon</code>, перед прошивкой отключите её в меню <code>Настройки → Звук → Аудиосистема</code>. Это предотвратит конфликты драйверов во время обновления.</p></div>
+
+<h2 id="пошаговая-инструкция-как-прошить-arslab-classic-15">Пошаговая инструкция: как прошить Arslab Classic 1.5</h2>
+
+<p>Процесс прошивки занимает около 20–40 минут в зависимости от модели. Главное правило: <strong>не прерывать процесс</strong> (даже если экран завис на 10+ минут). Вот пошаговый алгоритм:</p>
+
+<ol>
+  <li><p>Скопируйте файлы прошивки (<code>update.pkg</code> и <code>arslab.ini</code>) в корень USB-накопителя. Структура должна выглядеть так:</p>
+    <pre><code>E:\
+<p>├── update.pkg</p>
+<p>└── arslab.ini</code></pre></p>
+  </li>
+  <li><p>Вставьте флешку в USB-порт головного устройства (обычно расположен под крышкой бардачка или в центральном тоннеле).</p></li>
+  <li><p>Запустите процесс обновления:
+    <ul>
+      <li>Для <code>NTG4.0/4.5</code>: перейдите в <code>Настройки → Система → Обновление ПО → Локальное обновление</code>.</li>
+      <li>Для <code>NTG4.7</code>: нажмите и удерживайте <code>TEL + MENU + Назад</code> в течение 10 секунд, затем выберите <code>Service Mode → Update</code>.</li>
+    </ol>
+  </p></li>
+  <li><p>Подтвердите начало прошивки. Система перезагрузится, и на экране появится прогресс-бар с надписью <code>Updating...</code>.</p></li>
+  <li><p>После завершения (экран погаснет и снова включится) извлеките USB-накопитель и дождитесь полной загрузки системы (до 5 минут).</p></li>
+</ol>
+
+<p>Если после прошивки экран остаётся чёрным более 10 минут, а индикаторы на панели не реагируют — это признак <strong>неудачного обновления</strong>. В этом случае:</p>
+<ol>
+  <li>Отключите аккумулятор на 15 минут (сняв клемму).</li>
+  <li>Повторите прошивку с той же флешки.</li>
+  <li>Если ошибка повторяется — используйте <code>аварийный образ</code> (файл <code>recovery.img</code>), который нужно скачать отдельно.</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На моделях с <code>NTG4.7</code> после прошивки может появиться ошибка <code>"No Audio Output"</code>. Это означает, что не применён патч <code>audio_fix_47.zip</code>. Скопируйте его на флешку, повторите процедуру обновления — система автоматически обнаружит и установит исправление.</blockquote>
+
+<details class="faq-item"><summary>Что делать, если прошивка зависла на 99%?</summary><div class="faq-answer"><p>
+<p>Если прогресс-бар остановился на 99% и не движется более 30 минут:</p>
+<p>1. Не выключайте питание! Подождите ещё 10 минут — иногда система "думает" перед финальной перезагрузкой.</p>
+<p>2. Если экран не реагирует, извлеките USB-накопитель и подождите 5 минут. Система может завершить процесс самостоятельно.</p>
+<p>3. В крайнем случае выполните <strong>жёсткий сброс</strong>: удерживайте кнопку питания головного устройства 15 секунд. После перезагрузки повторите прошивку.</p></div></details></p>
+
+<h2 id="настройка-после-прошивки-активация-скрытых-функций">Настройка после прошивки: активация скрытых функций</h2>
+
+<p>Одна из ключевых фишек <em>Arslab Classic 1.5</em> — возможность разблокировать функции, которые производитель отключил программно. Например, на <strong>E-Class W212</strong> с камерой заднего вида можно активировать <code>360° обзор</code>, даже если машина не оснащена дополнительными камерами (правда, картинка будет дублироваться).</p>
+
+<p>Для этого:</p>
+<ol>
+  <li>Перейдите в <code>Настройки → Специальные функции → Engineering Mode</code> (пароль по умолчанию: <code>12345</code>).</li>
+  <li>Выберите раздел <code>Camera Settings</code> и активируйте опцию <code>Enable 360 View (Simulated)</code>.</li>
+  <li>Сохраните настройки и перезагрузите систему (<code>Настройки → Система → Перезагрузка</code>).</li>
+</ol>
+
+<p>Другие полезные скрытые функции:</p>
+<ul>
+  <li>🎵 <strong>Расширенный эквалайзер</strong>: в <code>Engineering Mode → Audio</code> можно настроить отдельные полосы для каждого динамика.</li>
+  <li>📡 <strong>Активация TV-тюнера</strong>: если в машине установлен модуль <code>DVB-T</code>, но он заблокирован, включите его в <code>Hidden Features → TV Module</code>.</li>
+  <li>🔋 <strong>Отображение напряжения аккумулятора</strong>: в <code>Diagnostic → Battery Status</code>.</li>
+</ul>
+
+<p>Для владельцев <strong>C-Class (W204)</strong> с системой <code>NTG4.0</code> доступна опция <code>Fast Boot</code>, которая ускоряет запуск мультимедии с 20 до 5 секунд. Активируется она через <code>Engineering Mode → System → Boot Optimization</code>.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Не активируйте функции, для которых нет аппаратной поддержки (например, <code>Night Vision</code> на машинах без инфракрасной камеры). Это может привести к ошибкам системы и даже к отказу дисплея.</p></div>
+
+<h2 id="решение-распространённых-ошибок-после-прошивки">Решение распространённых ошибок после прошивки</h2>
+
+<p>Даже при успешной установке <em>Arslab Classic 1.5</em> могут возникать баги. Вот самые частые и способы их устранения:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Нет звука в звонках по Bluetooth</td>
+      <td>Конфликт драйверов микрофона</td>
+      <td>Установить патч <code>audio_fix_47.zip</code> (для <code>NTG4.7</code>)</td>
+    </tr>
+    <tr>
+      <td>Не работает <code>Android Auto</code></td>
+      <td>Отсутствует файл <code>aap_config.xml</code></td>
+      <td>Скачать файл с форума <code>mbclub.ru</code> и поместить в <code>/usr/local/aap/</code></td>
+    </tr>
+    <tr>
+      <td>Экран мерцает или артефакты</td>
+      <td>Несовместимость с разрешением дисплея</td>
+      <td>Сбросить настройки экрана в <code>Engineering Mode → Display</code></td>
+    </tr>
+    <tr>
+      <td>Не подключается к <code>Mercedes Me</code></td>
+      <td>Блокировка сертификата</td>
+      <td>Обновить файл <code>certificates.p12</code> (доступен на сайте Arslab)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Если после прошивки пропал <strong>GPS-сигнал</strong>, проверьте:</p>
+<ol>
+  <li>Подключение антенны (разъём <code>FAKRA</code> на задней панели головного устройства).</li>
+  <li>Настройки в <code>Engineering Mode → GPS → Antenna Power</code> (должно быть <code>Enabled</code>).</li>
+  <li>Версию карт (обновите через <code>Настройки → Навигация → Обновление карт</code>).</li>
+</ol>
+
+<p>Для моделей с <code>NTG4.5</code> и проблемой <strong>"зависания" при подключении iPhone</strong> по <code>CarPlay</code> поможет сброс настроек Bluetooth:</p>
+<ol>
+  <li>Удалите все спаренные устройства в <code>Настройки → Bluetooth</code>.</li>
+  <li>Перезагрузите головное устройство.</li>
+  <li>Подключите iPhone заново, подтвердив запрос на trust.</li>
+</ol>
+
+<h2 id="откат-на-заводскую-прошивку-когда-это-необходимо">Откат на заводскую прошивку: когда это необходимо</h2>
+
+<p>В некоторых случаях возвращение к оригинальному ПО неизбежно:</p>
+<ul>
+  <li>🔧 Перед визитом в официальный сервис (иначе могут отказать в гарантийном ремонте).</li>
+  <li>🚨 Если прошивка <em>Arslab</em> вызвала критические ошибки (например, постоянные перезагрузки).</li>
+  <li>💰 При продаже автомобиля (новый владелец может не оценить кастомное ПО).</li>
+</ul>
+
+<p>Процесс отката аналогичен прошивке, но вместо <code>update.pkg</code> используется заводской образ. Его можно получить:</p>
+<ul>
+  <li>С официального сайта <code>Mercedes-Benz</code> (раздел <code>Support → Software Updates</code>).</li>
+  <li>Через диагностическое ПО <code>Xentry/DAS</code> (требуется подключение к серверам MB).</li>
+  <li>На форумах (например, <code>mbworld.org</code>), где выкладывают дампы оригинальных прошивок.</li>
+</ul>
+
+<p>Важно: после отката некоторые функции (например, <code>Android Auto</code>) перестанут работать, так как они не поддерживаются заводским ПО. Также может потребоваться <strong>перекодировка</strong> некоторых модулей (например, <code>SGW</code> или <code>IC</code>) через <code>Vediamo</code>, если прошивка <em>Arslab</em> изменяла их конфигурацию.</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На моделях с <code>NTG4.7</code> после отката на заводскую прошивку может потребоваться <strong>обновление карт навигации</strong> через <code>Mercedes Me</code>. В противном случае система будет выдавать ошибку <code>"Map Data Corrupted"</code>.</blockquote>
+
+<h2 id="сравнение-arslab-classic-15-с-другими-прошивками">Сравнение Arslab Classic 1.5 с другими прошивками</h2>
+
+<p>Чтобы понять, подходит ли вам <em>Classic 1.5</em>, сравним её с альтернативами:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Характеристика</th>
+      <th><em>Arslab Classic 1.5</em></th>
+      <th><em>Arslab Monterey</em></th>
+      <th><em>Original MB</em></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Поддержка <code>Wireless CarPlay</code></td>
+      <td>Да (на <code>NTG4.5/4.7</code>)</td>
+      <td>Да</td>
+      <td>Нет</td>
+    </tr>
+    <tr>
+      <td>Скорость работы</td>
+      <td>Высокая (оптимизирована)</td>
+      <td>Средняя (ресурсоёмкая)</td>
+      <td>Низкая (на старых моделях)</td>
+    </tr>
+    <tr>
+      <td>Поддержка <code>Android Auto</code></td>
+      <td>Да (включая беспроводной)</td>
+      <td>Да</td>
+      <td>Только на новых моделях</td>
+    </tr>
+    <tr>
+      <td>Совместимость с <code>Mercedes Me</code></td>
+      <td>Частичная (требует патчей)</td>
+      <td>Полная</td>
+      <td>Полная</td>
+    </tr>
+    <tr>
+      <td>Активация скрытых функций</td>
+      <td>Да (<code>360° камера</code>, <code>TV-тюнер</code>)</td>
+      <td>Да</td>
+      <td>Нет</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>Arslab Classic 1.5</em> идеальна для тех, кто ценит <strong>стабильность</strong> и <strong>минимализм</strong>. Она не перегружена ненужными виджеттами (в отличие от <em>Monterey</em>), но при этом предлагает всё необходимое: современные протоколы подключения смартфонов, улучшенную навигацию и возможность тонкой настройки.</p>
+
+<p>Если же вам нужна <strong>максимальная интеграция с онлайн-сервисами</strong> (например, <code>Mercedes Me Connect</code> или <code>Remote Start</code>), лучше рассмотреть <em>Arslab Monterey</em> или официальное ПО (хотя оно и уступает в функциональности).</p>
+
+<h2 id="faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</h2>
+
+<details>
+  <summary>Можно ли прошить Arslab Classic 1.5 на Mercedes с системой NTG5.5?</summary>
+  <p>Нет, <em>Classic 1.5</em> не поддерживает <code>NTG5.5</code> (устанавливается на модели после 2018 года). Для этих систем нужна прошивка <em>Arslab Xentry</em> или <em>Monterey 2.0+</em>. Попытка установить <em>Classic 1.5</em> приведёт к ошибке <code>"Incompatible Hardware"</code>.</p>
+</details>
+
+<details>
+  <summary>Потерял звук после прошивки. Что делать?</summary>
+  <p>Скорее всего, не применён патч для <code>NTG4.7</code>. Скачайте файл <code>audio_fix_47.zip</code>, распакуйте его на флешку и повторите процедуру обновления. Если проблема осталась — проверьте настройки в <code>Engineering Mode → Audio → Output Configuration</code> (должно быть <code>Default</code>).</p>
+</details>
+
+<details>
+  <summary>Как вернуть заводские настройки после Arslab?</summary>
+  <p>Для полного отката:</p>
+  <ol>
+    <li>Скачайте оригинальную прошивку для вашей модели (например, <code>HU_NTG4.5_2016.zip</code>).</li>
+    <li>Прошейте её через <code>Локальное обновление</code> (аналогично установке <em>Arslab</em>).</li>
+    <li>Выполните сброс настроек в <code>Настройки → Система → Сброс до заводских</code>.</li>
+  </ol>
+  <p>Если после отката остались артефакты (например, логотип <em>Arslab</em> при загрузке), придётся перепрошивать <code>bootloader</code> через <code>Vediamo</code>.</p>
+</details>
+
+<details>
+  <summary>Можно ли обновиться с Arslab Classic 1.0 прямо до 1.5?</summary>
+  <p>Да, но рекомендуется сделать это в два этапа:</p>
+  <ol>
+    <li>Сначала обновитесь до <em>Classic 1.2</em> (промежуточная версия).</li>
+    <li>Затем установите <em>1.5</em>.</li>
+  </ol>
+  <p>Это связано с изменением структуры конфигурационных файлов в версии 1.5. Прямое обновление с 1.0 может привести к сбою настроек <code>Bluetooth</code> и <code>Навигации</code>.</p>
+</details>
+
+<details>
+  <summary>Где скачать официальную прошивку Arslab Classic 1.5?</summary>
+  <p>Официальный источник — сайт команды <code>arslab-team.ru</code> (раздел <code>Downloads</code>). Альтернативные источники:</p>
+  <ul>
+    <li>Форум <code>mbclub.ru</code> (тема "Прошивки для NTG4/4.5").</li>
+    <li>Telegram-канал <code>@arslab_support</code>.</li>
+  </ul>
+  <p>⚠️ Осторожно: на торрент-трекерах и файлообменниках часто встречаются модифицированные (и потенциально опасные) версии прошивок. Проверяйте контрольные суммы файлов!</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#совместимость-arslab-classic-15-какие-модели-mercedes-поддерживаются">Совместимость Arslab Classic 1.5: какие модели Mercedes поддерживаются</a></li><li><a href="#подготовка-к-прошивке-что-нужно-сделать-до-установки">Подготовка к прошивке: что нужно сделать до установки</a></li><li><a href="#пошаговая-инструкция-как-прошить-arslab-classic-15">Пошаговая инструкция: как прошить Arslab Classic 1.5</a></li><li><a href="#настройка-после-прошивки-активация-скрытых-функций">Настройка после прошивки: активация скрытых функций</a></li><li><a href="#решение-распространённых-ошибок-после-прошивки">Решение распространённых ошибок после прошивки</a></li><li><a href="#откат-на-заводскую-прошивку-когда-это-необходимо">Откат на заводскую прошивку: когда это необходимо</a></li><li><a href="#сравнение-arslab-classic-15-с-другими-прошивками">Сравнение Arslab Classic 1.5 с другими прошивками</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/s/se/selektor-mersedes-210.html" class="related-card">Селектор Mercedes 210: диагностика, ремонт и замена</a></li><li><a href="/articles/m/me/mercedes-e63s-w213.html" class="related-card">Mercedes-AMG E63 S W213: Характеристики, двигатели и тюнинг</a></li><li><a href="/articles/k/ka/kak-snyat-zadnij-bamper-mersedes-211.html" class="related-card">Как снять задний бампер Мерседес W211: пошаговая инструкция</a></li><li><a href="/articles/m/me/mersedes-e-63.html" class="related-card">Mercedes-AMG E 63 S: обзор, цены, характеристики 2026 года</a></li><li><a href="/articles/b/bl/blok-sbc-mersedes-211.html" class="related-card">Блок SBC Mercedes 211: признаки, адаптация, ремонт</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/s/se/selektor-mersedes-210.html" class="related-bottom-card"><span class="related-bottom-title">Селектор Mercedes 210: диагностика, ремонт и замена</span><span class="related-bottom-desc">Полное руководство по селектору АКПП Mercedes W210. Как проверить контакты, заменить масло, устранит</span></a><a href="/articles/m/me/mercedes-e63s-w213.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-AMG E63 S W213: Характеристики, двигатели и тюнинг</span><span class="related-bottom-desc">Полный обзор Mercedes E63 S W213. Технические данные V8 Biturbo, разгон до 100 км/ч, особенности пол</span></a><a href="/articles/k/ka/kak-snyat-zadnij-bamper-mersedes-211.html" class="related-bottom-card"><span class="related-bottom-title">Как снять задний бампер Мерседес W211: пошаговая инструкция</span><span class="related-bottom-desc">Подробное руководство по демонтажу заднего бампера Mercedes E-Class W211. Инструменты, нюансы снятия</span></a><a href="/articles/m/me/mersedes-e-63.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-AMG E 63 S: обзор, цены, характеристики 2026 года</span><span class="related-bottom-desc">Подробный разбор Mercedes-AMG E 63 S: технические данные, сравнение с конкурентами, особенности тюни</span></a><a href="/articles/b/bl/blok-sbc-mersedes-211.html" class="related-bottom-card"><span class="related-bottom-title">Блок SBC Mercedes 211: признаки, адаптация, ремонт</span><span class="related-bottom-desc">Полный гид по системе SBC Mercedes 211. Симптомы неисправности, стоимость замены, процедура адаптаци</span></a><a href="/articles/z/za/zamena-masla-v-korobke-9g-tronic-mercedes.html" class="related-bottom-card"><span class="related-bottom-title">Замена масла в коробке 9G-Tronic Mercedes: интервалы и нюансы</span><span class="related-bottom-desc">Полная инструкция по замене масла в 9G-Tronic (722.9). Интервалы, выбор ATF 134, стоимость работ и р</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

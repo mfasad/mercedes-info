@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Sagem SL96 Immo Off: Полное руководство по отключению иммобилайзера — Мерседес Инфо</title>
+    <meta name="description" content="Подробная инструкция по отключению иммобилайзера в ЭБУ Sagem SL96. Методы чтения EEPROM, правка дампа и запуск двигателя без ключа.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/s/sa/sagem-sl96-immo-off.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Sagem SL96 Immo Off: Полное руководство по отключению иммобилайзера">
+    <meta property="og:description" content="Подробная инструкция по отключению иммобилайзера в ЭБУ Sagem SL96. Методы чтения EEPROM, правка дампа и запуск двигателя без ключа.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Sagem SL96 Immo Off: Полное руководство по отключению иммобилайзера</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Sagem SL96 Immo Off: Профессиональное отключение иммобилайзера</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#принцип-работы-иммобилайзера-в-блоках-sagem">Принцип работы иммобилайзера в блоках Sagem</a></li><li><a href="#необходимое-оборудование-и-подготовка">Необходимое оборудование и подготовка</a></li><li><a href="#процесс-чтения-и-модификации-eeprom">Процесс чтения и модификации EEPROM</a></li><li><a href="#альтернативные-методы-и-программные-решения">Альтернативные методы и программные решения</a></li><li><a href="#проверка-работоспособности-и-запуск-двигателя">Проверка работоспособности и запуск двигателя</a></li><li><a href="#возможные-проблемы-и-пути-их-решения">Возможные проблемы и пути их решения</a></li><li><a href="#faq-часто-задаваемые-вопросы">FAQ: Часто задаваемые вопросы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body">
+
+<p>Ситуация, когда автомобиль перестает заводиться из-за неисправности штатного иммобилайзера, часто застает владельца врасплох. Блок управления двигателем <em>Sagem SL96</em>, широко применявшийся на автомобилях концерна PSA (Peugeot, Citroen) начала 2000-х годов, имеет надежную, но иногда капризную систему защиты. Ошибка связи с чипом ключа или неисправность антенны считывания могут полностью обездвижить транспортное средство. В таких случаях единственным рабочим решением становится программное отключение системы защиты, известное как <strong>Immo Off</strong>.</p>
+
+<p>Процедура требует глубокого понимания архитектуры работы электронных блоков управления и наличия специализированного оборудования. Вам придется работать с внутренними микросхемами памяти, где хранятся критические данные для запуска мотора. Любая ошибка при считывании или записи может привести к полной неработоспособности <em>ECU</em>, поэтому подход должен быть максимально взвешенным и профессиональным.</p>
+
+<p>В данном материале мы разберем технические нюансы работы с <strong>Sagem SL96</strong>, рассмотрим необходимые инструменты и пошагово опишем процесс модификации программного обеспечения. Вы узнаете, как правильно подготовить оборудование, какие именно байты в дампе отвечают за блокировку и как безопасно внедрить изменения. Это руководство ориентировано на специалистов, знакомых с основами чип-тюнинга.</p>
+
+<h2 id="принцип-работы-иммобилайзера-в-блоках-sagem">Принцип работы иммобилайзера в блоках Sagem</h2>
+
+<p>Система защиты в контроллере <em>Sagem SL96</em> построена на постоянном диалоге между процессором двигателя и микросхемой EEPROM, где хранятся коды ключей. При повороте ключа в замке зажигания антенна считывает уникальный код транспондера и передает его в блок управления. Если коды совпадают, <strong>ECU</strong> разрешает подачу искры и впрыск топлива. В противном случае форсунки и катушки блокируются через несколько секунд работы двигателя.</p>
+
+<p>Основная сложность заключается в том, что данные об иммобилайзере разбросаны по разным областям памяти. Процессор Motorola, используемый в этих блоках, обращается к внешней EEPROM (часто это модели типа 93C56 или 93C66) для проверки VIN-кода и статусных флагов. <mark>Критически важно понимать, что простое удаление файлов иммобилайзера в прошивке без правки конфигурационных байтов в EEPROM не даст результата.</mark></p>
+
+<blockquote>⚠️ Внимание: Неправильное изменение контрольных сумм (Checksum) в прошивке может привести к тому, что блок управления откажется запускать двигатель даже с исправленным иммобилайзером.</blockquote>
+
+<p>Существует два основных подхода к решению проблемы: эмуляция сигнала ключа через дополнительные модули или полное программное удаление защиты (Immo OFF). Второй вариант является более надежным, так как исключает зависимость от дополнительных электронных компонентов, которые могут выйти из строя. При реализации метода <strong>Immo Off</strong> мы принудительно меняем логическое состояние флага в памяти, сообщая процессору, что авторизация успешно пройдена.</p>
+
+<h2 id="необходимое-оборудование-и-подготовка">Необходимое оборудование и подготовка</h2>
+
+<p>Для проведения качественной работы с блоком <em>Sagem SL96</em> вам потребуется не только ноутбук, но и специфическое аппаратное обеспечение. Стандартные OBDII сканеры здесь не помогут, так как необходимо прямое обращение к памяти микросхем. Основным инструментом станет программатор EEPROM, поддерживающий работу с микросхемами в корпусе SOIC8 или DIP8, а также адаптер для подключения к разъему блока.</p>
+
+<ul>
+<li>🔧 Программатор (например, CH341A, TL866 или специализированные решения типа BDM100) для чтения микросхем памяти.</li>
+<li>💻 Ноутбук с установленным ПО для работы с дампами (Hex-редактор, WinOLS или специализированный софт для иммобилайзеров).</li>
+<li>🔌 Паяльное оборудование или прижимной адаптер для подключения к ножкам микросхемы без выпаивания.</li>
+<li>💾 Резервное копирование исходных файлов (Backup) перед любыми манипуляциями.</li>
+</ul>
+
+<p>Перед началом процедуры необходимо обеспечить стабильное питание блока управления. Скачки напряжения в момент записи могут повредить ячейки памяти, что сделает блок невосстанавливаемым. Рекомендуется использовать лабораторный блок питания с выставленным напряжением <code>12.0V</code> и током не менее <code>2A</code>. Также важно проверить состояние контактов разъема на предмет окисления.</p>
+
+<div class="checklist-block"><h4>☑️ Подготовка к работе с Sagem SL96</h4><label class="check-item"><input type="checkbox"><span>Проверить напряжение АКБ или БП</span></label><label class="check-item"><input type="checkbox"><span>Подготовить программатор и адаптер</span></label><label class="check-item"><input type="checkbox"><span>Установить драйверы оборудования</span></label><label class="check-item"><input type="checkbox"><span>Сделать резервную копию стокового дампа</span></label><label class="check-item"><input type="checkbox"><span>Проверить пайку контактов на плате ЭБУ</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 5</div></div>
+
+<p>Особое внимание стоит уделить идентификации версии блока. <em>Sagem SL96</em> выпускался в нескольких модификациях, и расположение данных в памяти может отличаться. Ошибка в выборе типа микросхемы при чтении приведет к получению некорректного дампа, работа с которым бесполезна. Всегда сверяйтесь со схемой платы и маркировкой чипов перед подключением.</p>
+
+<h2 id="процесс-чтения-и-модификации-eeprom">Процесс чтения и модификации EEPROM</h2>
+
+<p>После вскрытия корпуса блока управления и получения доступа к печатной плате, необходимо Locate микросхему EEPROM. В большинстве случаев это 8-ми контактный чип, расположенный рядом с процессором. Аккуратно подключите пины программатора к соответствующим контактам микросхемы, соблюдая полярность. Ошибка в подключении может сжечь как саму микросхему, так и порты программатора.</p>
+
+<p>Запустите программное обеспечение и выберите правильный тип микросхемы из списка. Считайте содержимое памяти и сохраните его в файл с расширением <code>.bin</code> или <code>.hex</code>. Это ваш <strong>Backup</strong>, который может спасти ситуацию в случае неудачи. Только после создания нескольких копий можно приступать к анализу данных и поиску區域, отвечающих за иммобилайзер.</p>
+
+<p>Для модификации дампа используйте Hex-редактор. Вам необходимо найти特定的 байты, отвечающие за статус иммобилайзера. Обычно это последовательности, которые нужно заменить на <code>FF</code> или <code>00</code>, либо инвертировать биты в определенном адресе. Точный адрес зависит от версии прошивки и года выпуска автомобиля.</p>
+
+<details class="faq-item"><summary>Технические детали поиска байтов</summary><div class="faq-answer"><p>Поиск осуществляется по сигнатурам, характерным для PSA. Часто искомая область находится по смещению 0x00A0-0x00F0. Ищите повторяющиеся паттерны, связанные с VIN-кодом автомобиля, так как иммобилайзер часто привязан к нему. Изменение одного байта может нарушить контрольную сумму, поэтому используйте калькуляторChecksum.</p></div></details>
+
+<p>После внесения изменений в файл дампа, необходимо записать модифицированную версию обратно в микросхему EEPROM. Убедитесь, что процесс записи прошел без ошибок и была выполнена верификация. Если программатор сообщает об ошибке верификации, повторите попытку или проверьте качество контакта щупов.</p>
+
+<h2 id="альтернативные-методы-и-программные-решения">Альтернативные методы и программные решения</h2>
+
+<p>Помимо работы с EEPROM, существуют методы отключения иммобилайзера через диагностический разъем OBDII с использованием специализированного софта. Программы вроде <em>Diagbox</em> в связке с адаптированными плагинами иногда позволяют провести процедуру <strong>Immo Off</strong> без вскрытия блока. Однако этот метод работает не на всех версиях ПО блока управления.</p>
+
+<p>Еще одним вариантом является использование готовых патчей для прошивки процессора. В этом случае модифицируется не только EEPROM, но и основной код, исполняемый процессором Motorola. Это более сложный метод, требующий навыков работы с бинарными кодами и понимания логики работы <em>ECU</em>.</p>
+
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Сложность</th>
+<th>Риски</th>
+<th>Необходимое оборудование</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Правка EEPROM</td>
+<td>Средняя</td>
+<td>Средние</td>
+<td>Программатор, паяльник</td>
+</tr>
+<tr>
+<td>OBDII софт</td>
+<td>Низкая</td>
+<td>Низкие</td>
+<td>Диагностический кабель, ПО</td>
+</tr>
+<tr>
+<td>Патч прошивки</td>
+<td>Высокая</td>
+<td>Высокие</td>
+<td>BDM модулятор, опыт</td>
+</tr>
+</tbody>
+</table>
+
+<p>Выбор метода зависит от ваших навыков и доступного инструментария. Для разовых работ чаще всего оптимален вариант с перепайкой или подпайкой EEPROM, так как он дает полный контроль над процессом. Программные методы через OBD могут быть быстрее, но менее предсказуемы в случае сбоя связи.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой метод отключения иммобилайзера вы предпочитаете?</strong><ul><li>Работа с EEPROM паяльником</li><li>Программное отключение через OBD</li><li>Установка обходчика</li><li>Обращение в сервис</li></ul></div></div>
+
+<h2 id="проверка-работоспособности-и-запуск-двигателя">Проверка работоспособности и запуск двигателя</h2>
+
+<p>После успешной записи модифицированного дампа и сборки блока управления, необходимо проверить результат. Установите <em>ECU</em> на автомобиль или подключите его на столе, собрав минимальную проводку (жгут, аккумулятор, форсунки/лампочку). Включите зажигание и попробуйте запустить двигатель.</p>
+
+<p>Если двигатель запустился и работает ровно, не глохнет через 2-3 секунды — процедура <strong>Immo Off</strong> прошла успешно. Обратите внимание на поведение лампы иммобилайзера на панели приборов. В идеале она должна либо гаснуть сразу после включения зажигания, либо не загораться вовсе, в зависимости от реализации отключения.</p>
+
+<blockquote>⚠️ Внимание: Если двигатель заводится и сразу глохнет, возможно, были изменены не те байты или нарушена контрольная сумма. Также проверьте, не заблокировался ли блок из-за множественных попыток неверного ввода кода.</blockquote>
+
+<p>В некоторых случаях после процедуры может потребоваться адаптация дроссельной заслонки или сброс ошибок в других системах автомобиля, которые могли накопиться пока машина не заводилась. Используйте диагностический сканер для очистки истории неисправностей и проверки параметров работы двигателя в реальном времени.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если после Immo Off автомобиль заводится, но плавают обороты, попробуйте сбросить адаптации ЭБУ через диагностический разъем. Иногда блок "помнит" некорректные параметры работы в режиме блокировки.</p></div>
+
+<h2 id="возможные-проблемы-и-пути-их-решения">Возможные проблемы и пути их решения</h2>
+
+<p>В процессе работы могут возникнуть различные трудности. Одной из частых проблем является несовместимость версий ПО и "железа". Блоки <em>Sagem SL96</em> могли подвергаться предыдущему чип-тюнингу, и наличие модифицированной прошивки может конфликтовать с вашими правками EEPROM. В таком случае может потребоваться полная перепрошивка блока на стоковую версию перед выполнением <strong>Immo Off</strong>.</p>
+
+<p>Также встречается проблема "мертвого" блока после неудачной записи. Если блок перестал выходить на связь, возможно, поврежден загрузчик. Для восстановления потребуется программатор BDM, позволяющий получить доступ к памяти процессора напрямую, минуя стандартные протоколы связи. Это уже уровень глубокого восстановления.</p>
+
+<ul>
+<li>🔍 Двигатель не заводится: Проверьте целостность проводки и качество контакта в разъеме ЭБУ.</li>
+<li>🔍 Лампа иммобилайзера моргает: Проверьте правильность записи байтов в EEPROM, возможно, адресация неверна.</li>
+<li>🔍 Ошибки по датчикам: Убедитесь, что при работе на столе подключены все необходимые датчики (ДПКВ, ДАД).</li>
+</ul>
+
+<p>Не стоит забывать о юридической стороне вопроса. Отключение иммобилайзера делает автомобиль более уязвимым для угона. <mark>Владелец должен осознавать риски, связанные с отключением штатной системы безопасности.</mark> Рекомендуется компенсировать это установкой дополнительных охранных комплексов или GPS-трекеров.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Успешное отключение иммобилайзера — это не только правка байтов, но и комплексная проверка всех систем автомобиля для исключения конфликтов электроники.</p></div>
+
+<h2 id="faq-часто-задаваемые-вопросы">FAQ: Часто задаваемые вопросы</h2>
+
+<details>
+<summary>Можно ли отключить иммобилайзер Sagem SL96 без пайки?</summary>
+<p>В большинстве случаев требуется доступ к EEPROM, что подразумевает либо пайку, либо использование прижимного адаптера. Методы через OBDII работают нестабильно и зависят от конкретной версии ПО блока.</p>
+</details>
+
+<details>
+<summary>Собьется ли Immo Off после снятия аккумулятора?</summary>
+<p>Нет, данные об отключении иммобилайзера записываются в энергонезависимую память EEPROM. Они сохраняются даже при полном отключении питания автомобиля.</p>
+</details>
+
+<details>
+<summary>Нужно ли прописывать новые ключи после процедуры?</summary>
+<p>После качественного выполнения Immo Off автомобиль заведется любым ключом, который механически подходит к замку зажигания, так как проверка чипа больше не производится.</p>
+</details>
+
+<details>
+<summary>Безопасно ли покупать блок с уже сделанным Immo Off?</summary>
+<p>Покупка такого блока может быть рискованной, так как неизвестно, кто и как выполнял процедуру. Лучше модифицировать свой родной блок или купить контрактный и сделать отключение самостоятельно под свой VIN.</p>
+</details>
+
+<details>
+<summary>Влияет ли отключение иммобилайзера на работу катализатора и экологии?</summary>
+<p>Сама по себе процедура Immo Off не влияет на экологические параметры. Однако, если вместе с этим делается Chipping (чип-тюнинг) для увеличения мощности, то нормы токсичности могут быть изменены.</p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#принцип-работы-иммобилайзера-в-блоках-sagem">Принцип работы иммобилайзера в блоках Sagem</a></li><li><a href="#необходимое-оборудование-и-подготовка">Необходимое оборудование и подготовка</a></li><li><a href="#процесс-чтения-и-модификации-eeprom">Процесс чтения и модификации EEPROM</a></li><li><a href="#альтернативные-методы-и-программные-решения">Альтернативные методы и программные решения</a></li><li><a href="#проверка-работоспособности-и-запуск-двигателя">Проверка работоспособности и запуск двигателя</a></li><li><a href="#возможные-проблемы-и-пути-их-решения">Возможные проблемы и пути их решения</a></li><li><a href="#faq-часто-задаваемые-вопросы">FAQ: Часто задаваемые вопросы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/v/vw/vw-polo-club.html" class="related-card">Клуб владельцев Volkswagen Polo: обзоры, тюнинг и советы по ремонту</a></li><li><a href="/articles/p/pr/programma-dlya-diagnostiki-mersedes-skachat.html" class="related-card">Программа для диагностики Мерседес скачать: актуальные версии и софт</a></li><li><a href="/articles/m/me/mersedes-sla-2021.html" class="related-card">Mercedes SLA 2021: обзор, цены, характеристики и отзывы владельцев</a></li><li><a href="/articles/p/pa/patrubki-radiatora-mersedes.html" class="related-card">Патрубки радиатора Mercedes: замена, выбор, цены и советы</a></li><li><a href="/articles/m/me/mersedes-iz-budushchego.html" class="related-card">Mercedes из будущего: технологии 2026-2030 годов в деталях</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/v/vw/vw-polo-club.html" class="related-bottom-card"><span class="related-bottom-title">Клуб владельцев Volkswagen Polo: обзоры, тюнинг и советы по ремонту</span><span class="related-bottom-desc">Узнайте всё о &lt;em&gt;VW Polo Club&lt;/em&gt;: технические характеристики, тюнинг, ремонт и сообщество владель</span></a><a href="/articles/p/pr/programma-dlya-diagnostiki-mersedes-skachat.html" class="related-bottom-card"><span class="related-bottom-title">Программа для диагностики Мерседес скачать: актуальные версии и софт</span><span class="related-bottom-desc">Где скачать программу для диагностики Мерседес? Обзор Xentry, DAS, DTS Monaco. Инструкция по установ</span></a><a href="/articles/m/me/mersedes-sla-2021.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes SLA 2021: обзор, цены, характеристики и отзывы владельцев</span><span class="related-bottom-desc">Подробный разбор Mercedes SLA 2021 года: технические особенности, комплектации, плюсы и минусы, срав</span></a><a href="/articles/p/pa/patrubki-radiatora-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Патрубки радиатора Mercedes: замена, выбор, цены и советы</span><span class="related-bottom-desc">Как выбрать и заменить патрубки радиатора на Mercedes разных моделей? Признаки износа, оригинальные </span></a><a href="/articles/m/me/mersedes-iz-budushchego.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes из будущего: технологии 2026-2030 годов в деталях</span><span class="related-bottom-desc">Узнайте, какие инновации ждут владельцев Mercedes-Benz: автопилот 5 уровня, биометрические системы, </span></a><a href="/articles/s/st/styazhki-pruzhin-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Стяжки пружин Mercedes: выбор, замена и нюансы ремонта</span><span class="related-bottom-desc">Как правильно подобрать стяжки для пружин подвески Mercedes? Инструкции по замене, обзор инструменто</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

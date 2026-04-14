@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Как отключить проверку SSL в Windows 10: 5 рабочих способов — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговая инструкция по отключению проверки SSL-сертификатов в Windows 10 для разработчиков, тестировщиков и решения ошибок подключения. Безопасные методы и риски.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/k/ka/kak-otklyuchit-proverku-ssl-v-windows-10.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Как отключить проверку SSL в Windows 10: 5 рабочих способов">
+    <meta property="og:description" content="Пошаговая инструкция по отключению проверки SSL-сертификатов в Windows 10 для разработчиков, тестировщиков и решения ошибок подключения. Безопасные методы и риски.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Как отключить проверку SSL в Windows 10: 5 рабочих способов</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Отключение проверки SSL в Windows 10: когда это необходимо и как сделать правильно</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#почему-windows-10-блокирует-недоверенные-ssl-сертификаты">Почему Windows 10 блокирует недоверенные SSL-сертификаты?</a></li><li><a href="#способ-1-временное-отключение-проверки-в-браузере-для-chromeedge">Способ 1: Временное отключение проверки в браузере (для Chrome/Edge)</a></li><li><a href="#способ-2-отключение-проверки-ssl-в-реестре-windows">Способ 2: Отключение проверки SSL в реестре Windows</a></li><li><a href="#способ-3-использование-powershell-для-игнорирования-ssl-ошибок">Способ 3: Использование PowerShell для игнорирования SSL-ошибок</a></li><li><a href="#способ-4-отключение-проверки-в-git-и-других-утилитах">Способ 4: Отключение проверки в Git и других утилитах</a></li><li><a href="#способ-5-добавление-самоподписанного-сертификата-в-доверенные">Способ 5: Добавление самоподписанного сертификата в доверенные</a></li><li><a href="#риски-и-альтернативы-отключению-ssl-проверки">Риски и альтернативы отключению SSL-проверки</a></li><li><a href="#faq-частые-вопросы-об-отключении-ssl-в-windows-10">FAQ: Частые вопросы об отключении SSL в Windows 10</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Проверка <strong>SSL-сертификатов</strong> — стандартный механизм безопасности в <em>Windows 10</em>, защищающий пользователей от подделки веб-сайтов и перехвата данных. Однако в некоторых сценариях — при отладке локальных серверов, тестировании самоподписанных сертификатов или работе с устаревшими корпоративными системами — эта проверка становится препятствием. Ошибки вроде <code>ERR_CERT_AUTHORITY_INVALID</code> или <code>SSL_ERROR_BAD_CERT_DOMAIN</code> блокируют доступ к ресурсам, хотя вы уверены в их безопасности.</p>
+
+<p>В этой статье мы разберём <strong>5 проверенных способов отключить проверку SSL</strong> в <em>Windows 10</em> — от временных обходных путей до системных изменений. Важно: все методы снижают уровень безопасности, поэтому применяйте их только в контролируемых средах (например, на виртуальных машинах или тестовых стендах). Для повседневного использования в интернете <mark>отключение SSL-проверки равносильно открытию дверей для фишинговых атак и MITM-уязвимостей</mark>.</p>
+
+<h2 id="почему-windows-10-блокирует-недоверенные-ssl-сертификаты">Почему Windows 10 блокирует недоверенные SSL-сертификаты?</h2>
+
+<p>Операционная система <em>Windows 10</em> опирается на <strong>хранилище доверенных корневых центров сертификации</strong> (Trusted Root Certification Authorities). Если сертификат сайта:</p>
+<ul>
+  <li>🔄 <strong>Самоподписанный</strong> (сгенерирован без участия доверенного ЦС)</li>
+  <li>⏳ <strong>Просроченный</strong> (истёк срок действия)</li>
+  <li>🔍 <strong>С неправильным доменом</strong> (не совпадает с URL в адресной строке)</li>
+  <li>🛡️ <strong>Подписан неизвестным ЦС</strong> (не входит в список доверенных Microsoft)</li>
+</ul>
+<p>— браузеры (<em>Chrome</em>, <em>Edge</em>, <em>Firefox</em>) и системные утилиты (например, <code>curl</code> или <code>PowerShell</code>) блокируют соединение. Это не "глюк" системы, а намеренная защита. Однако в ряде случаев такая бдительность мешает:</p>
+
+<ul>
+  <li>💻 <strong>Разработчикам</strong>, тестирующим локальные HTTPS-серверы с самоподписанными сертификатами.</li>
+  <li>🏢 <strong>Сотрудникам компаний</strong>, использующим внутренние ресурсы с устаревшими сертификатами.</li>
+  <li>🔧 <strong>Администраторам</strong>, настраивающим оборудование с фабричными сертификатами.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Отключение проверки SSL делает систему уязвимой для атак "человек посередине" (MITM). Злоумышленники могут подменить трафик, перехватывать логины/пароли или внедрять вредоносный код. Никогда не применяйте эти методы на рабочих машинах с доступом к финансовым или личным данным.</blockquote>
+
+<h2 id="способ-1-временное-отключение-проверки-в-браузере-для-chromeedge">Способ 1: Временное отключение проверки в браузере (для Chrome/Edge)</h2>
+
+<p>Самый быстрый и наименее опасный метод — обойти проверку непосредственно в браузере. Подходит для разовых задач, например, тестирования локального сайта. В <em>Google Chrome</em> и <em>Microsoft Edge</em> (на базе Chromium) сделайте следующее:</p>
+
+<ol>
+  <li>Откройте страницу с ошибкой SSL (например, <code>NET::ERR_CERT_INVALID</code>).</li>
+  <li>Введите в адресной строке <code>thisisunsafe</code> (без кавычек) и нажмите <code>Enter</code>. Страница загрузится despite ошибки.
+    <div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Этот трюк работает только на английской раскладке клавиатуры. Если не срабатывает, попробуйте ввести <code>badidea</code> или <code>danger</code>.</li></p></div>
+  <li>Для постоянного игнорирования ошибок для конкретного сайта:
+    <ol>
+      <li>Перейдите в <code>Настройки → Конфиденциальность и безопасность → Безопасность</code>.</li>
+      <li>В разделе <strong>"Небезопасный контент"</strong> добавьте домен в исключения.</li>
+    </ol>
+  </li>
+</ol>
+
+<p>В <em>Mozilla Firefox</em> алгоритм иной:</p>
+<ol>
+  <li>На странице с ошибкой нажмите <code>Дополнительно → Принять риск и продолжить</code>.</li>
+  <li>Для автоматического игнорирования:
+    <ol>
+      <li>Введите в адресной строке <code>about:config</code>.</li>
+      <li>Найдите параметр <code>security.cert_pinner.enforcement_level</code> и установите значение <code>0</code>.</li>
+    </ol>
+  </li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Игнорирование SSL-ошибок в браузере не отключает системную проверку. Утилиты вроде <code>curl</code>, <code>wget</code> или <em>PowerShell</em>-скрипты по-прежнему будут блокировать соединения с недоверенными сертификатами.</blockquote>
+
+<div class="attention-box attention-info"><div><strong>📊 Для чего вам нужно отключить проверку SSL?</strong><ul><li>Разработка/тестирование</li><li>Доступ к корпоративным ресурсам</li><li>Решение проблем с устаревшим ПО</li><li>Другое</li></ul></div></div>
+
+<h2 id="способ-2-отключение-проверки-ssl-в-реестре-windows">Способ 2: Отключение проверки SSL в реестре Windows</h2>
+
+<p>Если требуется <strong>глобальное отключение проверки</strong> для всех приложений (включая системные утилиты), можно внести изменения в реестр. Этот метод затрагивает работу <code>WinHTTP</code>, <code>Schannel</code> и других компонентов, поэтому подходит только для опытных пользователей.</p>
+
+<p>Инструкция:</p>
+<ol>
+  <li>Откройте <code>Редактор реестра</code> (<code>Win + R</code> → введите <code>regedit</code>).</li>
+  <li>Перейдите по пути:
+    <pre><code>HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\System\Certificates</code></pre>
+<p>Если папки <code>Certificates</code> нет — создайте её (правая кнопка → <code>Создать → Раздел</code>).</p>
+  </li>
+  <li>Создайте новый <code>Параметр DWORD (32 бита)</code> с именем <code>DisableRootAutoUpdate</code> и значением <code>1</code>.</li>
+  <li>Создайте ещё один параметр <code>AuthRootDisableRootAutoUpdate</code> с тем же значением <code>1</code>.</li>
+  <li>Перезагрузите компьютер.</li>
+</ol>
+
+<p>Для отключения проверки <strong>только для конкретных приложений</strong> (например, <em>PowerShell</em> или <em>Git</em>) используйте параметр:</p>
+<pre><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\DisableCipherAlgorithms</code></pre>
+<p>Установите значение <code>1</code> для отключения проверки алгоритмов шифрования.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр реестра</th>
+      <th>Описание</th>
+      <th>Риск</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>DisableRootAutoUpdate</code></td>
+      <td>Отключает автоматическое обновление корневых сертификатов</td>
+      <td>Средний (устаревшие сертификаты могут стать уязвимыми)</td>
+    </tr>
+    <tr>
+      <td><code>AuthRootDisableRootAutoUpdate</code></td>
+      <td>Блокирует обновление доверенных корневых ЦС</td>
+      <td>Высокий (риск использования скомпрометированных сертификатов)</td>
+    </tr>
+    <tr>
+      <td><code>Schannel\DisabledProtocols</code></td>
+      <td>Отключает поддержку устаревших протоколов (SSL 3.0, TLS 1.0)</td>
+      <td>Низкий (может сломать совместимость со старыми системами)</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<p>Создать точку восстановления системы|Экспортировать текущие настройки реестра|Закрыть все приложения|Проверять изменения по одному параметру--></p>
+
+<h2 id="способ-3-использование-powershell-для-игнорирования-ssl-ошибок">Способ 3: Использование PowerShell для игнорирования SSL-ошибок</h2>
+
+<p>Если вам нужно отключить проверку SSL <strong>только для скриптов <em>PowerShell</strong></em>, используйте параметр <code>-SkipCertificateCheck</code> в командах вроде <code>Invoke-WebRequest</code> или <code>Invoke-RestMethod</code>. Этот метод не затрагивает системные настройки и действует только в текущей сессии.</p>
+
+<p>Примеры команд:</p>
+<pre><code>[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+<p>Invoke-WebRequest -Uri "https://ваш-сайт.ru" -SkipCertificateCheck</code></pre></p>
+
+<p>Для постоянного отключения проверки в <em>PowerShell</em> добавьте строку в профиль:</p>
+<ol>
+  <li>Откройте профиль <em>PowerShell</em>:
+    <pre><code>notepad $PROFILE</code></pre>
+  </li>
+  <li>Добавьте строку:
+    <pre><code>Add-Type @"
+<p>using System.Net;</p>
+<p>using System.Security.Cryptography.X509Certificates;</p>
+<p>public class TrustAllCertsPolicy : ICertificatePolicy {</p>
+<p>public bool CheckValidationResult(</p>
+<p>ServicePoint srvPoint, X509Certificate certificate,</p>
+<p>WebRequest request, int certificateProblem) {</p>
+<p>return true;</p>
+<p>}</p>
+<p>}</p>
+<p>"@</p>
+<p>[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy</code></pre></p>
+  </li>
+  <li>Сохраните файл и перезапустите <em>PowerShell</em>.</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Этот метод делает <strong>все</strong> HTTPS-запросы из <em>PowerShell</em> уязвимыми. Используйте его только в изолированных средах (например, на виртуальной машине без доступа к интернету).</blockquote>
+
+<details class="faq-item"><summary>Как вернуть проверку SSL в PowerShell?</summary><div class="faq-answer"><p>
+<p>Чтобы отменить изменения, удалите добавленные строки из профиля или выполните команду:</p>
+<pre><code>[System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null</code></pre>
+<p>После этого проверка сертификатов восстановится.</p></p></div></details></p>
+
+<h2 id="способ-4-отключение-проверки-в-git-и-других-утилитах">Способ 4: Отключение проверки в Git и других утилитах</h2>
+
+<p>Инструменты вроде <em>Git</em>, <code>curl</code> или <code>wget</code> также блокируют соединения с недоверенными SSL-сертификатами. Для каждого из них есть свои обходные пути.</p>
+
+<h3>Для Git:</h3>
+<p>Отключите проверку глобально (не рекомендуется) или для конкретного репозитория:</p>
+<pre><code>git config --global http.sslVerify false</code></pre>
+<p>Или для одного репо:</p>
+<pre><code>git config --local http.sslVerify false</code></pre>
+
+<h3>Для curl:</h3>
+<p>Используйте флаг <code>-k</code> (или <code>--insecure</code>):</p>
+<pre><code>curl -k https://ваш-сайт.ru</code></pre>
+
+<h3>Для wget:</h3>
+<p>Добавьте параметр <code>--no-check-certificate</code>:</p>
+<pre><code>wget --no-check-certificate https://ваш-сайт.ru</code></pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>Утилита</th>
+      <th>Команда для отключения SSL-проверки</th>
+      <th>Риск</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Git</em></td>
+      <td><code>git config http.sslVerify false</code></td>
+      <td>Высокий (риск подмены репозиториев)</td>
+    </tr>
+    <tr>
+      <td><code>curl</code></td>
+      <td><code>curl -k [URL]</code></td>
+      <td>Средний (только для текущего запроса)</td>
+    </tr>
+    <tr>
+      <td><code>wget</code></td>
+      <td><code>wget --no-check-certificate [URL]</code></td>
+      <td>Средний</td>
+    </tr>
+    <tr>
+      <td><em>Postman</em></td>
+      <td>Отключить <code>SSL certificate verification</code> в настройках</td>
+      <td>Низкий (только для тестовых запросов)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Отключение проверки SSL в утилитах вроде <em>Git</em> или <code>curl</code> действует только на текущую команду или сессию. Для системной защиты это безопаснее, чем изменения в реестре или браузере.</p></div>
+
+<h2 id="способ-5-добавление-самоподписанного-сертификата-в-доверенные">Способ 5: Добавление самоподписанного сертификата в доверенные</h2>
+
+<p>Instead полного отключения проверки SSL можно <strong>добавить проблемный сертификат в хранилище доверенных</strong>. Этот метод сохраняет защиту для остальных сайтов, но разрешает доступ к нужному ресурсу. Подходит для локальных серверов или корпоративных систем.</p>
+
+<p>Инструкция:</p>
+<ol>
+  <li>Экспортируйте сертификат из браузера:
+    <ol>
+      <li>Откройте сайт с ошибкой SSL в <em>Chrome</em>.</li>
+      <li>Нажмите на значок 🔒 → <code>Сертификат → Подробности → Копировать в файл</code>.</li>
+      <li>Сохраните в формате <code>.CER</code> или <code>.PEM</code>.</li>
+    </ol>
+  </li>
+  <li>Импортируйте сертификат в хранилище:
+    <ol>
+      <li>Нажмите <code>Win + R</code>, введите <code>certmgr.msc</code>.</li>
+      <li>Перейдите в <code>Доверенные корневые центры сертификации → Сертификаты</code>.</li>
+      <li>Правый клик → <code>Все задачи → Импорт</code> → выберите сохранённый файл.</li>
+    </ol>
+  </li>
+  <li>Перезапустите браузер или приложение.</li>
+</ol>
+
+<p>Для сертификатов <strong>локальных серверов</strong> (например, <em>XAMPP</em> или <em>OpenSSL</em>) сгенерируйте новый сертификат с правильными параметрами:</p>
+<pre><code>openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout key.pem -out cert.pem -subj "/CN=localhost" -days 3650</code></pre>
+<p>Затем импортируйте <code>cert.pem</code> в доверенные сертификаты.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для корпоративных пользователей: если IT-отдел предоставляет внутренний корневой сертификат, импортируйте его в <code>Локальный компьютер → Доверенные корневые ЦС</code> через <code>certlm.msc</code> (запускайте от имени администратора).</p></div>
+
+<h2 id="риски-и-альтернативы-отключению-ssl-проверки">Риски и альтернативы отключению SSL-проверки</h2>
+
+<p>Полное отключение проверки SSL — это <strong>крайняя мера</strong>, сравнимая с удалением антивируса на заражённом компьютере. Вместо этого рассмотрите альтернативы:</p>
+
+<ul>
+  <li>🔄 <strong>Обновите сертификаты</strong>: Если речь о корпоративном ресурсе, обратитесь в IT-отдел за актуальным сертификатом.</li>
+  <li>🛠️ <strong>Используйте прокси</strong>: Настройте локальный прокси-сервер (например, <em>mitmproxy</em>) с собственным доверенным сертификатом.</li>
+  <li>🌐 <strong>Тестируйте на изолированных доменах</strong>: Для разработки используйте домены вроде <code>.test</code> или <code>.localhost</code>, которые не требуют валидных SSL-сертификатов.</li>
+  <li>🔒 <strong>Создайте собственный ЦС</strong>: Разверните внутренний центр сертификации (например, на базе <em>OpenSSL</em> или <em>Windows AD CS</em>).</li>
+</ul>
+
+<p>Если отключение проверки неизбежно, следуйте правилам безопасности:</p>
+<ul>
+  <li>🚫 <strong>Не используйте метод на рабочей машине</strong> с доступом к важным данным.</li>
+  <li>🔍 <strong>Проверяйте сети</strong>: Отключайте SSL-проверку только в изолированных сетях (например, на виртуальной машине с хост-онли адаптером).</li>
+  <li>⏳ <strong>Восстанавливайте настройки</strong>: После завершения работ верните все изменения (удалите параметры реестра, обновите сертификаты).</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Отключение SSL-проверки должно быть временным решением. Долгосрочная альтернатива — настройка правильных сертификатов или использование инструментов вроде <em>mkcert</em> для генерации локально доверенных HTTPS-сертификатов.</p></div>
+
+<h2 id="faq-частые-вопросы-об-отключении-ssl-в-windows-10">FAQ: Частые вопросы об отключении SSL в Windows 10</h2>
+
+<details>
+  <summary>Можно ли отключить SSL-проверку только для одного сайта?</summary>
+  <p>Да, в браузерах (через исключения) или путём добавления сертификата сайта в доверенные. Системное отключение (через реестр или <em>PowerShell</em>) затрагивает все соединения.</p>
+</details>
+
+<details>
+  <summary>Почему после отключения проверки в реестре некоторые сайты всё равно не открываются?</summary>
+  <p>Некоторые приложения (например, <em>Microsoft Store</em> или <em>Windows Update</em>) используют собственные механизмы проверки SSL, не зависящие от системных настроек. Также проверьте, не блокирует ли соединение антивирус или фаервол.</p>
+</details>
+
+<details>
+  <summary>Как проверить, отключена ли SSL-проверка в системе?</summary>
+  <p>Выполните тестовый запрос через <em>PowerShell</em>:
+  <pre><code>Invoke-WebRequest -Uri "https://expired.badssl.com" -ErrorAction SilentlyContinue</code></pre>
+<p>Если страница загрузится без ошибок — проверка отключена. Также можно использовать утилиту <code>openssl s_client -connect expired.badssl.com:443</code> и проверить вывод на наличие ошибок сертификата.</p></p>
+</details>
+
+<details>
+  <summary>Безопасно ли отключать SSL-проверку для локального сервера (localhost)?</summary>
+  <p>Относительно безопасно, если сервер доступен только с вашего компьютера (например, через <code>127.0.0.1</code>). Однако если к серверу подключаются другие устройства по локальной сети, риск MITM-атак остаётся. Лучше использовать самоподписанный сертификат с добавлением его в доверенные.</p>
+</details>
+
+<details>
+  <summary>Как вернуть всё обратно после отключения SSL-проверки?</summary>
+  <p>Для браузеров: удалите сайты из исключений. Для реестра: удалите созданные параметры или верните их значения в <code>0</code>. В <em>PowerShell</em> выполните:
+  <pre><code>[System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null</code></pre>
+<p>Для <em>Git</em>:</p>
+  <pre><code>git config --global http.sslVerify true</code></pre></p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#почему-windows-10-блокирует-недоверенные-ssl-сертификаты">Почему Windows 10 блокирует недоверенные SSL-сертификаты?</a></li><li><a href="#способ-1-временное-отключение-проверки-в-браузере-для-chromeedge">Способ 1: Временное отключение проверки в браузере (для Chrome/Edge)</a></li><li><a href="#способ-2-отключение-проверки-ssl-в-реестре-windows">Способ 2: Отключение проверки SSL в реестре Windows</a></li><li><a href="#способ-3-использование-powershell-для-игнорирования-ssl-ошибок">Способ 3: Использование PowerShell для игнорирования SSL-ошибок</a></li><li><a href="#способ-4-отключение-проверки-в-git-и-других-утилитах">Способ 4: Отключение проверки в Git и других утилитах</a></li><li><a href="#способ-5-добавление-самоподписанного-сертификата-в-доверенные">Способ 5: Добавление самоподписанного сертификата в доверенные</a></li><li><a href="#риски-и-альтернативы-отключению-ssl-проверки">Риски и альтернативы отключению SSL-проверки</a></li><li><a href="#faq-частые-вопросы-об-отключении-ssl-в-windows-10">FAQ: Частые вопросы об отключении SSL в Windows 10</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/h/hu/huglu-renova-black-synthetic.html" class="related-card">Huglu Renova Black Synthetic: обзор, характеристики и отзывы 2026</a></li><li><a href="/articles/l/lu/lukojl-genesis-claritech-5w-30.html" class="related-card">Лукойл Genesis Claritech 5W-30: характеристики, отзывы, аналоги</a></li><li><a href="/articles/0/07/0746-oshibka-mersedes.html" class="related-card">Ошибка 0746 Mercedes: причины, диагностика, устранение</a></li><li><a href="/articles/k/ku/kuplyu-mersedes-s-probegom.html" class="related-card">Куплю Mercedes с пробегом: как выбрать надежный автомобиль в 2026 году</a></li><li><a href="/articles/g/gr/grejt-vol-wingle-7.html" class="related-card">Great Wall Wingle 7: обзор, характеристики и реальные отзывы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/h/hu/huglu-renova-black-synthetic.html" class="related-bottom-card"><span class="related-bottom-title">Huglu Renova Black Synthetic: обзор, характеристики и отзывы 2026</span><span class="related-bottom-desc">Подробный анализ ружья Huglu Renova Black Synthetic: технические параметры, преимущества синтетическ</span></a><a href="/articles/l/lu/lukojl-genesis-claritech-5w-30.html" class="related-bottom-card"><span class="related-bottom-title">Лукойл Genesis Claritech 5W-30: характеристики, отзывы, аналоги</span><span class="related-bottom-desc">Подробный обзор моторного масла Лукойл Genesis Claritech 5W-30: спецификации, совместимость с авто, </span></a><a href="/articles/0/07/0746-oshibka-mersedes.html" class="related-bottom-card"><span class="related-bottom-title">Ошибка 0746 Mercedes: причины, диагностика, устранение</span><span class="related-bottom-desc">Подробный разбор ошибки 0746 Мерседес. Причины неисправности клапана управления давлением, симптомы,</span></a><a href="/articles/k/ku/kuplyu-mersedes-s-probegom.html" class="related-bottom-card"><span class="related-bottom-title">Куплю Mercedes с пробегом: как выбрать надежный автомобиль в 2026 году</span><span class="related-bottom-desc">Пошаговое руководство по покупке подержанного Mercedes-Benz: проверка истории, популярные модели, це</span></a><a href="/articles/g/gr/grejt-vol-wingle-7.html" class="related-bottom-card"><span class="related-bottom-title">Great Wall Wingle 7: обзор, характеристики и реальные отзывы</span><span class="related-bottom-desc">Полный разбор пикапа Great Wall Wingle 7. Технические характеристики, расход топлива, плюсы и минусы</span></a><a href="/articles/p/pr/prusa-slicer-flying-bear-ghost-5-profil.html" class="related-bottom-card"><span class="related-bottom-title">PrusaSlicer для Flying Bear Ghost 5: профиль и настройки 2026</span><span class="related-bottom-desc">Как настроить PrusaSlicer для 3D-принтера Flying Bear Ghost 5: готовые профили, оптимальные параметр</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

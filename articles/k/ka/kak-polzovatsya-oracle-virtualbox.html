@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Oracle VirtualBox: полное руководство для начинающих (2026) — Мерседес Инфо</title>
+    <meta name="description" content="Как установить, настроить и использовать VirtualBox для виртуальных машин? Пошаговая инструкция с советами по оптимизации и устранению ошибок.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/k/ka/kak-polzovatsya-oracle-virtualbox.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Oracle VirtualBox: полное руководство для начинающих (2026)">
+    <meta property="og:description" content="Как установить, настроить и использовать VirtualBox для виртуальных машин? Пошаговая инструкция с советами по оптимизации и устранению ошибок.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/b-class/">B Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Oracle VirtualBox: полное руководство для начинающих (2026)</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Как пользоваться Oracle VirtualBox: от установки до тонкой настройки</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#1-установка-virtualbox-шаг-за-шагом">1. Установка VirtualBox: шаг за шагом</a></li><li><a href="#2-создание-первой-виртуальной-машины">2. Создание первой виртуальной машины</a></li><li><a href="#3-установка-операционной-системы-в-вм">3. Установка операционной системы в ВМ</a></li><li><a href="#4-настройка-гостевой-ос-для-максимальной-производительности">4. Настройка гостевой ОС для максимальной производительности</a></li><li><a href="#5-работа-с-сетевыми-подключениями">5. Работа с сетевыми подключениями</a></li><li><a href="#6-общие-папки-и-обмен-файлами">6. Общие папки и обмен файлами</a></li><li><a href="#7-резервное-копирование-и-клонирование-вм">7. Резервное копирование и клонирование ВМ</a></li><li><a href="#8-устранение-распространённых-ошибок">8. Устранение распространённых ошибок</a></li><li><a href="#faq-частые-вопросы-по-virtualbox">FAQ: Частые вопросы по VirtualBox</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>Oracle VirtualBox</em> — это бесплатное кроссплатформенное решение для виртуализации, которое позволяет запускать несколько операционных систем на одном компьютере одновременно. Инструмент незаменим для разработчиков, тестировщиков, системных администраторов и даже обычных пользователей, которым нужно "попробовать" <strong>Linux</strong> без переустановки <strong>Windows</strong> или запустить устаревшее ПО в изолированной среде.</p>
+
+<p>В отличие от конкурентов вроде <em>VMware Workstation</em> или <em>Hyper-V</em>, <em>VirtualBox</em> выделяется простотой интерфейса, открытым исходным кодом (для личного использования) и широкой поддержкой гостевых ОС — от <strong>Windows 11</strong> до <strong>macOS</strong> (с оговорками) и дистрибутивов <strong>Linux</strong>. Однако даже у такого гибкого инструмента есть подводные камни: неправильные настройки могут привести к тормозам, ошибкам запуска или конфликтам с антивирусом. В этом руководстве мы разберём всё — от базовой установки до продвинутых трюков.</p>
+
+<h2 id="1-установка-virtualbox-шаг-за-шагом">1. Установка VirtualBox: шаг за шагом</h2>
+
+<p>Перед установкой проверьте, поддерживает ли ваш процессор аппаратную виртуализацию (<strong>VT-x/AMD-V</strong>). Без неё производительность виртуальных машин (ВМ) упадёт в 5–10 раз. Проверить это можно через <code>Диспетчер задач → Производительность → CPU</code> (в <strong>Windows</strong>) или команду <code>egrep -c '(vmx|svm)' /proc/cpuinfo</code> в <strong>Linux</strong>/<strong>macOS</strong>.</p>
+
+<p>Скачайте последнюю версию <em>VirtualBox</em> с <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">официального сайта</a>. Обратите внимание: для <strong>Windows</strong> доступны две версии — обычная и с поддержкой <em>USB 3.0</em> (требует отдельного <strong>Extension Pack</strong>). Для <strong>macOS</strong> выбирайте версию под ваш чип (<em>Intel</em> или <em>Apple Silicon</em>), но помните: виртуализация <strong>Windows</strong> на <em>M1/M2</em> возможна только через обходные пути.</p>
+
+<ul>
+  <li>📥 <strong>Скачивание:</strong> Выбирайте версию для своей ОС (хост-системы). Для <strong>Linux</strong> доступны пакеты <code>.deb</code> (Debian/Ubuntu) и <code>.rpm</code> (Fedora/OpenSUSE).</li>
+  <li>🔧 <strong>Установка:</strong> В <strong>Windows</strong> запустите <code>.exe</code>-файл с правами администратора. В <strong>Linux</strong> используйте менеджер пакетов, например: <pre><code>sudo apt install ./virtualbox-7.0_7.0.12-159484~Ubuntu~jammy_amd64.deb</code></pre></li>
+  <li>🔄 <strong>Extension Pack:</strong> После установки основного пакета скачайте <strong>Oracle VM VirtualBox Extension Pack</strong> (для поддержки <em>USB 2.0/3.0</em>, <em>RDP</em> и шифрования дисков). Установите его через <code>Файл → Настройки → Расширения</code>.</li>
+  <li>⚠️ <strong>Антивирус:</strong> Отключите защиту на время установки — некоторые антивирусы (например, <em>Avast</em> или <em>Kaspersky</em>) блокируют драйверы <em>VirtualBox</em> как "подозрительные".</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На ноутбуках с <em>Hybrid Graphics</em> (например, <em>NVIDIA Optimus</em>) виртуальные машины могут тормозить из-за использования встроенной графики <em>Intel</em>. Чтобы принудительно задействовать дискретную видеокарту, добавьте в ярлык <em>VirtualBox</em> параметр <code>--startvm &lt;имя_ВМ&gt; --graphicscontroller vboxsvga</code>.</blockquote>
+
+<h2 id="2-создание-первой-виртуальной-машины">2. Создание первой виртуальной машины</h2>
+
+<p>После установки откройте <em>VirtualBox</em> и нажмите <code>Создать</code>. Откроется мастер, где нужно указать:</p>
+
+<ol>
+  <li><strong>Имя и тип ОС:</strong> Введите название (например, "Windows 10 Test") и выберите тип (<strong>Microsoft Windows</strong>) и версию (<strong>Windows 10 (64-bit)</strong>). <mark>Если в списке нет 64-битной версии, значит аппаратная виртуализация отключена в BIOS или заблокирована хост-системой.</mark></li>
+  <li><strong>Объём ОЗУ:</strong> Для <strong>Windows 10/11</strong> рекомендуется <code>4 ГБ</code>, для <strong>Linux</strong> — <code>2 ГБ</code>. Не выделяйте больше половины физической памяти!</li>
+  <li><strong>Виртуальный жёсткий диск:</strong> Выберите <code>Создать новый виртуальный жёсткий диск</code> → <code>VDI (VirtualBox Disk Image)</code> → <code>Динамический виртуальный диск</code>. Размер: <code>25 ГБ</code> для <strong>Windows</strong>, <code>10–15 ГБ</code> для <strong>Linux</strong>.</li>
+</ol>
+
+<p>После создания ВМ её нужно настроить. Перейдите в <code>Настройки → Система</code> и:</p>
+<ul>
+  <li>🔄 Установите порядок загрузки: сначала <code>Оптический привод</code> (для установки ОС с ISO), затем <code>Жёсткий диск</code>.</li>
+  <li>🖥️ В разделе <code>Дисплей → Экран</code> увеличьте <code>Видеопамять</code> до <code>128 МБ</code> (это ускорит работу графического интерфейса).</li>
+  <li>🔌 В <code>USB</code> включите контроллер <code>USB 3.0 (xHCI)</code>, если установили <strong>Extension Pack</strong>.</li>
+</ul>
+
+<div class="attention-box attention-info"><div><strong>📊 Для чего вы используете VirtualBox?</strong><ul><li>Для тестирования ПО</li><li>Для запуска устаревших программ</li><li>Для изучения новых ОС</li><li>Для разработки</li><li>Другое</li></ul></div></div>
+
+<h2 id="3-установка-операционной-системы-в-вм">3. Установка операционной системы в ВМ</h2>
+
+<p>Чтобы установить ОС в виртуальную машину, вам понадобится <strong>ISO-образ</strong> дистрибутива. Для <strong>Windows</strong> скачайте официальный образ с сайта <em>Microsoft</em> (например, через <a href="https://www.microsoft.com/software-download" target="_blank">Media Creation Tool</a>). Для <strong>Linux</strong> берите образы с сайтов дистрибутивов (<em>Ubuntu</em>, <em>Fedora</em>, <em>Debian</em> и др.).</p>
+
+<p>Подключите ISO к ВМ:</p>
+<ol>
+  <li>Выделите виртуальную машину и нажмите <code>Запустить</code>.</li>
+  <li>В открывшемся окне выберите <code>Выбрать диск</code> и укажите путь к ISO-файлу.</li>
+  <li>Нажмите <code>Продолжить</code> — начнётся загрузка с образа.</li>
+</ol>
+
+<p>Дальше следуйте стандартному процессу установки ОС, как на физическом компьютере. Например, для <strong>Windows 10</strong>:</p>
+<ul>
+  <li>🌐 Выберите язык и раскладку клавиатуры.</li>
+  <li>🔑 Введите лицензионный ключ (или пропустите этот шаг).</li>
+  <li>💾 При выборе диска для установки удалите все существующие разделы и создайте новый на всё доступное пространство.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если при установке <strong>Windows</strong> в <em>VirtualBox</em> появляется ошибка <code>0x80070057</code>, проверьте, что в настройках ВМ включён контроллер <code>SATA</code> (а не <code>IDE</code>) и выбрана правильная версия ОС в параметрах машины. Также убедитесь, что ISO-образ не повреждён (проверьте контрольную сумму <code>SHA-1</code>).</blockquote>
+
+<div class="checklist-block"><h4>☑️ Подготовка к установке ОС в VirtualBox</h4><label class="check-item"><input type="checkbox"><span>Скачать официальный ISO-образ</span></label><label class="check-item"><input type="checkbox"><span>Проверить контрольную сумму файла</span></label><label class="check-item"><input type="checkbox"><span>Выделить достаточно ОЗУ (минимум 2 ГБ)</span></label><label class="check-item"><input type="checkbox"><span>Включить аппаратную виртуализацию в BIOS</span></label><label class="check-item"><input type="checkbox"><span>Отключить антивирус на время установки</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 5</div></div>
+
+<h2 id="4-настройка-гостевой-ос-для-максимальной-производительности">4. Настройка гостевой ОС для максимальной производительности</h2>
+
+<p>После установки ОС в виртуальную машину её нужно оптимизировать. Первое, что стоит сделать — установить <strong>Дополнения гостевой ОС (<em>Guest Additions</strong>)</strong>. Они добавляют поддержку:</p>
+<ul>
+  <li>🖱️ <strong>Интеграции мыши</strong> (не нужно захват/освобождение клавишей <code>Host</code>).</li>
+  <li>📁 <strong>Общих папок</strong> между хостом и гостем.</li>
+  <li>🖥️ <strong>Автоматического изменения разрешения экрана</strong>.</li>
+  <li>🔄 <strong>Копирования файлов через буфер обмена</em>.</li>
+</ul>
+
+<p>Чтобы установить <em>Guest Additions</em>:</p>
+<ol>
+  <li>Запустите ВМ и войдите в установленную ОС.</li>
+  <li>В меню <em>VirtualBox</em> выберите <code>Устройства → Подключить образ Дополнений гостевой ОС</code>.</li>
+  <li>В гостевой ОС откройте <code>Этот компьютер</code> (<strong>Windows</strong>) или терминал (<strong>Linux</strong>) и запустите установщик:
+    <pre><code>sudo sh /media/VBOXADDITIONS_7.0.12/VBoxLinuxAdditions.run</code></pre>
+  </li>
+  <li>Перезагрузите ВМ.</li>
+</ol>
+
+<p>Для дополнительной оптимизации:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Windows</th>
+      <th>Linux</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Видеопамять</strong></td>
+      <td><code>128 МБ</code> (в настройках ВМ)</td>
+      <td><code>64–128 МБ</code> (зависит от DE)</td>
+    </tr>
+    <tr>
+      <td><strong>Количество ядер CPU</strong></td>
+      <td>Не более 50% физических ядер</td>
+      <td>1–2 ядра (для серверных дистрибутивов — до 4)</td>
+    </tr>
+    <tr>
+      <td><strong>Ускорение 2D/3D</strong></td>
+      <td>Включить в настройках дисплея</td>
+      <td>Отключить (может вызывать артефакты)</td>
+    </tr>
+    <tr>
+      <td><strong>Память (ОЗУ)</strong></td>
+      <td><code>4 ГБ</code> (минимум <code>2 ГБ</code>)</td>
+      <td><code>1–2 ГБ</code> (для <em>Ubuntu Server</em> хватит <code>512 МБ</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если виртуальная машина тормозит, попробуйте включить <strong>паравиртуализацию</strong> в настройках ВМ (<code>Система → Ускорение → Включить PAE/NX</code>). Это особенно актуально для 32-битных гостевых ОС.</p></div>
+
+<h2 id="5-работа-с-сетевыми-подключениями">5. Работа с сетевыми подключениями</h2>
+
+<p>По умолчанию <em>VirtualBox</em> использует <strong>NAT</strong> (<em>Network Address Translation</em>), что позволяет ВМ выходить в интернет через хост-систему, но не даёт доступа к ней извне. Если нужно, чтобы виртуальная машина была видна в локальной сети (например, для тестирования веб-сервера), выберите один из режимов:</p>
+
+<ul>
+  <li>🌐 <strong>Сетевой мост (<code>Bridged</code>):</strong> ВМ получает собственный IP в локальной сети, как физическое устройство. Подходит для серверов или игр по сети.</li>
+  <li>🔗 <strong>Внутренняя сеть (<code>Internal Network</code>):</strong> ВМ видят друг друга, но не имеют доступа к хосту или интернету. Полезно для изолированных тестов.</li>
+  <li>🔄 <strong>Host-Only:</strong> Создаётся закрытая сеть между хостом и ВМ. Используется для безопасного тестирования.</li>
+</ul>
+
+<p>Чтобы изменить тип подключения:</p>
+<ol>
+  <li>Выключите ВМ.</li>
+  <li>Перейдите в <code>Настройки → Сеть</code>.</li>
+  <li>В поле <code>Тип подключения</code> выберите нужный режим.</li>
+  <li>Для <code>Bridged</code> укажите физический сетевой адаптер хоста (например, <code>wlan0</code> или <code>eth0</code>).</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если после смены сетевого режима на <code>Bridged</code> ВМ не получает IP-адрес, проверьте, что в гостевой ОС включено автоматическое получение настроек (<strong>DHCP</strong>). В <strong>Windows</strong> это делается в <code>Панель управления → Сеть и Интернет → Центр управления сетями → Изменение параметров адаптера</code>. В <strong>Linux</strong> отредактируйте файл <code>/etc/network/interfaces</code> или используйте <code>nmcli</code>.</blockquote>
+
+<details class="faq-item"><summary>Как настроить порт-проброс (Port Forwarding) в NAT?</summary><div class="faq-answer"><p>Порт-проброс позволяет получить доступ к службам ВМ (например, веб-серверу) извне, даже если используется NAT.
+<p>1. Выключите ВМ.</p>
+<p>2. Перейдите в <code>Настройки → Сеть → Дополнительно → Проброс портов</code>.</p>
+<p>3. Добавьте правило: укажите имя (например, "HTTP"), протокол (<code>TCP</code>), хост-порт (<code>8080</code>), гостевой порт (<code>80</code>).</p>
+<p>4. Сохраните и запустите ВМ.</p>
+<p>Теперь при обращении к <code>http://localhost:8080</code> на хосте вы попадете на веб-сервер в ВМ.</p></div></details></p>
+
+<h2 id="6-общие-папки-и-обмен-файлами">6. Общие папки и обмен файлами</h2>
+
+<p>Чтобы обмениваться файлами между хостом и гостевой ОС, можно использовать:</p>
+<ul>
+  <li>📂 <strong>Общие папки (<em>Shared Folders</strong>):</em> Требуют установленных <em>Guest Additions</em>. Папки монтируются как сетевые диски.</li>
+  <li>🔄 <strong>Буфер обмена:</strong> Включается в <code>Устройства → Общий буфер обмена → Двунаправленный</code>.</li>
+  <li>💾 <strong>Перетаскивание (<em>Drag’n’Drop</strong>):</strong> Активируется в <code>Устройства → Перетаскивание</code>.</li>
+</ul>
+
+<p>Для настройки общей папки:</p>
+<ol>
+  <li>Выключите ВМ.</li>
+  <li>Перейдите в <code>Настройки → Общие папки</code> и добавьте новую, указав путь на хосте (например, <code>C:\Shared</code>) и имя папки (например, <code>shared_folder</code>).</li>
+  <li>Включите опции <code>Авто-монтирование</code> и <code>Сделать постоянной</code>.</li>
+  <li>Запустите ВМ и проверьте наличие папки в:
+    <ul>
+      <li><strong>Windows:</strong> <code>Сетевое окружение → VirtualBox Shared Folders</code>.</li>
+      <li><strong>Linux:</strong> <code>/media/sf_shared_folder</code> (может потребоваться добавить пользователя в группу <code>vboxsf</code>).</li>
+    </ol>
+  </li>
+</ol>
+
+<p>Если папка не отображается в <strong>Linux</strong>, выполните:</p>
+<pre><code>sudo usermod -aG vboxsf $USER
+<p>sudo reboot</code></pre></p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Общие папки работают медленнее, чем физические диски. Для крупных файлов (например, баз данных) лучше использовать <strong>сетевые протоколы</strong> (SMB, NFS) или <strong>внешние USB-накопители</em> (если включена поддержка USB в Extension Pack).</p></div>
+
+<h2 id="7-резервное-копирование-и-клонирование-вм">7. Резервное копирование и клонирование ВМ</h2>
+
+<p><em>VirtualBox</em> позволяет сохранять состояние ВМ в виде <strong>снимков (<em>Snapshots</strong>)</strong> или полностью клонировать машину. Это полезно для:</p>
+<ul>
+  <li>🔄 <strong>Тестирования ПО:</strong> Сделайте снимок перед установкой сомнительных программ.</li>
+  <li>📦 <strong>Развёртывания шаблонов:</strong> Клонируйте настроенную ВМ для других пользователей.</li>
+  <li>🛠️ <strong>Восстановления после сбоев:</em> Вернитесь к рабочей версии за несколько кликов.</li>
+</ul>
+
+<p>Чтобы создать снимок:</p>
+<ol>
+  <li>Запустите ВМ и доведите её до нужного состояния (например, установите все обновления).</li>
+  <li>В меню <em>VirtualBox</em> выберите <code>Машина → Сделать снимок</code>.</li>
+  <li>Введите название (например, "Чистая установка + обновления") и описание.</li>
+</ol>
+
+<p>Для клонирования ВМ:</p>
+<ol>
+  <li>Выключите ВМ.</li>
+  <li>Нажмите правой кнопкой на ВМ в списке и выберите <code>Клонировать</code>.</li>
+  <li>Укажите новое имя и выберите тип клона:
+    <ul>
+      <li><strong>Полный клон:</strong> Независимая копия (занимает много места).</li>
+      <li><strong>Связанный клон:</strong> Экономит место, но зависит от оригинальной ВМ.</li>
+    </ol>
+  </li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Связанные клоны нельзя переносить на другой компьютер — они привязаны к оригинальной ВМ и её UUID. Если оригинальная ВМ будет удалена, клон станет неработоспособным.</blockquote>
+
+<h2 id="8-устранение-распространённых-ошибок">8. Устранение распространённых ошибок</h2>
+
+<p>Даже при правильной настройке <em>VirtualBox</em> может выдавать ошибки. Вот самые частые проблемы и их решения:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>VT-x is not available (VERR_NEM_VM_CREATE_FAILED)</code></td>
+      <td>Аппаратная виртуализация отключена в BIOS или заблокирована</td>
+      <td>Включите <code>VT-x/AMD-V</code> в BIOS и отключите <em>Hyper-V</em> в <strong>Windows</strong> (<code>bcdedit /set hypervisorlaunchtype off</code>)</td>
+    </tr>
+    <tr>
+      <td><code>Failed to open a session for the virtual machine (VERR_NEM_VM_CREATE_FAILED)</code></td>
+      <td>Конфликт с другим гипервизором (например, <em>Hyper-V</em> или <em>WSL2</em>)</td>
+      <td>Отключите <em>Hyper-V</em> или используйте команду: <pre><code>dism.exe /Online /Disable-Feature:Microsoft-Hyper-V-All</code></pre></td>
+    </tr>
+    <tr>
+      <td><code>The virtual machine has terminated unexpectedly</code></td>
+      <td>Нехватка памяти или повреждение конфигурационного файла ВМ</td>
+      <td>Увеличьте выделенную ОЗУ или удалите файл <code>&lt;имя_ВМ&gt;.vbox</code> (настройки сбросятся)</td>
+    </tr>
+    <tr>
+      <td><code>USB device is busy with a previous request</code></td>
+      <td>Конфликт с драйверами USB на хосте</td>
+      <td>Переподключите устройство или перезапустите службу <em>VirtualBox USB</em> в <code>Диспетчере задач</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Если ВМ не запускается после обновления <em>VirtualBox</em>, попробуйте:</p>
+<ol>
+  <li>Удалить старую версию через <code>Панель управления → Программы и компоненты</code>.</li>
+  <li>Установить новую версию с правами администратора.</li>
+  <li>Обновить <em>Guest Additions</em> в гостевой ОС.</li>
+</ol>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если виртуальная машина тормозит при работе с диском, попробуйте изменить тип контроллера в настройках ВМ (<code>Настройки → Носители</code>). Для <strong>SSD</strong> лучше выбрать <code>SATA</code> или <code>NVMe</code> (если поддерживается), для <strong>HDD</strong> — <code>IDE</code> (но это медленнее).</p></div>
+
+<h2 id="faq-частые-вопросы-по-virtualbox">FAQ: Частые вопросы по VirtualBox</h2>
+
+<details>
+  <summary>Можно ли запускать macOS в VirtualBox на Windows?</summary>
+  <p>Технически да, но с оговорками: <em>Oracle</em> официально не поддерживает виртуализацию <strong>macOS</strong> на не-<em>Apple</em> железе из-за лицензионных ограничений. Для этого нужны:</p>
+  <ul>
+    <li>Специальные патчи для <em>VirtualBox</em> (например, <a href="https://github.com/foxlet/macOS-Simple-KVM" target="_blank">macOS-Simple-KVM</a>).</li>
+    <li>Образ <strong>macOS</strong> (например, из <em>App Store</em> или с сайта разработчиков).</li>
+    <li>Процессор <em>Intel</em> (на <em>Apple Silicon</em> <strong>macOS</strong> в <em>VirtualBox</em> не запустится).</li>
+  </ul>
+  <p>Производительность будет низкой, а стабильность — сомнительной. Для полноценной работы <strong>macOS</strong> лучше использовать <em>VMware</em> с патчами или физический <em>Mac</em>.</p>
+</details>
+
+<details>
+  <summary>Как увеличить размер диска виртуальной машины?</summary>
+  <p>Если виртуальный диск (<code>.vdi</code>) заполнен, его можно расширить без потери данных:</p>
+  <ol>
+    <li>Откройте терминал (<strong>Windows</strong>: <code>cmd</code>, <strong>Linux/macOS</strong>: <code>bash</code>).</li>
+    <li>Перейдите в папку с файлом диска и выполните:
+      <pre><code>VBoxManage modifyhd "путь_к_диску.vdi" --resize 51200</code></pre>
+<p>(где <code>51200</code> — новый размер в мегабайтах, т.е. 50 ГБ).</p>
+    </li>
+    <li>Запустите ВМ и расширьте раздел с помощью встроенных инструментов ОС:
+      <ul>
+        <li><strong>Windows:</strong> <code>Управление дисками → Расширить том</code>.</li>
+        <li><strong>Linux:</strong> <code>sudo fdisk /dev/sda</code> → удалите и создайте раздел заново, затем <code>sudo resize2fs /dev/sda1</code>.</li>
+      </ol>
+    </li>
+  </ol>
+</details>
+
+<details>
+  <summary>Почему в VirtualBox не работает звук?</summary>
+  <p>Проблемы со звуком обычно связаны с неверными настройками аудиоконтроллера или драйверов в гостевой ОС. Проверьте:</p>
+  <ul>
+    <li>В настройках ВМ (<code>Настройки → Аудио</code>) включён ли аудиоконтроллер (<code>Intel HD Audio</code> или <code>ICH AC97</code>).</li>
+    <li>В гостевой ОС установлены ли драйверы звука (в <strong>Windows</strong> проверьте <code>Диспетчер устройств</code>).</li>
+    <li>Не конфликтует ли <em>VirtualBox</em> с другими аудиоприложениями (например, <em>Discord</em> или <em>Voicemeeter</em>).</li>
+  </ul>
+  <p>Если звук прерывается, попробуйте изменить хост-аудиодрайвер в настройках на <code>Windows DirectSound</code> или <code>Null Audio</code> (для тестирования).</p>
+</details>
+
+<details>
+  <summary>Как перенести виртуальную машину на другой компьютер?</summary>
+  <p>Чтобы перенести ВМ:</p>
+  <ol>
+    <li>Скопируйте файлы ВМ (обычно это <code>.vdi</code> или <code>.vmdk</code> + <code>.vbox</code>) на новый компьютер.</li>
+    <li>Установите <em>VirtualBox</em> той же версии, что и на старом ПК.</li>
+    <li>В <em>VirtualBox</em> выберите <code>Файл → Импорт конфигураций</code> и укажите путь к <code>.vbox</code>-файлу.</li>
+    <li>Если ВМ не запускается, проверьте пути к дискам в настройках (<code>Настройки → Носители</code>).</li>
+  </ol>
+  <p>Для <strong>Linked Clones</strong> перенос невозможен — они зависят от оригинальной ВМ.</p>
+</details>
+
+<details>
+  <summary>Можно ли играть в игры на виртуальной машине?</summary>
+  <p>Технически да, но с серьёзными ограничениями:</p>
+  <ul>
+    <li>🎮 <strong>3D-ускорение:</strong> Включается в настройках ВМ (<code>Настройки → Дисплей → Ускорение 3D</code>), но работает медленно.</li>
+    <li>🖥️ <strong>Производительность:</strong> Даже с <em>VT-x</em> FPS будет в 5–10 раз ниже, чем на физическом ПК.</li>
+    <li>🔌 <strong>Поддержка DirectX/OpenGL:</strong> <em>VirtualBox</em> эмулирует только базовые функции, поэтому современные игры (например, <em>Cyberpunk 2077</em> или <em>GTA V</em>) не запустятся.</li>
+  </ul>
+  <p>Для игр лучше использовать:</p>
+  <ul>
+    <li><em>GPU Passthrough</em> (передача физической видеокарты в ВМ, требует <strong>Linux</strong> + <em>QEMU/KVM</em>).</li>
+    <li><em>Shadow PC</em> или <em>GeForce NOW</em> (облачный гейминг).</li>
+    <li>Двойную загрузку (<strong>dual boot</strong>) для <strong>Windows</strong>/<strong>Linux</strong>.</li>
+  </ul>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#1-установка-virtualbox-шаг-за-шагом">1. Установка VirtualBox: шаг за шагом</a></li><li><a href="#2-создание-первой-виртуальной-машины">2. Создание первой виртуальной машины</a></li><li><a href="#3-установка-операционной-системы-в-вм">3. Установка операционной системы в ВМ</a></li><li><a href="#4-настройка-гостевой-ос-для-максимальной-производительности">4. Настройка гостевой ОС для максимальной производительности</a></li><li><a href="#5-работа-с-сетевыми-подключениями">5. Работа с сетевыми подключениями</a></li><li><a href="#6-общие-папки-и-обмен-файлами">6. Общие папки и обмен файлами</a></li><li><a href="#7-резервное-копирование-и-клонирование-вм">7. Резервное копирование и клонирование ВМ</a></li><li><a href="#8-устранение-распространённых-ошибок">8. Устранение распространённых ошибок</a></li><li><a href="#faq-частые-вопросы-по-virtualbox">FAQ: Частые вопросы по VirtualBox</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/me/mersedes-247-kuzov.html" class="related-card">Mercedes 247 кузов: характеристики B-Class и B200d</a></li><li><a href="/articles/e/ek/eksport-zametok-iz-google-keep.html" class="related-card">Как экспортировать заметки из Google Keep: 5 способов + FAQ</a></li><li><a href="/articles/g/ga/gabarity-nissan-almera-classic.html" class="related-card">Габариты Nissan Almera Classic: размеры кузова, багажника, салона</a></li><li><a href="/articles/p/pl/planshet-teclast-tpad.html" class="related-card">Teclast TPad: обзор, характеристики и отзывы о планшете 2026</a></li><li><a href="/articles/s/sk/skachat-google-play-na-pk.html" class="related-card">Как скачать Google Play на ПК: официальные и альтернативные способы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/me/mersedes-247-kuzov.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes 247 кузов: характеристики B-Class и B200d</span><span class="related-bottom-desc">Всё о Mercedes 247 кузове: технические характеристики, обзор двигателей, типичные неисправности и ос</span></a><a href="/articles/e/ek/eksport-zametok-iz-google-keep.html" class="related-bottom-card"><span class="related-bottom-title">Как экспортировать заметки из Google Keep: 5 способов + FAQ</span><span class="related-bottom-desc">Пошаговые инструкции по переносу заметок из &lt;em&gt;Google Keep&lt;/em&gt; в другие форматы: PDF, DOCX, TXT. С</span></a><a href="/articles/g/ga/gabarity-nissan-almera-classic.html" class="related-bottom-card"><span class="related-bottom-title">Габариты Nissan Almera Classic: размеры кузова, багажника, салона</span><span class="related-bottom-desc">Полные технические размеры Nissan Almera Classic (N16): длина, ширина, высота, колесная база, клирен</span></a><a href="/articles/p/pl/planshet-teclast-tpad.html" class="related-bottom-card"><span class="related-bottom-title">Teclast TPad: обзор, характеристики и отзывы о планшете 2026</span><span class="related-bottom-desc">Подробный разбор планшета &lt;em&gt;Teclast TPad&lt;/em&gt;: технические характеристики, плюсы и минусы, сравнен</span></a><a href="/articles/s/sk/skachat-google-play-na-pk.html" class="related-bottom-card"><span class="related-bottom-title">Как скачать Google Play на ПК: официальные и альтернативные способы</span><span class="related-bottom-desc">Пошаговые инструкции по установке Google Play на Windows и Mac. Эмуляторы, веб-версия, APK и риски с</span></a><a href="/articles/m/me/mercedes-benz-b.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz B-Class: обзор, цены, плюсы и минусы модели</span><span class="related-bottom-desc">Подробный разбор Mercedes-Benz B-Class: технические характеристики, комплектации, отзывы владельцев </span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

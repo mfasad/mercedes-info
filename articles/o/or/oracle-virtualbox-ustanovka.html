@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Oracle VirtualBox: установка на Windows, Linux и macOS с нуля — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговое руководство по установке VirtualBox 7.0+ на все ОС: системные требования, настройка сети, решение ошибок и оптимизация производительности.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/o/or/oracle-virtualbox-ustanovka.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Oracle VirtualBox: установка на Windows, Linux и macOS с нуля">
+    <meta property="og:description" content="Пошаговое руководство по установке VirtualBox 7.0+ на все ОС: системные требования, настройка сети, решение ошибок и оптимизация производительности.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/a-class/">A Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Oracle VirtualBox: установка на Windows, Linux и macOS с нуля</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Как установить Oracle VirtualBox: полное руководство для новичков и профессионалов</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#1-системные-требования-что-нужно-для-работы-virtualbox">1. Системные требования: что нужно для работы VirtualBox</a></li><li><a href="#2-подготовка-системы-включаем-виртуализацию-в-biosuefi">2. Подготовка системы: включаем виртуализацию в BIOS/UEFI</a></li><li><a href="#3-скачивание-и-установка-virtualbox-на-windows">3. Скачивание и установка VirtualBox на Windows</a></li><li><a href="#4-установка-virtualbox-на-linux-ubuntudebian-fedora-arch">4. Установка VirtualBox на Linux (Ubuntu/Debian, Fedora, Arch)</a></li><li><a href="#5-установка-virtualbox-на-macos-intel-и-apple-silicon-m1m2">5. Установка VirtualBox на macOS (Intel и Apple Silicon M1/M2)</a></li><li><a href="#6-первая-настройка-virtualbox-создаём-виртуальную-машину">6. Первая настройка VirtualBox: создаём виртуальную машину</a></li><li><a href="#7-распространённые-ошибки-и-их-решения">7. Распространённые ошибки и их решения</a></li><li><a href="#8-альтернативы-virtualbox-когда-стоит-выбрать-другое-решение">8. Альтернативы VirtualBox: когда стоит выбрать другое решение</a></li><li><a href="#faq-частые-вопросы-по-установке-virtualbox">FAQ: Частые вопросы по установке VirtualBox</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p><em>Oracle VirtualBox</em> — это мощный инструмент виртуализации, который позволяет запускать несколько операционных систем на одном компьютере одновременно. Без необходимости перезагрузки или выделения отдельного железа. Но даже такая проверенная временем программа может вызвать сложности при установке — особенно если вы сталкиваетесь с виртуализацией впервые.</p>
+
+<p>В этой статье мы разберём не только базовую установку <strong>VirtualBox на Windows, Linux и macOS</strong>, но и нюансы, которые редко упоминают в официальной документации. Например, как правильно настроить <code>VT-x/AMD-V</code> в BIOS, почему виртуальная машина тормозит на ноутбуке, и какие <mark>скрытые параметры конфигурации</mark> могут ускорить работу гостевой ОС на 30-40%. Также вы найдёте решения для самых распространённых ошибок (вроде <code>E_FAIL (0x80004005)</code> или проблем с USB 3.0) и чек-лист для проверки системы перед установкой.</p>
+
+<h2 id="1-системные-требования-что-нужно-для-работы-virtualbox">1. Системные требования: что нужно для работы VirtualBox</h2>
+
+<p>Прежде чем скачивать установщик, убедитесь, что ваш компьютер соответствует минимальным (и желательным) требованиям. <em>Oracle VirtualBox 7.0+</em> поддерживает большинство современных систем, но есть критические моменты, которые часто упускают.</p>
+
+<p><strong>Обязательные требования:</strong></p>
+<ul>
+  <li>🖥️ <strong>Процессор:</strong> 64-битный (x86_64) с поддержкой аппаратной виртуализации (<code>VT-x</code> для Intel или <code>AMD-V</code> для AMD). Без неё производительность виртуальных машин будет в 5-10 раз ниже.</li>
+  <li>🧠 <strong>ОЗУ:</strong> минимум 4 ГБ (но для комфортной работы с Windows 10/11 в гостевой ОС нужно ≥8 ГБ).</li>
+  <li>💾 <strong>Свободное место:</strong> 20 ГБ на системном диске (для установки программы) + место под виртуальные машины (от 20 ГБ для лёгких дистрибутивов Linux до 100+ ГБ для Windows с программами).</li>
+  <li>🔌 <strong>ОС хоста:</strong> Windows 8.1/10/11, macOS 10.13+ (High Sierra и новее), Linux (ядро ≥3.2).</li>
+</ul>
+
+<p><strong>Рекомендации для продвинутых пользователей:</strong></p>
+<ul>
+  <li>🔥 <strong>SSD/NVMe:</strong> Виртуальные машины на HDD работают в 3-5 раз медленнее. Если у вас механический жёсткий диск, выделите под ВМ отдельный раздел на SSD.</li>
+  <li>🔄 <strong>Сетевая карта:</strong> Для сетевых экспериментов (например, с <code>pfSense</code> или <code>Kali Linux</code>) лучше иметь второй физический сетевой адаптер.</li>
+  <li>🎮 <strong>Видеокарта:</strong> Для 3D-ускорения (например, в <em>Windows-играх</em> или <em>AutoCAD</em> внутри ВМ) нужна поддержка <code>OpenGL 3.0+</code> и драйверы хост-системы.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Минимум</th>
+      <th>Рекомендовано</th>
+      <th>Для профессионалов</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Процессор</td>
+      <td>2 ядра, 2.0 ГГц</td>
+      <td>4 ядра, 3.0+ ГГц</td>
+      <td>6+ ядер, 4.0+ ГГц (с <code>Hyper-Threading</code>)</td>
+    </tr>
+    <tr>
+      <td>ОЗУ</td>
+      <td>4 ГБ</td>
+      <td>16 ГБ</td>
+      <td>32+ ГБ (для нескольких ВМ одновременно)</td>
+    </tr>
+    <tr>
+      <td>Хранилище</td>
+      <td>HDD, 50 ГБ свободно</td>
+      <td>SSD, 200+ ГБ свободно</td>
+      <td>NVMe + отдельный диск для ВМ</td>
+    </tr>
+    <tr>
+      <td>Сеть</td>
+      <td>1 Гбит/с</td>
+      <td>1 Гбит/с + Wi-Fi 5/6</td>
+      <td>10 Гбит/с или два адаптера</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На ноутбуках с <em>Hybrid Graphics</em> (например, <em>NVIDIA Optimus</em> или <em>AMD Switchable Graphics</em>) 3D-ускорение в VirtualBox может не работать. Перед установкой проверьте, поддерживает ли ваша интегрированная графика <code>OpenGL 3.0</code> через утилиту <code>glxinfo</code> (Linux) или <em>GPU-Z</em> (Windows).</blockquote>
+
+<div class="attention-box attention-info"><div><strong>📊 Для чего вы устанавливаете VirtualBox?</strong><ul><li>Для тестирования ПО</li><li>Для обучения (курсы, сертификации)</li><li>Для запуска старых программ/игр</li><li>Для разработки (Docker, Kubernetes)</li><li>Другое</li></ul></div></div>
+
+<h2 id="2-подготовка-системы-включаем-виртуализацию-в-biosuefi">2. Подготовка системы: включаем виртуализацию в BIOS/UEFI</h2>
+
+<p>Одна из самых распространённых ошибок при установке VirtualBox — игнорирование настроек BIOS. Без включённой аппаратной виртуализации (<code>VT-x/AMD-V</code>) программа либо откажется запускать 64-битные гостевые ОС, либо будет работать крайне медленно.</p>
+
+<p><strong>Как проверить, включена ли виртуализация:</strong></p>
+<ol>
+  <li>На <strong>Windows</strong>: откройте <code>Диспетчер задач</code> → вкладка <code>Производительность</code> → <code>ЦП</code>. Посмотрите строку <code>Виртуализация</code>.</li>
+  <li>На <strong>Linux</strong>: выполните команду:
+    <pre><code>egrep -c '(vmx|svm)' /proc/cpuinfo</code></pre>
+<p>Если результат >0 — виртуализация поддерживается, но может быть отключена в BIOS.</li></p>
+  <li>На <strong>macOS</strong>: используйте терминал:
+    <pre><code>sysctl -a | grep machdep.cpu.features</code></pre>
+<p>Ищите флаги <code>VMX</code> (Intel) или <code>SVM</code> (AMD).</li></p>
+</ol>
+
+<p><strong>Как включить виртуализацию в BIOS:</strong></p>
+<ol>
+  <li>Перезагрузите компьютер и войдите в BIOS/UEFI (обычно клавиши <code>Del</code>, <code>F2</code>, <code>F12</code> или <code>Esc</code> при загрузке).</li>
+  <li>Найдите раздел <code>Advanced</code> → <code>CPU Configuration</code> (названия могут отличаться).</li>
+  <li>Активируйте опции:
+    <ul>
+      <li>🔧 <code>Intel Virtualization Technology (VT-x)</code> — для процессоров Intel.</li>
+      <li>🔧 <code>AMD-V</code> или <code>SVM Mode</code> — для процессоров AMD.</li>
+      <li>🔧 <code>Virtualization Extensions</code> или <code>Vanderpool</code> — альтернативные названия.</li>
+    </ol>
+  </li>
+  <li>Сохраните настройки (<code>F10</code>) и перезагрузитесь.</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На некоторых материнских платах (особенно от <em>ASUS</em> и <em>MSI</em>) опция виртуализации может быть скрыта. Чтобы её разблокировать, иногда нужно сначала отключить <code>Secure Boot</code> или сбросить BIOS к заводским настройкам.</blockquote>
+
+
+<p>Включена аппаратная виртуализация в BIOS|Обновлены драйверы чипсета и сетевых адаптеров|Отключены конфликтующие программы (VMware, Hyper-V)|Свободно ≥20 ГБ на системном диске|Проверена совместимость антивируса (например, Kaspersky может блокировать сетевые адаптеры VirtualBox)--></p>
+
+<h2 id="3-скачивание-и-установка-virtualbox-на-windows">3. Скачивание и установка VirtualBox на Windows</h2>
+
+<p>Установка на <strong>Windows</strong> — самый простой вариант, но и здесь есть подводные камни. Например, конфликты с <em>Hyper-V</em> (встроенная виртуализация Windows) или проблемы с цифровой подписью драйверов.</p>
+
+<p><strong>Шаг 1. Скачивание установщика:</strong></p>
+<ul>
+  <li>🌐 Перейдите на <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">официальный сайт VirtualBox</a>.</li>
+  <li>📥 Выберите версию для <code>Windows hosts</code> (на момент написания статьи актуальна <em>VirtualBox 7.0.12</em>).</li>
+  <li>🔗 Скачайте также <code>VirtualBox Extension Pack</code> — он нужен для поддержки USB 2.0/3.0, RDP и других расширенных функций.</li>
+</ul>
+
+<p><strong>Шаг 2. Установка:</strong></p>
+<ol>
+  <li>Запустите скачанный файл (например, <code>VirtualBox-7.0.12-159484-Win.exe</code>).</li>
+  <li>Нажмите <code>Next</code>, выберите компоненты для установки (рекомендуется оставить всё по умолчанию).</li>
+  <li>В процессе установки появится предупреждение о подключении сетевых адаптеров — разрешите это (<code>Install</code>).</li>
+  <li>После завершения установки <strong>не запускайте VirtualBox сразу</strong> — сначала установите <code>Extension Pack</code>.</li>
+</ol>
+
+<p><strong>Шаг 3. Установка Extension Pack:</strong></p>
+<ol>
+  <li>Откройте VirtualBox, перейдите в <code>Файл → Настройки → Плагины</code>.</li>
+  <li>Нажмите на иконку <code>+</code> (добавить новый плагин) и выберите скачанный <code>Extension Pack</code>.</li>
+  <li>Подтвердите установку и примите лицензионное соглашение.</li>
+</ol>
+
+<p><strong>Шаг 4. Проверка работоспособности:</strong></p>
+<ul>
+  <li>Создайте тестовую виртуальную машину (например, с <em>Linux Mint</em> или <em>Windows 11</em>).</li>
+  <li>Убедитесь, что в настройках ВМ доступны опции <code>USB 3.0</code> и <code>VRDP Server</code> (это значит, что <code>Extension Pack</code> установлен корректно).</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если после установки VirtualBox не запускается с ошибкой <code>Failed to create the VirtualBox COM object</code>, причиной может быть конфликт с <em>Hyper-V</em>. Отключите его через <code>Панель управления → Программы и компоненты → Включение или отключение компонентов Windows</code> (снимите галочку с <code>Hyper-V</code> и <code>Платформа виртуальной машины</code>).</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если у вас Windows 11 с включённым <em>Core Isolation</em> (защита от уязвимостей), VirtualBox может работать нестабильно. Попробуйте отключить <code>Memory Integrity</code> в <code>Безопасность Windows → Защита устройства от уязвимостей</code>.</p></div>
+
+<h2 id="4-установка-virtualbox-на-linux-ubuntudebian-fedora-arch">4. Установка VirtualBox на Linux (Ubuntu/Debian, Fedora, Arch)</h2>
+
+<p>На <strong>Linux</strong> установка VirtualBox требует больше шагов из-за зависимостей и особенностей пакетных менеджеров. Кроме того, здесь важно правильно настроить права доступа к устройствам (<code>/dev/vboxdrv</code>, <code>/dev/vboxnetctl</code>).</p>
+
+<p><strong>Способ 1. Установка из официальных репозиториев (рекомендуется для новичков):</strong></p>
+
+<p>Для <em>Ubuntu/Debian</em>:</p>
+<pre><code>sudo apt update
+<p>sudo apt install virtualbox virtualbox-ext-pack</code></pre></p>
+
+<p>Для <em>Fedora/RHEL</em>:</p>
+<pre><code>sudo dnf install @virtualization
+<p>sudo dnf install VirtualBox</code></pre></p>
+
+<p>Для <em>Arch Linux/Manjaro</em>:</p>
+<pre><code>sudo pacman -S virtualbox virtualbox-ext-oracle</code></pre>
+
+<p><strong>Способ 2. Установка из официального .deb/.rpm (актуальная версия):</strong></p>
+<ol>
+  <li>Скачайте пакет с <a href="https://www.virtualbox.org/wiki/Linux_Downloads" target="_blank">страницы загрузок</a> (например, <code>virtualbox-7.0_7.0.12-159484~Ubuntu~jammy_amd64.deb</code> для Ubuntu 22.04).</li>
+  <li>Установите зависимости:
+    <pre><code>sudo apt install build-essential dkms linux-headers-$(uname -r)</code></pre>
+  </li>
+  <li>Установите пакет:
+    <pre><code>sudo dpkg -i virtualbox-7.0_*.deb</code></pre>
+  </li>
+  <li>Добавьте пользователя в группу <code>vboxusers</code>:
+    <pre><code>sudo usermod -aG vboxusers $USER</code></pre>
+  </li>
+  <li>Перезагрузите систему.</li>
+</ol>
+
+<p><strong>Проверка установки:</strong></p>
+<ul>
+  <li>Запустите VirtualBox из терминала командой <code>virtualbox</code>.</li>
+  <li>Убедитесь, что модули ядра загружены:
+    <pre><code>lsmod | grep vbox</code></pre>
+<p>Должны отобразиться <code>vboxdrv</code>, <code>vboxnetflt</code>, <code>vboxnetadp</code>.</li></p>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На некоторых дистрибутивах (например, <em>Fedora 38+</em>) может потребоваться отключить <code>Secure Boot</code> в BIOS или подписать модули VirtualBox вручную. Инструкция по подписи:
+<pre><code>sudo mokutil --disable-validation</code></pre>
+<p>После перезагрузки следуйте инструкциям на экране для создания ключа.</blockquote></p>
+
+<details class="faq-item"><summary>Как удалить VirtualBox полностью на Linux?</summary><div class="faq-answer"><p>
+<p>Чтобы полностью удалить VirtualBox и все его компоненты, выполните:</p>
+<pre><code>sudo apt purge virtualbox-*  # Для Debian/Ubuntu
+<p>sudo dnf remove VirtualBox*  # Для Fedora/RHEL</p>
+<p>sudo rm -rf ~/.config/VirtualBox/</p>
+<p>sudo rm -rf ~/.VirtualBox/</p>
+<p>sudo vboxconfig --uninstall</code></pre></p>
+<p>Также проверьте и удалите оставшиеся модули ядра:</p>
+<pre><code>sudo dkms remove vboxhost/7.0.12 --all
+<p>sudo rm -f /etc/apt/sources.list.d/virtualbox.list</code></pre></p></div></details></p>
+
+<h2 id="5-установка-virtualbox-на-macos-intel-и-apple-silicon-m1m2">5. Установка VirtualBox на macOS (Intel и Apple Silicon M1/M2)</h2>
+
+<p>На <strong>macOS</strong> установка VirtualBox имеет свои нюансы, особенно на новых чипах <em>Apple Silicon</em> (M1/M2). Официальная версия VirtualBox для ARM пока находится в стадии бета-тестирования и не поддерживает все функции.</p>
+
+<p><strong>Требования для macOS:</strong></p>
+<ul>
+  <li>🍎 macOS 10.13 (High Sierra) или новее.</li>
+  <li>🖥️ Для Intel Mac: процессор с поддержкой <code>VT-x</code> (все Mac с 2010 года и новее).</li>
+  <li>🔋 Для Apple Silicon (M1/M2): только бета-версия VirtualBox 7.0+ с ограниченной поддержкой гостевых ОС (пока работают только Linux ARM, Windows на M1 не поддерживается).</li>
+</ul>
+
+<p><strong>Шаг 1. Скачивание:</strong></p>
+<ul>
+  <li>Перейдите на <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">страницу загрузок</a> и выберите <code>OS X hosts</code>.</li>
+  <li>Для <em>Apple Silicon</em> скачайте <code>VirtualBox-7.0.12-159484-OSX.dmg</code> (ARM-версия).</li>
+</ul>
+
+<p><strong>Шаг 2. Установка:</strong></p>
+<ol>
+  <li>Откройте скачанный <code>.dmg</code>-файл и перетащите <em>VirtualBox.app</em> в папку <code>Applications</code>.</li>
+  <li>При первом запуске macOS заблокирует приложение (разработчик не подтверждён). Перейдите в <code>Системные настройки → Защита и безопасность</code> и разрешите открытие.</li>
+  <li>Установите <code>Extension Pack</code> так же, как на Windows (через <code>Файл → Настройки → Плагины</code>).</li>
+</ol>
+
+<p><strong>Ограничения на Apple Silicon (M1/M2):</strong></p>
+<ul>
+  <li>❌ Не поддерживается <strong>Windows</strong> (ни x86, ни ARM-версия).</li>
+  <li>❌ Нет аппаратного ускорения 3D (только программный рендеринг).</li>
+  <li>✅ Работают <strong>Linux ARM</strong> (Ubuntu, Debian, Fedora для ARM64).</li>
+  <li>✅ Поддерживаются <strong>Docker-контейнеры</strong> через ВМ.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На macOS с чипами M1/M2 VirtualBox может конфликтовать с <em>Parallels Desktop</em> или <em>UTM</em>. Если вы используете эти программы, перед установкой VirtualBox полностью удалите их, включая кеш и настройки в <code>~/Library/</code>.</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>На macOS с Apple Silicon (M1/M2) для запуска Windows лучше использовать <em>Parallels Desktop</em> или <em>UTM</em> с QEMU. VirtualBox на ARM пока не поддерживает Windows-гостей.</p></div>
+
+<h2 id="6-первая-настройка-virtualbox-создаём-виртуальную-машину">6. Первая настройка VirtualBox: создаём виртуальную машину</h2>
+
+<p>После установки VirtualBox нужно правильно настроить первую виртуальную машину. От этого зависит её производительность и стабильность. Разберём процесс на примере установки <em>Windows 11</em>.</p>
+
+<p><strong>Шаг 1. Создание новой ВМ:</strong></p>
+<ol>
+  <li>Нажмите <code>Создать</code> (или <code>New</code>).</li>
+  <li>Введите имя ВМ (например, <code>Windows 11 Test</code>).</li>
+  <li>Выберите тип ОС: <code>Microsoft Windows</code>, версия: <code>Windows 11 (64-bit)</code>.</li>
+  <li>Укажите объём ОЗУ. Для Windows 11 минимум <strong>4 ГБ</strong>, рекомендуется <strong>8 ГБ</strong>.</li>
+  <li>Выберите <code>Создать новый виртуальный жёсткий диск</code> (VDI), формат <code>Динамический</code>, размер ≥<strong>60 ГБ</strong>.</li>
+</ol>
+
+<p><strong>Шаг 2. Настройка параметров ВМ:</strong></p>
+<ul>
+  <li>🔧 <strong>Система → Процессор:</strong> Выделите 2-4 ядра (но не больше половины физических ядер вашего CPU).</li>
+  <li>🔧 <strong>Система → Ускорение:</strong> Включите <code>Включить PAE/NX</code> и <code>Включить вложенную страничную таблицу (EPT)</code>.</li>
+  <li>🔧 <strong>Дисплей → Экран:</strong> Увеличьте видеопамять до <strong>128 МБ</strong> и включите 3D-ускорение (если нужно).</li>
+  <li>🔧 <strong>Носители:</strong> Подключите ISO-образ Windows 11 к виртуальному приводу.</li>
+  <li>🔧 <strong>Сеть:</strong> Выберите <code>NAT</code> для доступа в интернет или <code>Сетевой мост</code> (если ВМ должна быть видна в локальной сети).</li>
+</ul>
+
+<p><strong>Шаг 3. Установка гостевой ОС:</strong></p>
+<ol>
+  <li>Запустите ВМ и следуйте стандартному процессу установки Windows 11.</li>
+  <li>После установки установите <code>Дополнения гостевой ОС</code> (<code>Devices → Insert Guest Additions CD Image</code>). Это улучшит производительность, поддержит общий буфер обмена и автоматическое изменение размера экрана.</li>
+</ol>
+
+<p><strong>Оптимизация производительности:</strong></p>
+<ul>
+  <li>🚀 В настройках ВМ (<code>Система → Ускорение</code>) включите <code>Аппаратное ускорение (VT-x/AMD-V)</code> и <code>Вложенную страничную таблицу (EPT)</code>.</li>
+  <li>🚀 Для SSD: в настройках диска (<code>Носители</code>) включите <code>Кэш ввода-вывода хоста</code> и <code>Кэш ввода-вывода гостя</code>.</li>
+  <li>🚀 Отключите ненужные устройства (например, <code>Аудио</code> или <code>USB-контроллер</code>, если они не используются).</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если виртуальная машина тормозит, попробуйте в настройках (<code>Система → Процессор</code>) включить <code>Ограничение исполнения</code> (Execution Cap) на 70-80%. Это предотвратит "удушение" хост-системы.</p></div>
+
+<h2 id="7-распространённые-ошибки-и-их-решения">7. Распространённые ошибки и их решения</h2>
+
+<p>Даже после правильной установки VirtualBox может выдавать ошибки. Вот самые частые из них и способы их исправления.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>E_FAIL (0x80004005)</code></td>
+      <td>Конфликт с Hyper-V или антивирусом</td>
+      <td>Отключите Hyper-V (<code>bcdedit /set hypervisorlaunchtype off</code>) или добавьте VirtualBox в исключения антивируса.</td>
+    </tr>
+    <tr>
+      <td><code>VT-x is not available</code></td>
+      <td>Виртуализация отключена в BIOS или занята другой программой</td>
+      <td>Включите <code>VT-x</code> в BIOS, отключите <em>VMware</em> или <em>Docker Desktop</em>.</td>
+    </tr>
+    <tr>
+      <td><code>Failed to open a session for the virtual machine</code></td>
+      <td>Недостаточно прав или повреждён файл конфигурации ВМ</td>
+      <td>Запустите VirtualBox от имени администратора или пересоздайте ВМ.</td>
+    </tr>
+    <tr>
+      <td><code>USB device is busy</code></td>
+      <td>USB-устройство используется хост-системой</td>
+      <td>Отключите устройство от хоста перед подключением к ВМ или используйте <code>USB-фильтры</code>.</td>
+    </tr>
+    <tr>
+      <td><code>No bootable medium found</code></td>
+      <td>Не подключён загрузочный диск или повреждён ISO-образ</td>
+      <td>Проверьте путь к ISO в настройках ВМ (<code>Носители</code>) или скачайте образ заново.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Дополнительные советы:</strong></p>
+<ul>
+  <li>🔄 Если ВМ не запускается после обновления VirtualBox, обновите также <code>Extension Pack</code> и <code>Guest Additions</code>.</li>
+  <li>🔌 Для решения проблем с сетью попробуйте сменить тип адаптера с <code>NAT</code> на <code>Сетевой мост</code> или наоборот.</li>
+  <li>💾 Если виртуальный диск повреждён, воспользуйтесь утилитой <code>VBoxManage checkmedium</code>:
+    <pre><code>VBoxManage checkmedium "путь_к_диску.vdi" --repair</code></pre>
+  </li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы используете <em>Windows 11 в качестве гостевой ОС</em>, убедитесь, что в настройках ВМ включён <code>TPM</code> (в разделе <code>Система → Безопасность</code>). Без этого установка Windows 11 завершится ошибкой.</blockquote>
+
+<h2 id="8-альтернативы-virtualbox-когда-стоит-выбрать-другое-решение">8. Альтернативы VirtualBox: когда стоит выбрать другое решение</h2>
+
+<p>VirtualBox — не единственный инструмент виртуализации. В некоторых случаях лучше использовать альтернативы:</p>
+
+<ul>
+  <li>🔹 <strong>VMware Workstation Pro:</strong>
+    <ul>
+      <li>✅ Лучшая производительность для Windows-гостей.</li>
+      <li>✅ Поддержка DirectX 11 и OpenGL 4.1 (важно для игр и 3D-приложений).</li>
+      <li>❌ Платный (бесплатная версия <em>VMware Workstation Player</em> с ограниченными функциями).</li>
+    </ul>
+  </li>
+  <li>🔹 <strong>Parallels Desktop (macOS):</strong>
+    <ul>
+      <li>✅ Оптимизирован для Apple Silicon (M1/M2).</li>
+      <li>✅ Поддержка Windows ARM (через эмуляцию).</li>
+      <li>❌ Платный, высокая цена подписки.</li>
+    </ul>
+  </li>
+  <li>🔹 <strong>QEMU/KVM (Linux):</strong>
+    <ul>
+      <li>✅ Максимальная производительность (почти native).</li>
+      <li>✅ Поддержка виртуализации GPU (с <em>Looking Glass</em> или <em>PCI Passthrough</em>).</li>
+      <li>❌ Сложная настройка, требует знаний Linux.</li>
+    </ul>
+  </li>
+  <li>🔹 <strong>Hyper-V (Windows):</strong>
+    <ul>
+      <li>✅ Встроен в Windows 10/11 Pro/Enterprise.</li>
+      <li>✅ Поддержка Docker и Windows-контейнеров.</li>
+      <li>❌ Не поддерживает macOS/Linux в качестве хоста.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Когда выбирать VirtualBox:</strong></p>
+<ul>
+  <li>🆓 Нужен бесплатный кросс-платформенный инструмент.</li>
+  <li>🛠️ Нужна простая настройка и поддержка snapshots.</li>
+  <li>🖥️ Работаете с лёгкими ОС (Linux, Windows 7/10).</li>
+</ul>
+
+<p><strong>Когда искать альтернативу:</strong></p>
+<ul>
+  <li>🎮 Нужна высокая производительность в играх или 3D-приложениях.</li>
+  <li>🍎 У вас Mac с чипом M1/M2 и нужно запускать Windows.</li>
+  <li>🐧 Требуется виртуализация на уровне предприятия (например, для кластера Kubernetes).</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>VirtualBox — лучший выбор для большинства домашних задач (тестирование ПО, обучение, запуск старых программ). Для профессиональной работы с высокими нагрузками рассмотрите <em>VMware</em> или <em>KVM</em>.</p></div>
+
+<h2 id="faq-частые-вопросы-по-установке-virtualbox">FAQ: Частые вопросы по установке VirtualBox</h2>
+
+<details>
+  <summary>🔹 Можно ли установить VirtualBox на Windows 11 Home?</summary>
+  <p>Да, но с ограничениями. <strong>Windows 11 Home</strong> не поддерживает <em>Hyper-V</em>, поэтому конфликтов не будет. Однако для лучшей производительности рекомендуется:</p>
+  <ol>
+    <li>Включить <code>VT-x</code> в BIOS.</li>
+    <li>Отключить <code>Core Isolation</code> в <code>Безопасность Windows</code>.</li>
+    <li>Использовать <code>WSL 2</code> для Linux-контейнеров вместо полноценных ВМ.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>🔹 Почему VirtualBox не видит USB-устройства?</summary>
+  <p>Проблема обычно связана с:</p>
+  <ul>
+    <li>Отсутствием <code>Extension Pack</code> (установите его через <code>Файл → Настройки → Плагины</code>).</li>
+    <li>Конфликтом с драйверами хост-системы (попробуйте отключить устройство от хоста перед подключением к ВМ).</li>
+    <li>Неправильными правами доступа (на Linux добавьте пользователя в группу <code>vboxusers</code>).</li>
+  </ul>
+  <p>Также проверьте, что в настройках ВМ (<code>Порты → USB</code>) включён контроллер <code>USB 2.0 (EHCI)</code> или <code>USB 3.0 (xHCI)</code>.</p>
+</details>
+
+<details>
+  <summary>🔹 Как перенести виртуальную машину на другой компьютер?</summary>
+  <p>Чтобы перенести ВМ:</p</div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#1-системные-требования-что-нужно-для-работы-virtualbox">1. Системные требования: что нужно для работы VirtualBox</a></li><li><a href="#2-подготовка-системы-включаем-виртуализацию-в-biosuefi">2. Подготовка системы: включаем виртуализацию в BIOS/UEFI</a></li><li><a href="#3-скачивание-и-установка-virtualbox-на-windows">3. Скачивание и установка VirtualBox на Windows</a></li><li><a href="#4-установка-virtualbox-на-linux-ubuntudebian-fedora-arch">4. Установка VirtualBox на Linux (Ubuntu/Debian, Fedora, Arch)</a></li><li><a href="#5-установка-virtualbox-на-macos-intel-и-apple-silicon-m1m2">5. Установка VirtualBox на macOS (Intel и Apple Silicon M1/M2)</a></li><li><a href="#6-первая-настройка-virtualbox-создаём-виртуальную-машину">6. Первая настройка VirtualBox: создаём виртуальную машину</a></li><li><a href="#7-распространённые-ошибки-и-их-решения">7. Распространённые ошибки и их решения</a></li><li><a href="#8-альтернативы-virtualbox-когда-стоит-выбрать-другое-решение">8. Альтернативы VirtualBox: когда стоит выбрать другое решение</a></li><li><a href="#faq-частые-вопросы-по-установке-virtualbox">FAQ: Частые вопросы по установке VirtualBox</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/me/mersedes-a170-foto.html" class="related-card">Mercedes A170 фото: 100+ реальных снимков модели W168 и W169</a></li><li><a href="/articles/e/ec/eclipse-avn-r7w.html" class="related-card">Toyota Eclipse AVN R7W: Полная инструкция и коды ошибок</a></li><li><a href="/articles/m/me/mercedes-benz-a-klasse.html" class="related-card">Mercedes-Benz A-Class: обзор, цены, характеристики и отзывы 2026</a></li><li><a href="/articles/m/me/mercedes-benz-a-45-amg.html" class="related-card">Mercedes-Benz A 45 AMG: Обзор, характеристики и тюнинг хэтчбека</a></li><li><a href="/articles/m/me/mersedes-to-a1.html" class="related-card">Mercedes-Benz A-Class: Обзор, характеристики и комплектации хэтчбека</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/me/mersedes-a170-foto.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes A170 фото: 100+ реальных снимков модели W168 и W169</span><span class="related-bottom-desc">Ищите качественные фото Mercedes A170? Подборка внешних и внутренних снимков W168 (1997-2004) и W169</span></a><a href="/articles/e/ec/eclipse-avn-r7w.html" class="related-bottom-card"><span class="related-bottom-title">Toyota Eclipse AVN R7W: Полная инструкция и коды ошибок</span><span class="related-bottom-desc">Подробный разбор системы Eclipse AVN R7W. Коды ошибок, настройка Bluetooth, установка карт и устране</span></a><a href="/articles/m/me/mercedes-benz-a-klasse.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz A-Class: обзор, цены, характеристики и отзывы 2026</span><span class="related-bottom-desc">Полный гайд по Mercedes A-Class: комплектации, двигатели, расход топлива, плюсы и минусы, сравнение </span></a><a href="/articles/m/me/mercedes-benz-a-45-amg.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz A 45 AMG: Обзор, характеристики и тюнинг хэтчбека</span><span class="related-bottom-desc">Полный разбор Mercedes-Benz A 45 AMG. Технические характеристики, динамика разгона, особенности полн</span></a><a href="/articles/m/me/mersedes-to-a1.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz A-Class: Обзор, характеристики и комплектации хэтчбека</span><span class="related-bottom-desc">Полный гид по Mercedes-Benz A-Class. Технические характеристики, обзор интерьеров, двигателей и сист</span></a><a href="/articles/m/me/mersedes-a-170-17-dizel.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes A 170 1.7 дизель: характеристики, проблемы, отзывы владельцев</span><span class="related-bottom-desc">Подробный обзор Mercedes-Benz A 170 CDI (W168) с дизельным двигателем 1.7: технические данные, слабы</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

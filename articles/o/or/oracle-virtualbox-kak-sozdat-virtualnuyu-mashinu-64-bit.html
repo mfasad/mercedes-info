@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Oracle VirtualBox: как создать 64-битную виртуальную машину за 10 минут — Мерседес Инфо</title>
+    <meta name="description" content="Пошаговая инструкция по установке 64-битной ВМ в VirtualBox с настройками BIOS, разделением диска и устранением ошибок. Подходит для Windows 11/10, Linux и macOS.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/o/or/oracle-virtualbox-kak-sozdat-virtualnuyu-mashinu-64-bit.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Oracle VirtualBox: как создать 64-битную виртуальную машину за 10 минут">
+    <meta property="og:description" content="Пошаговая инструкция по установке 64-битной ВМ в VirtualBox с настройками BIOS, разделением диска и устранением ошибок. Подходит для Windows 11/10, Linux и macOS.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/b-class/">B Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Oracle VirtualBox: как создать 64-битную виртуальную машину за 10 минут</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Как создать 64-битную виртуальную машину в Oracle VirtualBox: полное руководство с настройками</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#подготовка-системы-проверка-поддержки-64-битной-виртуализации">Подготовка системы: проверка поддержки 64-битной виртуализации</a></li><li><a href="#установка-oracle-virtualbox-и-расширений">Установка Oracle VirtualBox и расширений</a></li><li><a href="#создание-новой-виртуальной-машины-пошаговая-инструкция">Создание новой виртуальной машины: пошаговая инструкция</a></li><li><a href="#настройка-biosuefi-хост-системы-для-64-битной-виртуализации">Настройка BIOS/UEFI хост-системы для 64-битной виртуализации</a></li><li><a href="#установка-гостевой-ос-и-драйверов">Установка гостевой ОС и драйверов</a></li><li><a href="#оптимизация-производительности-64-битной-вм">Оптимизация производительности 64-битной ВМ</a></li><li><a href="#типичные-ошибки-и-их-решения">Типичные ошибки и их решения</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Создание 64-битной виртуальной машины в <em>Oracle VirtualBox</em> — задача, с которой сталкиваются как начинающие IT-специалисты, так и опытные пользователи при тестировании ПО, развёртывании серверов или изучении новых ОС. Однако многие упускают критические нюансы: от включения виртуализации в BIOS до правильного выделения ресурсов, что приводит к ошибкам вроде <code>VT-x is not available</code> или <code>This kernel requires an x86-64 CPU</code>. Эта статья не просто повторит стандартные шаги из документации, а раскроет <strong>скрытые настройки</strong>, оптимизацию производительности и решения типичных проблем — от отсутствия 64-битных опций в списке до падения ВМ при загрузке.</p>
+
+<p>Мы разберём процесс на примере <em>VirtualBox 7.0+</em> (актуальной на 2026 год) с учётом особенностей хост-систем на <em>Windows 11</em>, <em>Linux (Ubuntu/Debian)</em> и <em>macOS</em>. Особое внимание уделим <strong>аппаратной виртуализации</strong> (Intel VT-x/AMD-V), настройке <code>UEFI</code> для современных ОС и распределению ресурсов, чтобы ВМ работала стабильно даже на слабых ПК. Если вы ранее сталкивались с тем, что виртуальная машина «тормозит» или не запускается — здесь найдёте конкретные решения, а не общие советы.</p>
+
+<h2 id="подготовка-системы-проверка-поддержки-64-битной-виртуализации">Подготовка системы: проверка поддержки 64-битной виртуализации</h2>
+
+<p>Прежде чем создавать ВМ, необходимо убедиться, что ваше «железо» и хост-система поддерживают 64-битную виртуализацию. Без этого опция <code>Версия: 64-bit</code> в VirtualBox будет просто отсутствовать в выпадающем списке. Вот как проверить:</p>
+
+<ul>
+  <li>🔧 <strong>Для Windows:</strong> откройте <code>Диспетчер задач → Производительность → ЦП</code>. В разделе <em>Виртуализация</em> должны быть активны пункты <code>Включено</code> для <em>Intel VT-x</em> или <em>AMD-V</em>.</li>
+  <li>🐧 <strong>Для Linux:</strong> выполните команду в терминале:
+    <pre><code>egrep -c '(vmx|svm)' /proc/cpuinfo</code></pre>
+<p>Результат <code>0</code> означает, что виртуализация отключена в BIOS, <code>1 и более</code> — поддерживается.</li></p>
+  <li>🍎 <strong>Для macOS:</strong> используйте утилиту <code>sysctl -a | grep machdep.cpu.features</code> и ищите флаги <code>VMX</code> (Intel) или <code>SVM</code> (AMD).</li>
+</ul>
+
+<p>Если поддержка есть, но VirtualBox не видит 64-битные опции, проблема кроется в настройках BIOS/UEFI или гипервизоре хост-системы (например, <em>Hyper-V</em> в Windows или <em>Core Isolation</em> в Windows 11).</p>
+
+<blockquote>⚠️ <strong>Внимание:</strong> На ноутбуках с процессорами <em>Intel 11-го поколения и новее</em> (например, <em>Core i7-1165G7</em>) может потребоваться отключить <code>Virtualization Based Security (VBS)</code> в <code>gpedit.msc</code>, даже если VT-x включён в BIOS. Это типичная причина ошибки <code>VT-x is being used by another hypervisor</code>.</blockquote>
+
+<div class="attention-box attention-info"><div><strong>📊 Какую ОС вы планируете установить в виртуальную машину?</strong><ul><li>Windows 10/11</li><li>Linux (Ubuntu, Debian и др.)</li><li>macOS</li><li>Другую Unix-систему (FreeBSD и т.п.)</li><li>Не знаю</li></ul></div></div>
+
+<h2 id="установка-oracle-virtualbox-и-расширений">Установка Oracle VirtualBox и расширений</h2>
+
+<p>Последняя версия <em>Oracle VirtualBox</em> (на момент написания — <strong>7.0.12</strong>) доступна на <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">официальном сайте</a>. Важно скачать <strong>полный пакет</strong>, а не портативную версию, так как он включает драйверы для USB 3.0 и поддержку <code>EFI</code>. Не менее критично установить <em>Extension Pack</em> — без него не будут работать:</p>
+
+<ul>
+  <li>🖥️ Виртуальные <code>USB 2.0/3.0</code> устройства (флешки, веб-камеры).</li>
+  <li>🔒 <code>RDP</code>-сервер для удалённого подключения к ВМ.</li>
+  <li>💾 Зашифрованные диски (<code>AES-256</code>).</li>
+</ul>
+
+<p>Инструкция по установке:</p>
+<ol>
+  <li>Запустите установочный файл VirtualBox и следуйте мастеру, оставляя все опции по умолчанию.</li>
+  <li>После установки откройте программу и перейдите в <code>Файл → Настройки → Расширения</code>.</li>
+  <li>Нажмите на иконку <code>+</code>, выберите скачанный <code>Extension Pack</code> и подтвердите установку.</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если после установки <em>Extension Pack</em> VirtualBox выдаёт ошибку <code>VERR_FILE_NOT_FOUND</code>, удалите старую версию программы через <code>Панель управления → Программы</code>, затем очистите папку <code>C:\Program Files\Oracle\VirtualBox</code> вручную и переустановите ПО.</blockquote>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Перед установкой VirtualBox на Windows отключите антивирус (например, <em>Kaspersky</em> или <em>Avast</em>) — он может блокировать драйверы виртуализации, что приведёт к ошибке <code>Failed to open a session for the virtual machine</code>.</p></div>
+
+<h2 id="создание-новой-виртуальной-машины-пошаговая-инструкция">Создание новой виртуальной машины: пошаговая инструкция</h2>
+
+<p>Теперь перейдём к созданию ВМ. Мы рассмотрим универсальный сценарий для 64-битной ОС (на примере <em>Windows 11</em>, но шаги идентичны для <em>Linux</em>). Откройте VirtualBox и нажмите <code>Создать</code>.</p>
+
+
+<p>Имя ВМ (например, "Win11_x64")|Тип ОС: "Microsoft Windows" (или "Linux"/"Mac OS X")|Версия: "Windows 11 (64-bit)" или аналогичная|Выделить ≥2048 МБ ОЗУ (для Windows 11 минимум 4 ГБ)|Создать новый виртуальный жёсткий диск (VDI, динамический, ≥25 ГБ)--></p>
+
+<p><strong>Ключевые моменты:</strong></p>
+<ul>
+  <li>📛 <strong>Имя ВМ:</strong> используйте только латинские символы и подчёркивания. Пробелы могут вызвать ошибки при монтировании общих папок.</li>
+  <li>🖥️ <strong>Тип и версия ОС:</strong> если нужной версии нет в списке (например, <em>AlmaLinux 9</em>), выбирайте ближайшую по ядру (для AlmaLinux — <code>Red Hat (64-bit)</code>).</li>
+  <li>💾 <strong>Жёсткий диск:</strong> для современных ОС выбирайте формат <code>VDI</code> (native для VirtualBox) и <code>динамическое выделение</code>, если на хосте мало места. Для серверов лучше <code>фиксированный размер</code> — он быстрее.</li>
+</ul>
+
+<p>После создания ВМ откроется окно её настроек. Здесь важно:</p>
+<ol>
+  <li>Перейти в <code>Система → Материнская плата</code> и включить <code>Включить EFI</code> (для Windows 11/10 и современных Linux-дистрибутивов).</li>
+  <li>В <code>Система → Процессор</code> выставить ≥2 ядра (но не более 50% от физических ядер хоста!).</li>
+  <li>В <code>Дисплей → Экран</code> увеличить видеопамять до <code>128 МБ</code> и включить <code>3D-ускорение</code> (необходимо для <em>GNOME/KDE</em> в Linux).</li>
+</ol>
+
+<details class="faq-item"><summary>Почему ВМ с Windows 11 требует TPM 2.0?</summary><div class="faq-answer"><p>
+<p>Windows 11 официально требует модуль <em>TPM 2.0</em> для установки, но в VirtualBox его эмуляция отключена по умолчанию. Чтобы обойти проверку:</p>
+<p>1. В настройках ВМ перейдите в <code>Система → Материнская плата</code>.</p>
+<p>2. Включите <code>Включить EFI</code> и добавьте в <code>Дополнительно</code> строку:</p>
+   <pre><code>--tpm2 /usr/lib/virtualbox/ExtensionPacks/Oracle_VM_VirtualBox_Extension_Pack/tpm/tpm2.dll</code></pre>
+<p>(путь может отличаться в зависимости от ОС хоста).</p>
+<p>3. При установке Windows 11 нажмите <code>Shift+F10</code>, введите <code>regedit</code>, затем найдите ключ <code>HKEY_LOCAL_MACHINE\SYSTEM\Setup\LabConfig</code> и создайте параметры <code>BypassTPMCheck</code>, <code>BypassSecureBootCheck</code> со значением <code>1</code>.<</p></div></details></p>
+
+<h2 id="настройка-biosuefi-хост-системы-для-64-битной-виртуализации">Настройка BIOS/UEFI хост-системы для 64-битной виртуализации</h2>
+
+<p>Если в VirtualBox отсутствует опция <code>64-bit</code> при создании ВМ, в 90% случаев виноваты настройки BIOS или конфликт гипервизоров. Вот как это исправить:</p>
+
+<table>
+  <thead>
+    <tr><th>Проблема</th><th>Решение для Windows</th><th>Решение для Linux/macOS</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Отсутствует опция 64-bit в списке версий ОС</td>
+      <td>
+<p>1. Перезагрузите ПК, зайдите в BIOS (<code>Del/F2</code>).<br></p>
+<p>2. Включите <code>Intel VT-x</code> или <code>AMD-V</code> (раздел <code>Advanced → CPU Configuration</code>).<br></p>
+<p>3. Отключите <code>Hyper-V</code> в <code>Панель управления → Программы → Включение/отключение компонентов Windows</code>.</p>
+      </td>
+      <td>
+<p>1. Проверьте включение виртуализации в BIOS.<br></p>
+<p>2. Для <em>Linux</em>: добавьте модули ядра:</p>
+        <pre><code>sudo modprobe kvm-intel</code></pre>
+<p>(или <code>kvm-amd</code> для AMD).<br></p>
+<p>3. Для <em>macOS</em>: отключите <code>System Integrity Protection (SIP)</code> (требуется для некоторых версий).</p>
+      </td>
+    </tr>
+    <tr>
+      <td>Ошибка <code>VT-x is not available</code></td>
+      <td>
+<p>Отключите <code>Core Isolation</code> в <code>Параметры Windows → Конфиденциальность → Безопасность Windows → Безопасность устройства</code>.</p>
+      </td>
+      <td>
+<p>Убедитесь, что в <code>/etc/default/grub</code> нет параметров <code>intel_iommu=on</code> или <code>amd_iommu=on</code> (они конфликтуют с KVM).</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p><mark>Критичный нюанс для ноутбуков Lenovo/Dell:</mark> некоторые модели (например, <em>ThinkPad T14</em> или <em>Dell XPS 13</em>) имеют скрытую опцию <code>Virtualization for Direct-I/O</code> в BIOS, которую нужно включить <strong>отдельно</strong> от VT-x. Без неё VirtualBox будет выдавать ошибку <code>Failed to open a session for the virtual machine</code> при запуске 64-битной ВМ.</p>
+
+<h2 id="установка-гостевой-ос-и-драйверов">Установка гостевой ОС и драйверов</h2>
+
+<p>После настройки ВМ можно приступать к установке ОС. Мы рассмотрим процесс на примере <em>Windows 11 x64</em>, но шаги аналогичны для других систем:</p>
+
+<ol>
+  <li>Скачайте официальный ISO-образ с сайта Microsoft (<a href="https://www.microsoft.com/software-download/windows11" target="_blank">ссылка</a>) или дистрибутив Linux (например, <em>Ubuntu 22.04 LTS</em> с <a href="https://ubuntu.com/download/desktop" target="_blank">ubuntu.com</a>).</li>
+  <li>В настройках ВМ перейдите в <code>Носители</code>, выберите пустой привод и нажмите на иконку диска справа. Укажите путь к ISO-образу.</li>
+  <li>Запустите ВМ и следуйте инструкциям установщика. Для Windows 11 при запросе ключа продукта нажмите <code>У меня нет ключа</code>.</li>
+</ol>
+
+<p>После установки ОС необходимо установить <em>Дополнения гостевой ОС (Guest Additions)</em> — это пакет драйверов и утилит, который:</p>
+<ul>
+  <li>🖱️ Включает <strong>автоматическое изменение разрешения экрана</strong> при resize окна ВМ.</li>
+  <li>📂 Позволяет использовать <strong>общие папки</strong> между хостом и гостем.</li>
+  <li>🔄 Добавлет поддержку <strong>drag-and-drop</strong> файлов.</li>
+</ul>
+
+<p>Чтобы установить Guest Additions:</p>
+<ol>
+  <li>В меню VirtualBox выберите <code>Устройства → Подключить образ Дополнений гостевой ОС</code>.</li>
+  <li>Внутри ВМ откройте <code>Этот компьютер</code> (или файловый менеджер в Linux) и запустите файл <code>VBoxWindowsAdditions.exe</code> (или <code>VBoxLinuxAdditions.run</code> для Linux).</li>
+  <li>Следуйте мастеру установки и перезагрузите ВМ.</li>
+</ol>
+
+<blockquote>⚠️ <strong>Внимание:</strong> В <em>Windows 11</em> установка Guest Additions может завершиться ошибкой <code>The signature of the file is corrupt</code>. Решение: перед установкой отключите проверку подписи драйверов, выполнив в командной строке (от имени администратора):
+<pre><code>bcdedit /set testsigning on</code></pre>
+<p>После установки верните параметр в исходное состояние командой <code>bcdedit /set testsigning off</code>.</blockquote></p>
+
+<h2 id="оптимизация-производительности-64-битной-вм">Оптимизация производительности 64-битной ВМ</h2>
+
+<p>64-битные виртуальные машины требуют больше ресурсов, чем 32-битные. Чтобы ВМ работала плавно, следуйте этим рекомендациям:</p>
+
+<ul>
+  <li>💡 <strong>Выделение ОЗУ:</strong> для Windows 11 минимально <code>4 ГБ</code>, оптимально — <code>8 ГБ</code>. Для Linux-серверов (например, <em>Ubuntu Server</em>) достаточно <code>2 ГБ</code>.</li>
+  <li>🔄 <strong>Процессор:</strong> выделяйте не более <code>50% физических ядер</code> хоста. Например, если у вас <em>Ryzen 7 5800H</em> (8 ядер/16 потоков), ВМ достаточно <code>4 ядра</code>.</li>
+  <li>💾 <strong>Жёсткий диск:</strong> для SSD хоста выбирайте контроллер <code>NVMe</code> (в настройках ВМ: <code>Носители → Контроллер: NVMe</code>). Для HDD — <code>SATA</code>.</li>
+  <li>🎮 <strong>Видео:</strong> для игр или 3D-приложений включите <code>3D-ускорение</code> и увеличьте видеопамять до <code>256 МБ</code> (но это может привести к артефактам в некоторых ОС!).</li>
+</ul>
+
+<p><mark>Уникальный лайфхак для слабых ПК:</mark> если ВМ «тормозит» даже после оптимизации, попробуйте включить <code>Паравиртуализацию</code> в настройках (<code>Система → Ускорение → Паравиртуализация: KVM</code> для Linux-хоста или <code>Hyper-V</code> для Windows). Это снизит нагрузку на CPU до <code>20-30%</code> за счёт использования родных драйверов виртуализации хост-системы.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для максимальной производительности 64-битной ВМ отключите ненужные устройства в настройках: звуковую карту (если не нужна), последовательные порты и USB-контроллеры (если не используете флешки).</p></div>
+
+<h2 id="типичные-ошибки-и-их-решения">Типичные ошибки и их решения</h2>
+
+<p>Даже при правильной настройке пользователи сталкиваются с ошибками. Вот самые распространённые и способы их устранения:</p>
+
+<table>
+  <thead>
+    <tr><th>Ошибка</th><th>Причина</th><th>Решение</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>This kernel requires an x86-64 CPU, but only detected an i686 CPU</code></td>
+      <td>ВМ настроена как 32-битная, хотя образ ОС 64-битный.</td>
+      <td>Удалите ВМ и создайте заново, выбрав 64-битную версию ОС. Убедитесь, что в BIOS включена виртуализация.</td>
+    </tr>
+    <tr>
+      <td><code>VT-x is not available (VERR_VMX_NO_VMX)</code></td>
+      <td>Конфликт с Hyper-V или Core Isolation в Windows 11.</td>
+      <td>Отключите Hyper-V командой:
+      <pre><code>bcdedit /set hypervisorlaunchtype off</code></pre>
+<p>и перезагрузите ПК.</td></p>
+    </tr>
+    <tr>
+      <td><code>Failed to open a session for the virtual machine (VERR_NEM_VM_CREATE_FAILED)</code></td>
+      <td>Недостаточно прав или конфликт с антивирусом.</td>
+      <td>Запустите VirtualBox от имени администратора. Добавьте исключение для <code>VirtualBoxVM.exe</code> в антивирусе.</td>
+    </tr>
+    <tr>
+      <td>ВМ зависает на логотипе Windows/Linux</td>
+      <td>Нехватка ОЗУ или неправильные настройки EFI.</td>
+      <td>Увеличьте ОЗУ до <code>4 ГБ</code>. В настройках ВМ отключите <code>EFI</code>, если ОС старая (Windows 7, Linux с BIOS-загрузчиком).</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Если проблема не решена, проверьте логи VirtualBox: в меню ВМ выберите <code>Показать журнал</code> и ищите строки с <code>ERROR</code> или <code>FAILED</code>. Часто там указан конкретный модуль или драйвер, вызывающий сбой.</p>
+
+<h2 id="faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</h2>
+
+<details>
+  <summary>Можно ли запустить 64-битную ВМ на 32-битной хост-системе?</summary>
+  <p>Нет, это невозможно. 32-битная ОС хоста не поддерживает 64-битную виртуализацию на аппаратном уровне. Вам потребуется переустановить хост-систему на 64-битную версию или использовать облачные решения (например, <em>AWS</em> или <em>Google Cloud</em>).</p>
+</details>
+
+<details>
+  <summary>Как увеличить диск ВМ после её создания?</summary>
+  <p>Для дисков <code>VDI</code> (динамических или фиксированных) используйте команду в терминале хоста:
+  <pre><code>VBoxManage modifyhd "путь_к_диску.vdi" --resize 50000</code></pre>
+<p>(где <code>50000</code> — новый размер в МБ). После этого внутри ВМ расширьте раздел с помощью <code>Disk Management</code> (Windows) или <code>gparted</code> (Linux).</p></p>
+</details>
+
+<details>
+  <summary>Почему в VirtualBox нет опции «64-bit» для macOS?</summary>
+  <p><em>Oracle VirtualBox</em> не поддерживает виртуализацию <em>macOS</em> на не-Apple железе из-за лицензионных ограничений. Для запуска macOS в ВМ используйте специализированные инструменты вроде <em>QEMU</em> с патчем <code>OpenCore</code> или покупайте <em>Mac Mini</em> для легальной виртуализации.</p>
+</details>
+
+<details>
+  <summary>Как ускорить работу ВМ на слабом ПК?</summary>
+  <p>Отключите в настройках ВМ:
+  <ul>
+    <li>3D-ускорение (если не нужно).</li>
+    <li>Звуковую карту.</li>
+    <li>USB-контроллеры.</li>
+  </ul>
+<p>Установите лёгкую ОС (например, <em>Lubuntu</em> или <em>Windows 10 LTSC</em>) и выделите не более <code>1-2 ядер CPU</code> и <code>2 ГБ ОЗУ</code>.</p></p>
+</details>
+
+<details>
+  <summary>Можно ли перенести ВМ на другой компьютер?</summary>
+  <p>Да, скопируйте файлы ВМ (с расширениями <code>.vdi</code>, <code>.vbox</code>) на новый ПК и импортируйте через <code>Файл → Импорт конфигураций</code>. Убедитесь, что на новом ПК такая же версия VirtualBox и включена виртуализация в BIOS. При переносе между Windows и Linux может потребоваться конвертация диска:
+  <pre><code>VBoxManage clonemedium source.vdi target.vdi --format VDI</code></pre></p>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#подготовка-системы-проверка-поддержки-64-битной-виртуализации">Подготовка системы: проверка поддержки 64-битной виртуализации</a></li><li><a href="#установка-oracle-virtualbox-и-расширений">Установка Oracle VirtualBox и расширений</a></li><li><a href="#создание-новой-виртуальной-машины-пошаговая-инструкция">Создание новой виртуальной машины: пошаговая инструкция</a></li><li><a href="#настройка-biosuefi-хост-системы-для-64-битной-виртуализации">Настройка BIOS/UEFI хост-системы для 64-битной виртуализации</a></li><li><a href="#установка-гостевой-ос-и-драйверов">Установка гостевой ОС и драйверов</a></li><li><a href="#оптимизация-производительности-64-битной-вм">Оптимизация производительности 64-битной ВМ</a></li><li><a href="#типичные-ошибки-и-их-решения">Типичные ошибки и их решения</a></li><li><a href="#faq-ответы-на-частые-вопросы">FAQ: ответы на частые вопросы</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/f/fa/fara-almera-classic.html" class="related-card">Фары на Nissan Almera Classic: выбор, замена, тюнинг (2026)</a></li><li><a href="/articles/m/me/mercedes-benz-b-klass-w245.html" class="related-card">Mercedes-Benz B-класс W245: Характеристики, Двигатели и Отзывы</a></li><li><a href="/articles/m/me/mersedes-s-klass-bu.html" class="related-card">Mercedes B-Class (W247): обзор, цены, плюсы и минусы 2026 года</a></li><li><a href="/articles/r/ro/robot-pylesos-xiaomi-mijia-g1-sweeping-vacuum-cleaner.html" class="related-card">Xiaomi Mijia G1: обзор робота-пылесоса с лазерной навигацией</a></li><li><a href="/articles/a/al/almera-classic-datchik-kolenvala.html" class="related-card">Almera Classic: датчик коленвала – признаки, замена, диагностика</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/f/fa/fara-almera-classic.html" class="related-bottom-card"><span class="related-bottom-title">Фары на Nissan Almera Classic: выбор, замена, тюнинг (2026)</span><span class="related-bottom-desc">Подробный гайд по фарам для Nissan Almera Classic: оригинальные артикулы, аналоги, инструкция по зам</span></a><a href="/articles/m/me/mercedes-benz-b-klass-w245.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz B-класс W245: Характеристики, Двигатели и Отзывы</span><span class="related-bottom-desc">Полный обзор Mercedes-Benz B-класс W245: технические характеристики, выбор двигателя, типичные неисп</span></a><a href="/articles/m/me/mersedes-s-klass-bu.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes B-Class (W247): обзор, цены, плюсы и минусы 2026 года</span><span class="related-bottom-desc">Подробный разбор &lt;em&gt;Mercedes-Benz B-Class&lt;/em&gt; (W247): технические характеристики, комплектации, от</span></a><a href="/articles/r/ro/robot-pylesos-xiaomi-mijia-g1-sweeping-vacuum-cleaner.html" class="related-bottom-card"><span class="related-bottom-title">Xiaomi Mijia G1: обзор робота-пылесоса с лазерной навигацией</span><span class="related-bottom-desc">Характеристики, плюсы и минусы &lt;em&gt;Xiaomi Mijia G1&lt;/em&gt; — лазерный робот-пылесос с влажной уборкой. </span></a><a href="/articles/a/al/almera-classic-datchik-kolenvala.html" class="related-bottom-card"><span class="related-bottom-title">Almera Classic: датчик коленвала – признаки, замена, диагностика</span><span class="related-bottom-desc">Подробный разбор неисправности ДПКВ на Nissan Almera Classic. Симптомы, коды ошибок, пошаговая инстр</span></a><a href="/articles/m/me/mercedes-b-klassa.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes B-Class: обзор, цены, характеристики и отзывы 2026</span><span class="related-bottom-desc">Полный гид по &lt;em&gt;Mercedes-Benz B-Class&lt;/em&gt; (W247): технические данные, комплектации, плюсы/минусы,</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

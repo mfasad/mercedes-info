@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Ошибка CLR 80004005: как исправить и сохранить работу программы — Мерседес Инфо</title>
+    <meta name="description" content="Подробный разбор ошибки CLR 80004005: причины, способы устранения, профилактика. Пошаговые инструкции для Windows 10/11 и .NET Framework.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/o/os/oshibka-clr-80004005-rabota-programmy-budet-prekrashchena.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Ошибка CLR 80004005: как исправить и сохранить работу программы">
+    <meta property="og:description" content="Подробный разбор ошибки CLR 80004005: причины, способы устранения, профилактика. Пошаговые инструкции для Windows 10/11 и .NET Framework.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Ошибка CLR 80004005: как исправить и сохранить работу программы</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>Ошибка CLR 80004005: «Работа программы будет прекращена» — причины и решения</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-означает-ошибка-clr-80004005-и-почему-она-возникает">Что означает ошибка CLR 80004005 и почему она возникает</a></li><li><a href="#как-диагностировать-проблему-шаги-перед-исправлением">Как диагностировать проблему: шаги перед исправлением</a></li><li><a href="#метод-1-переустановка-или-восстановление-net-framework">Метод 1: Переустановка или восстановление .NET Framework</a></li><li><a href="#метод-2-исправление-реестра-windows">Метод 2: Исправление реестра Windows</a></li><li><a href="#метод-3-обновление-и-восстановление-системных-файлов">Метод 3: Обновление и восстановление системных файлов</a></li><li><a href="#метод-4-проверка-антивируса-и-брандмауэра">Метод 4: Проверка антивируса и брандмауэра</a></li><li><a href="#метод-5-проверка-аппаратных-проблем">Метод 5: Проверка аппаратных проблем</a></li><li><a href="#профилактика-как-избежать-ошибки-clr-80004005-в-будущем">Профилактика: как избежать ошибки CLR 80004005 в будущем</a></li><li><a href="#faq-частые-вопросы-по-ошибке-clr-80004005">FAQ: Частые вопросы по ошибке CLR 80004005</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Ошибка <strong>CLR 80004005</strong> с сообщением «Работа программы будет прекращена» — одна из самых распространённых проблем в среде <em>.NET Framework</em>, которая может возникнуть как у обычных пользователей, так и у разработчиков. Она сигнализирует о критическом сбое в работе <strong>Common Language Runtime (CLR)</strong> — основного компонента, отвечающего за выполнение приложений на платформе .NET. В большинстве случаев ошибка приводит к аварийному закрытию программы, потере несохранённых данных и даже системным зависаниям.</p>
+
+<p>Чаще всего проблема проявляется при запуске приложений, написанных на <em>C#</em> или <em>VB.NET</em>, а также при работе с программами, зависящими от <em>.NET Framework 3.5/4.x</em> (например, <em>Microsoft Office</em>, <em>AutoCAD</em>, <em>1C:Предприятие</em> или игры на <em>Unity</em>). В некоторых случаях ошибка может указывать на повреждение системных файлов, конфликты версий .NET или проблемы с правами доступа. Далее разберём, как диагностировать и устранить эту проблему на разных версиях Windows, а также предотвратить её повторное появление.</p>
+
+<h2 id="что-означает-ошибка-clr-80004005-и-почему-она-возникает">Что означает ошибка CLR 80004005 и почему она возникает</h2>
+
+<p>Код <strong>80004005</strong> в контексте <em>CLR</em> (Common Language Runtime) относится к категории <strong>E_FAIL</strong> — универсальной ошибке, указывающей на неудачное выполнение операции без конкретной причины. В отличие от других кодов (например, <code>0x80131500</code> для проблем с сборками), этот сбой не даёт явных подсказок, поэтому диагностика требует комплексного подхода.</p>
+
+<p>Основные причины возникновения:</p>
+<ul>
+  <li>🔹 <strong>Повреждение или отсутствие .NET Framework</strong> — наиболее частая причина. Например, после некорректного обновления Windows или удаления компонентов.</li>
+  <li>🔹 <strong>Конфликт версий .NET</strong>. Если в системе установлены несколько версий (например, 3.5 и 4.8), приложение может пытаться использовать неподходящую.</li>
+  <li>🔹 <strong>Проблемы с реестром Windows</strong>. Неправильные записи в ветках <code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework</code> или <code>HKEY_CLASSES_ROOT</code>.</li>
+  <li>🔹 <strong>Блокировка антивирусом</strong>. Некоторые антивирусы (например, <em>Kaspersky</em>, <em>Avast</em>) могут блокировать доступ к файлам <em>mscoree.dll</em> или <em>clr.dll</em>.</li>
+  <li>🔹 <strong>Повреждение системных файлов</strong>, включая <code>mscorlib.dll</code> или <code>System.Runtime.dll</code>.</li>
+  <li>🔹 <strong>Нехватка прав</strong>. Приложение не может получить доступ к необходимым ресурсам из-за ограничений <em>UAC</em> или политики безопасности.</li>
+</ul>
+
+<p>В некоторых случаях ошибка может быть связана с <strong>аппаратными проблемами</strong>, например, сбоями в работе <em>ОЗУ</em> или жёсткого диска. Если сбой возникает только в одном приложении, скорее всего, виноват его код или зависимости. Если же ошибка появляется системно — проблема кроется в Windows или .NET.</p>
+
+<div class="attention-box attention-info"><div><strong>📊 С какой программой у вас возникла ошибка CLR 80004005?</strong><ul><li>1C:Предприятие</li><li>AutoCAD</li><li>Игра на Unity</li><li>Microsoft Office</li><li>Другая программа</li></ul></div></div>
+
+<h2 id="как-диагностировать-проблему-шаги-перед-исправлением">Как диагностировать проблему: шаги перед исправлением</h2>
+
+<p>Прежде чем приступать к исправлению, важно определить <strong>контекст ошибки</strong>. От этого зависит выбор метода решения. Следуйте этому алгоритму:</p>
+
+<ol>
+  <li><strong>Запустите приложение от имени администратора</strong>. Кликните правой кнопкой по ярлыку и выберите «Запуск от имени администратора». Если ошибка исчезла — проблема в правах доступа.</li>
+  <li><strong>Проверьте журнал событий Windows</strong>:
+    <pre><code>Пуск → Выполнить (Win+R) → eventvwr.msc → Журналы Windows → Приложение</code></pre>
+<p>Ищите записи с источником <code>.NET Runtime</code> или <code>Application Error</code>.</li></p>
+  <li><strong>Убедитесь в работоспособности .NET Framework</strong>. Запустите команду в <em>CMD</em> (от админа):
+    <pre><code>sfc /scannow</code></pre>
+<p>Если будут найдены повреждённые файлы, система попытается их восстановить.</li></p>
+  <li><strong>Проверьте целостность системных файлов</strong>:
+    <pre><code>DISM /Online /Cleanup-Image /RestoreHealth</code></pre></li>
+</ol>
+
+<p>Если после этих шагов ошибка остаётся, переходите к целенаправленным методам исправления. Обратите внимание: если сбой возникает только в одной программе, попробуйте её <strong>переустановить</strong> или обновить до последней версии.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если ошибка появляется при запуске игры на Unity, попробуйте отключить антивирус на время теста. Часто <em>Unity Player</em> конфликтует с защитой в реальном времени.</p></div>
+
+<h2 id="метод-1-переустановка-или-восстановление-net-framework">Метод 1: Переустановка или восстановление .NET Framework</h2>
+
+<p>В 80% случаев ошибка <strong>CLR 80004005</strong> устраняется после восстановления или переустановки <em>.NET Framework</em>. Ниже — пошаговые инструкции для разных версий Windows.</p>
+
+<h3>Для Windows 10 и 11:</h3>
+<ol>
+  <li>Откройте <code>Панель управления → Программы → Программы и компоненты → Включение или отключение компонентов Windows</code>.</li>
+  <li>Снимите галочки с <em>.NET Framework 3.5</em> и <em>.NET Framework 4.8</em> (если есть), нажмите <code>OK</code> и перезагрузите ПК.</li>
+  <li>Повторно включите эти компоненты и дождитесь завершения установки.</li>
+  <li>Обновите .NET через <em>Центр обновления Windows</em> (нажмите <code>Win + I → Обновление и безопасность → Проверка обновлений</code>).</li>
+</ol>
+
+<h3>Для Windows 7/8:</h3>
+<p>Скачайте официальный установщик с сайта Microsoft:
+<ul>
+  <li>🔗 <a href="https://dotnet.microsoft.com/download/dotnet-framework" target="_blank">.NET Framework 4.8</a> (для современных приложений).</li>
+  <li>🔗 <a href="https://www.microsoft.com/ru-ru/download/details.aspx?id=21" target="_blank">.NET Framework 3.5</a> (для старых программ).</li>
+</ul>
+<p>Перед установкой <strong>отключите антивирус</strong> и убедитесь, что у вас достаточно места на диске (не менее 1 ГБ).</p>
+
+<div class="checklist-block"><h4>☑️ Подготовка к переустановке .NET Framework</h4><label class="check-item"><input type="checkbox"><span>Отключить антивирус</span></label><label class="check-item"><input type="checkbox"><span>Создать точку восстановления системы</span></label><label class="check-item"><input type="checkbox"><span>Скачать официальный установщик с сайта Microsoft</span></label><label class="check-item"><input type="checkbox"><span>Запустить установку от имени администратора</span></label><div class="check-progress">Выполнено: <span class="check-count">0</span> / 4</div></div>
+
+<p>Если после переустановки ошибка остаётся, попробуйте <strong>ручное восстановление</strong> через команду:</p>
+<pre><code>%windir%\Microsoft.NET\Framework\v4.0.30319\SetupCache\Client\setup.exe /repair /x86 /x64 /ia64</code></pre>
+
+<h2 id="метод-2-исправление-реестра-windows">Метод 2: Исправление реестра Windows</h2>
+
+<p>Неправильные записи в реестре могут приводить к тому, что <em>CLR</em> не может корректно инициализировать среду выполнения. <strong>Внимание</strong>: редактирование реестра — рискованная операция. <mark>Перед внесением изменений обязательно создайте резервную копию реестра (Файл → Экспорт в <code>regedit</code>).</mark></p>
+
+<p>Следующие ключи чаще всего связаны с ошибкой <strong>80004005</strong>:</p>
+<table>
+  <thead>
+    <tr><th>Ключ реестра</th><th>Описание</th><th>Действие</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\Policy\v4.0</code></td><td>Политики версий .NET 4.x</td><td>Удалите подключи, если они пусты или содержат некорректные данные.</td></tr>
+    <tr><td><code>HKEY_CLASSES_ROOT\CLSID\{...}\InprocServer32</code></td><td>Записи для COM-объектов CLR</td><td>Проверьте, что путь указывает на <code>mscoree.dll</code> в <code>%windir%\System32</code>.</td></tr>
+    <tr><td><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\SideBySide\Winners\x86_microsoft.windows.common-controls_6595b64144ccf1df</code></td><td>Библиотеки общих элементов управления</td><td>Удалите ключ и перезагрузите ПК (будет восстановлен автоматически).</td></tr>
+  </tbody>
+</table>
+
+<p>После внесения изменений перезагрузите компьютер и проверьте, исчезла ли ошибка. Если нет — переходите к следующему методу.</p>
+
+<details class="faq-item"><summary>Как вернуть реестр в исходное состояние?</summary><div class="faq-answer"><p>Если после редактирования реестра система стала работать нестабильно, воспользуйтесь созданной резервной копией: откройте <code>regedit</code>, выберите <code>Файл → Импорт</code> и укажите путь к сохранённому файлу .reg.</p></div></details>
+
+<h2 id="метод-3-обновление-и-восстановление-системных-файлов">Метод 3: Обновление и восстановление системных файлов</h2>
+
+<p>Если ошибка <strong>CLR 80004005</strong> вызвана повреждением системных файлов, поможет встроенная утилита <code>SFC</code> (System File Checker) и <code>DISM</code> (Deployment Image Servicing and Management). Эти инструменты сканируют и восстанавливают критические файлы Windows, включая те, что связаны с .NET.</p>
+
+<p>Выполните команды по порядку:</p>
+<ol>
+  <li><strong>Проверка целостности системных файлов</strong>:
+    <pre><code>sfc /scannow</code></pre>
+<p>Дождитесь завершения (может занять 10–30 минут).</li></p>
+  <li><strong>Восстановление образа Windows</strong>:
+    <pre><code>DISM /Online /Cleanup-Image /RestoreHealth /Source:C:\RepairSource\Windows /LimitAccess</code></pre>
+<p>Замените <code>C:\RepairSource\Windows</code> на путь к установочному диску Windows (если требуется).</li></p>
+  <li><strong>Перезагрузка</strong> и повторный запуск проблемного приложения.</li>
+</ol>
+
+<p>Если <code>SFC</code> нашёл повреждённые файлы, но не смог их восстановить, попробуйте <strong>ручную замену</strong>:
+<ul>
+  <li>📁 Скачайте оригинальные файлы <code>mscoree.dll</code> и <code>clr.dll</code> с другого ПК с такой же версией Windows.</li>
+  <li>🔄 Замените их в папках <code>C:\Windows\System32</code> и <code>C:\Windows\SysWOW64</code> (потребуются права администратора).</li>
+  <li>🔑 Зарегистрируйте библиотеки командой:
+    <pre><code>regsvr32 mscoree.dll</code></pre></li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если после выполнения <code>DISM</code> появляется ошибка <code>0x800f081f</code>, это означает, что компоненты восстановления отсутствуют. В этом случае потребуется установочный носитель Windows для ручного указания источника файлов.</p></div>
+
+<h2 id="метод-4-проверка-антивируса-и-брандмауэра">Метод 4: Проверка антивируса и брандмауэра</h2>
+
+<p>Антивирусы и брандмауэры часто блокируют доступ к файлам <em>.NET Framework</em>, воспринимая их активность как подозрительную. Это особенно актуально для <em>Kaspersky Internet Security</em>, <em>Avast</em> и <em>ESET NOD32</em>, которые могут блокировать <code>mscoree.dll</code> или <code>clr.dll</code>.</p>
+
+<p>Что делать:</p>
+<ul>
+  <li>🛡️ <strong>Временно отключите антивирус</strong> и проверьте, исчезла ли ошибка. Если да — добавьте исключение для программы и папок <code>C:\Windows\Microsoft.NET</code>.</li>
+  <li>🔥 <strong>Проверьте карантин антивируса</strong>. Возможно, критические файлы были удалены или изолированы.</li>
+  <li>🌐 <strong>Настройте брандмауэр Windows</strong>:
+    <pre><code>Панель управления → Брандмауэр Windows → Дополнительные параметры → Правила для исходящего подключения</code></pre>
+<p>Добавьте исключение для вашего приложения.</li></p>
+</ul>
+
+<p>Если используете <em>Windows Defender</em>, добавьте папку с программой в исключения:
+<ol>
+  <li>Откройте <code>Параметры → Обновление и безопасность → Безопасность Windows → Защита от вирусов и угроз</code>.</li>
+  <li>Нажмите «Управление настройками» под разделом «Исключения».</li>
+  <li>Добавьте путь к исполняемому файлу программы (например, <code>C:\Program Files\MyApp\app.exe</code>).</li>
+</ol>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если после отключения антивируса ошибка исчезла, но вы не хотите оставлять систему без защиты, попробуйте заменить антивирус на <em>Windows Defender</em> или <em>Bitdefender</em> — они реже конфликтуют с .NET.</p></div>
+
+<h2 id="метод-5-проверка-аппаратных-проблем">Метод 5: Проверка аппаратных проблем</h2>
+
+<p>Реже, но всё же возможны случаи, когда ошибка <strong>CLR 80004005</strong> вызвана <strong>аппаратными сбоями</strong>:
+<ul>
+  <li>💾 <strong>Повреждённые секторы жёсткого диска</strong>, особенно если файлы .NET расположены на проблемных участках.</li>
+  <li>🧠 <strong>Ошибки оперативной памяти</strong>, приводящие к сбоям при загрузке сборок .NET.</li>
+  <li>🔌 <strong>Нестабильное питание</strong> (например, при разгоне процессора или неисправном блоке питания).</li>
+</ul>
+
+<p>Как проверить:</p>
+<ol>
+  <li><strong>Тест жёсткого диска</strong>:
+    <pre><code>chkdsk C: /f /r</code></pre>
+<p>Выполните команду в <em>CMD</em> (от админа) и перезагрузите ПК.</li></p>
+  <li><strong>Проверка ОЗУ</strong>:
+    <pre><code>Пуск → Выполнить (Win+R) → mdsched.exe</code></pre>
+<p>Запустите тест памяти и дождитесь результатов (может занять 10–20 минут).</li></p>
+  <li><strong>Мониторинг стабильности системы</strong>. Используйте утилиты вроде <em>HWiNFO</em> или <em>CrystalDiskInfo</em> для проверки температуры и здоровья компонентов.</li>
+</ol>
+
+<p>Если тесты выявили проблемы с <em>HDD/SSD</em> или <em>ОЗУ</em>, рекомендуется заменить неисправные компоненты. В случае сбоев питания попробуйте сбросить настройки <em>BIOS/UEFI</em> к заводским или отключить разгон.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если ошибка появляется только при высокой нагрузке на систему (например, в играх или рендере), скорее всего, виновата оперативная память или перегрев процессора.</p></div>
+
+<h2 id="профилактика-как-избежать-ошибки-clr-80004005-в-будущем">Профилактика: как избежать ошибки CLR 80004005 в будущем</h2>
+
+<p>Чтобы минимизировать риск повторного появления ошибки, следуйте этим рекомендациям:</p>
+<ul>
+  <li>🔄 <strong>Регулярно обновляйте Windows и .NET Framework</strong>. Включите автоматическое обновление или проверяйте наличие апдейтов вручную раз в месяц.</li>
+  <li>🛡️ <strong>Используйте надёжный антивирус</strong>, но настройте исключения для папок <code>C:\Windows\Microsoft.NET</code> и <code>C:\Program Files\Reference Assemblies</code>.</li>
+  <li>📦 <strong>Устанавливайте программы только из официальных источников</strong>. Пиратские сборки часто содержат повреждённые или устаревшие версии .NET.</li>
+  <li>🔧 <strong>Периодически чистите реестр</strong> с помощью <em>CCleaner</em> или <em>Wise Registry Cleaner</em> (но не злоупотребляйте!).</li>
+  <li>💾 <strong>Создавайте точки восстановления</strong> перед установкой нового ПО или обновлений.</li>
+</ul>
+
+<p>Если вы разработчик и сталкиваетесь с ошибкой <strong>CLR 80004005</strong> в своём проекте, проверьте:
+<ul>
+  <li>📝 <strong>Целевую версию .NET</strong> в настройках проекта (должна совпадать с установленной на ПК пользователя).</li>
+  <li>🔗 <strong>Зависимости NuGet</strong>. Обновите пакеты до последних стабильных версий.</li>
+  <li>🐞 <strong>Обработку исключений</strong>. Убедитесь, что в коде нет необработанных исключений, которые могут крашнуть <em>CLR</em>.</li>
+</ul>
+
+<p>Для корпоративных пользователей рекомендуется развернуть <em>.NET Framework</em> через <em>Group Policy</em> или <em>SCCM</em>, чтобы обеспечить единообразие версий на всех рабочих станциях.</p>
+
+<h2 id="faq-частые-вопросы-по-ошибке-clr-80004005">FAQ: Частые вопросы по ошибке CLR 80004005</h2>
+
+<details>
+  <summary>🔹 Можно ли игнорировать ошибку CLR 80004005, если программа всё равно работает?</summary>
+  <p>Нет. Даже если программа не закрывается сразу, ошибка указывает на серьёзные проблемы в работе <em>CLR</em>, которые могут привести к потере данных, утечкам памяти или нестабильной работе системы. Рекомендуется устранить причину как можно скорее.</p>
+</details>
+
+<details>
+  <summary>🔹 Ошибка появляется только в одной программе. Что делать?</summary>
+  <p>Скорее всего, проблема в самом приложении. Попробуйте:
+  <ul>
+    <li>Переустановить программу.</li>
+    <li>Обновить её до последней версии.</li>
+    <li>Обратиться в поддержку разработчика с логами ошибки (см. <code>Журнал событий Windows</code>).</li>
+  </ul>
+<p>Если программа старая, возможно, она требует конкретной версии .NET (например, 3.5 вместо 4.8).</p></p>
+</details>
+
+<details>
+  <summary>🔹 После обновления Windows ошибка стала появляться чаще. В чём дело?</summary>
+  <p>Обновления Windows иногда приводят к конфликтам версий .NET. Например, после установки <em>KB5012345</em> (вымышленный пример) может сломаться совместимость с старыми приложениями. Решение:
+  <ol>
+    <li>Удалите последнее обновление через <code>Панель управления → Программы → Просмотр установленных обновлений</code>.</li>
+    <li>Временно откатитесь к предыдущей версии .NET (если возможно).</li>
+    <li>Обратитесь в поддержку Microsoft с описанием проблемы.</li>
+  </ol>
+</details>
+
+<details>
+  <summary>🔹 Может ли ошибка CLR 80004005 быть связана с вирусами?</summary>
+  <p>Да, некоторые вирусы (например, <em>trojan.win32</em>) могут повреждать файлы .NET или подменять <code>mscoree.dll</code>. Если вы подозреваете заражение:
+  <ul>
+    <li>Просканируйте систему <em>Malwarebytes</em> или <em>Dr.Web CureIt</em>.</li>
+    <li>Проверьте целостность файлов .NET (см. метод с <code>SFC</code>).</li>
+    <li>Если вирус найден, переустановите .NET Framework после лечения.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>🔹 Как узнать, какая версия .NET Framework установлена на моём ПК?</summary>
+  <p>Есть несколько способов:
+  <ol>
+    <li>Через реестр: откройте <code>regedit</code> и перейдите к <code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP</code>.</li>
+    <li>Через <em>CMD</em>:
+      <pre><code>dir %windir%\Microsoft.NET\Framework\ /AD /B</code></pre>
+<p>Отобразит список установленных версий.</li></p>
+    <li>С помощью утилиты <em>.NET Version Detector</em> (скачать можно на GitHub).</li>
+  </ol>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-означает-ошибка-clr-80004005-и-почему-она-возникает">Что означает ошибка CLR 80004005 и почему она возникает</a></li><li><a href="#как-диагностировать-проблему-шаги-перед-исправлением">Как диагностировать проблему: шаги перед исправлением</a></li><li><a href="#метод-1-переустановка-или-восстановление-net-framework">Метод 1: Переустановка или восстановление .NET Framework</a></li><li><a href="#метод-2-исправление-реестра-windows">Метод 2: Исправление реестра Windows</a></li><li><a href="#метод-3-обновление-и-восстановление-системных-файлов">Метод 3: Обновление и восстановление системных файлов</a></li><li><a href="#метод-4-проверка-антивируса-и-брандмауэра">Метод 4: Проверка антивируса и брандмауэра</a></li><li><a href="#метод-5-проверка-аппаратных-проблем">Метод 5: Проверка аппаратных проблем</a></li><li><a href="#профилактика-как-избежать-ошибки-clr-80004005-в-будущем">Профилактика: как избежать ошибки CLR 80004005 в будущем</a></li><li><a href="#faq-частые-вопросы-по-ошибке-clr-80004005">FAQ: Частые вопросы по ошибке CLR 80004005</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/c/cl/clarion-pn-3439.html" class="related-card">Clarion PN 3439: характеристики, схема и совместимость</a></li><li><a href="/articles/i/in/injector-cleaner-toyota-08813-80013.html" class="related-card">Очиститель инжекторов Toyota 08813-80013: состав, применение, аналоги</a></li><li><a href="/articles/r/ra/rasshifrovka-vin-koda-mersedes-bents.html" class="related-card">Расшифровка VIN-кода Мерседес Бенц: полная инструкция и коды</a></li><li><a href="/articles/m/ma/maslo-v-akpp-9g-tronic-mercedes.html" class="related-card">Масло в АКПП 9G-Tronic Mercedes: выбор, замена, ошибки и советы</a></li><li><a href="/articles/m/me/mercedes-benz-o302.html" class="related-card">Mercedes-Benz O302: легендарный автобус с немецкой надежностью</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/c/cl/clarion-pn-3439.html" class="related-bottom-card"><span class="related-bottom-title">Clarion PN 3439: характеристики, схема и совместимость</span><span class="related-bottom-desc">Полный обзор Clarion PN 3439. Технические характеристики, распиновка, поиск аналогов и советы по уст</span></a><a href="/articles/i/in/injector-cleaner-toyota-08813-80013.html" class="related-bottom-card"><span class="related-bottom-title">Очиститель инжекторов Toyota 08813-80013: состав, применение, аналоги</span><span class="related-bottom-desc">Подробный разбор оригинального очистителя форсунок Toyota 08813-80013: как работает, когда применять</span></a><a href="/articles/r/ra/rasshifrovka-vin-koda-mersedes-bents.html" class="related-bottom-card"><span class="related-bottom-title">Расшифровка VIN-кода Мерседес Бенц: полная инструкция и коды</span><span class="related-bottom-desc">Узнайте, как проводится расшифровка вин кода Мерседес Бенц. Подробный разбор 17 символов, заводские </span></a><a href="/articles/m/ma/maslo-v-akpp-9g-tronic-mercedes.html" class="related-bottom-card"><span class="related-bottom-title">Масло в АКПП 9G-Tronic Mercedes: выбор, замена, ошибки и советы</span><span class="related-bottom-desc">Какое масло заливать в 9G-Tronic Mercedes? Периодичность замены, оригинальные и аналогичные масла, о</span></a><a href="/articles/m/me/mercedes-benz-o302.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz O302: легендарный автобус с немецкой надежностью</span><span class="related-bottom-desc">Технические характеристики, история и особенности Mercedes-Benz O302 — культового автобуса 1960-х. О</span></a><a href="/articles/k/ka/kak-narisovat-mashinu-mersedes-karandashom.html" class="related-bottom-card"><span class="related-bottom-title">Как нарисовать Мерседес карандашом: пошаговая инструкция для начинающих</span><span class="related-bottom-desc">Учитесь рисовать &lt;em&gt;Mercedes-Benz&lt;/em&gt; карандашом с нуля: от выбора модели до проработки деталей. П</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

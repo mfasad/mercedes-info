@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>STM32 Programmer CLI: полное руководство по прошивке через командную строку — Мерседес Инфо</title>
+    <meta name="description" content="Как прошить STM32 через CLI: инструменты (st-flash, OpenOCD, STM32CubeProgrammer), команды, ошибки и оптимизация для автоматизации. Гайд для разработчиков 2026.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/s/st/stm32-programmer-cli.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="STM32 Programmer CLI: полное руководство по прошивке через командную строку">
+    <meta property="og:description" content="Как прошить STM32 через CLI: инструменты (st-flash, OpenOCD, STM32CubeProgrammer), команды, ошибки и оптимизация для автоматизации. Гайд для разработчиков 2026.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/s-class/">S Class</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">STM32 Programmer CLI: полное руководство по прошивке через командную строку</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>STM32 Programmer CLI: от установки до автоматизации прошивки микроконтроллеров</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#1-выбор-инструмента-stm32cubeprogrammer-vs-openocd-vs-st-flash">1. Выбор инструмента: STM32CubeProgrammer vs OpenOCD vs st-flash</a></li><li><a href="#2-установка-и-настройка-инструментов">2. Установка и настройка инструментов</a></li><li><a href="#3-основные-команды-для-прошивки">3. Основные команды для прошивки</a></li><li><a href="#4-типичные-ошибки-и-их-решения">4. Типичные ошибки и их решения</a></li><li><a href="#5-оптимизация-скорости-прошивки">5. Оптимизация скорости прошивки</a></li><li><a href="#6-автоматизация-прошивки-скрипты-и-cicd">6. Автоматизация прошивки: скрипты и CI/CD</a></li><li><a href="#7-восстановление-кирпичей-через-cli">7. Восстановление "кирпичей" через CLI</a></li><li><a href="#8-продвинутые-техники-отладка-и-работа-с-памятью">8. Продвинутые техники: отладка и работа с памятью</a></li><li><a href="#faq-частые-вопросы-по-stm32-programmer-cli">FAQ: Частые вопросы по STM32 Programmer CLI</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Прошивка микроконтроллеров <em>STM32</em> через командную строку (CLI) — это не просто альтернатива графическим интерфейсам вроде <em>STM32CubeIDE</em> или <em>Keil</em>, а часто единственный способ автоматизировать процессы в производстве, CI/CD-пайплайнах или при работе с headless-системами. CLI-утилиты типа <strong>STM32CubeProgrammer</strong>, <strong>OpenOCD</strong> или <strong>st-flash</strong> позволяют прошивать <em>STM32</em> с точностью до байта, интегрироваться со скриптами на <code>Python/Bash</code>, и даже восстанавливать "кирпичи" через <code>SWJ-DP</code> или <code>JTAG</code>.</p>
+
+<p>Однако переход на CLI сопряжён с подводными камнями: от неочевидных флагов команд (например, <code>--verify</code> vs <code>--verify=read</code> в <em>STM32CubeProgrammer</em>) до проблем с драйверами <em>ST-Link</em> в Linux или конфликтов версий <em>OpenOCD</em>. В этом руководстве мы разберём <strong>все этапы</strong> — от установки инструментов до отладки типичных ошибок типа <code>Error: failed to read memory</code> или <code>Cannot connect to target</code>, а также покажем, как ускорить прошивку на 30% за счёт оптимизации параметров CLI.</p>
+
+<h2 id="1-выбор-инструмента-stm32cubeprogrammer-vs-openocd-vs-st-flash">1. Выбор инструмента: STM32CubeProgrammer vs OpenOCD vs st-flash</h2>
+
+<p>Три основных CLI-утилиты для работы с <em>STM32</em> решают одни задачи, но подходят для разных сценариев. Выбор зависит от <strong>протокола</strong> (SWD/JTAG), <strong>ОС</strong> (Windows/Linux/macOS) и <strong>целей</strong> (отладка, массовая прошивка, восстановление).</p>
+
+<ul>
+  <li>🔧 <strong>STM32CubeProgrammer</strong> — официальный инструмент от <em>STMicroelectronics</em> с поддержкой всех семейств <em>STM32</em> (от <em>STM32F0</em> до <em>STM32H7</em>). Поддерживает <code>SWD</code>, <code>JTAG</code>, <code>UART</code> и даже <code>I2C/SPI</code> для bootloader-прошивки. Минус — закрытый исходный код и иногда избыточный функционал.</li>
+  <li>🐧 <strong>OpenOCD</strong> — открытый отладчик с поддержкой <em>STM32</em> через <code>SWD/JTAG</code>. Гибкий, но требует ручной настройки конфигурационных файлов (<code>.cfg</code>). Идеален для Linux и интеграции с <code>GDB</code>.</li>
+  <li>⚡ <strong>st-flash</strong> — минималистичная утилита из проекта <em>texane/stlink</em>. Работает только с <em>ST-Link</em> (v1/v2/v3), но прошивает быстрее конкурентов за счёт оптимизированного протокола. Нет поддержки отладки.</li>
+</ul>
+
+<p>Для <strong>производства</strong> чаще выбирают <em>STM32CubeProgrammer</em> из-за стабильности, для <strong>Linux-разработки</strong> — <em>OpenOCD</em>, а для <strong>быстрой прошивки</strong> тестовых плат — <em>st-flash</em>. Ниже сравнение ключевых параметров:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>STM32CubeProgrammer</th>
+      <th>OpenOCD</th>
+      <th>st-flash</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Поддержка протоколов</td>
+      <td>SWD, JTAG, UART, I2C, SPI</td>
+      <td>SWD, JTAG</td>
+      <td>SWD (только ST-Link)</td>
+    </tr>
+    <tr>
+      <td>Скорость прошивки (1 МБ)</td>
+      <td>~15 сек</td>
+      <td>~20 сек</td>
+      <td>~10 сек</td>
+    </tr>
+    <tr>
+      <td>Кросс-платформенность</td>
+      <td>Windows, Linux, macOS</td>
+      <td>Linux, Windows (WSL), macOS</td>
+      <td>Linux, Windows (с сборкой)</td>
+    </tr>
+    <tr>
+      <td>Поддержка отладки</td>
+      <td>Да (через GDB)</td>
+      <td>Да</td>
+      <td>Нет</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><mark>Критическое отличие</mark>: только <em>STM32CubeProgrammer</em> поддерживает прошивку через <code>UART</code> с использованием встроенного bootloader-а <em>STM32</em> (актуально для восстановления "кирпичей" без отладчика).</p>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой инструмент вы используете для прошивки STM32?</strong><ul><li>STM32CubeProgrammer</li><li>OpenOCD</li><li>st-flash</li><li>Другой (напишите в комментариях)</li></ul></div></div>
+
+<h2 id="2-установка-и-настройка-инструментов">2. Установка и настройка инструментов</h2>
+
+<p>Процесс установки зависит от ОС и выбранной утилиты. На Windows проще всего работать с <em>STM32CubeProgrammer</em> (есть установщик), а на Linux придётся собирать <em>OpenOCD</em> или <em>st-flash</em> из исходников.</p>
+
+<h3>2.1. STM32CubeProgrammer (Windows/Linux/macOS)</h3>
+<p>Официальные инструкции от <em>ST</em> часто устаревают, поэтому вот актуальные шаги для установки:</p>
+<ol>
+  <li>Скачайте последнюю версию с <a href="https://www.st.com/en/development-tools/stm32cubeprog.html" target="_blank">официального сайта</a> (на момент написания — <code>v2.15.0</code>).</li>
+  <li>На Windows запустите установщик с правами администратора. На Linux/macOS распакуйте архив и добавьте путь к <code>bin/</code> в <code>PATH</code>:
+  <pre><code>export PATH=$PATH:/путь/до/STM32CubeProgrammer/bin</code></pre>
+  </li>
+  <li>Проверьте установку командой:
+  <pre><code>STM32_Programmer_CLI --version</code></pre>
+  </li>
+</ol>
+
+<h3>2.2. OpenOCD (Linux/WSL)</h3>
+<p>В репозиториях дистрибутивов часто лежат устаревшие версии. Для <em>STM32</em> рекомендуется версия <code>0.12.0+</code>:</p>
+<pre><code># Установка зависимостей (Ubuntu/Debian)
+<p>sudo apt install autoconf libtool pkg-config libusb-1.0-0-dev</p>
+
+<p># Клонирование и сборка</p>
+<p>git clone https://git.code.sf.net/p/openocd/code openocd</p>
+<p>cd openocd</p>
+<p>./bootstrap</p>
+<p>./configure --enable-stlink</p>
+<p>make -j$(nproc)</p>
+<p>sudo make install</code></pre></p>
+
+<p><strong>Важно</strong>: для работы с <em>ST-Link v3</em> добавьте флаг <code>--enable-stlink</code> при конфигурации.</p>
+
+<h3>2.3. st-flash (Linux/Windows)</h3>
+<p>Утилита из проекта <em>texane/stlink</em> устанавливается через <code>pip</code> или из исходников:</p>
+<pre><code># Через pip (рекомендуется)
+<p>pip install stlink</p>
+
+<p># Или сборка из исходников</p>
+<p>git clone https://github.com/texane/stlink.git</p>
+<p>cd stlink</p>
+<p>make release</p>
+<p>sudo make install</code></pre></p>
+
+<p>После установки проверьте обнаружение отладчика:</p>
+<pre><code>st-info --probe
+<p># Пример вывода:</p>
+<p>Found 1 stlink programmers</p>
+<p>version:    V3J9M3</p>
+<p>serial:     066EFF555051848687234512</p>
+<p>flash:      2048 KiB</p>
+<p>sram:       192 KiB</p>
+<p>chipid:     0x0413 (STM32F103C8)</code></pre></p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если <code>st-info</code> не находит ST-Link, проверьте права доступа к USB-устройству в Linux: добавьте правило <code>sudo usermod -a -G plugdev $USER</code> и перезагрузитесь.</p></div>
+
+<h2 id="3-основные-команды-для-прошивки">3. Основные команды для прошивки</h2>
+
+<p>Разберём базовые команды для каждой утилиты, а также нюансы их использования. Все примеры приведены для микроконтроллера <em>STM32F407G-DISC1</em> (отладочная плата <em>Discovery</em>).</p>
+
+<h3>3.1. STM32CubeProgrammer</h3>
+<p>Утилита поддерживает два режима работы: <code>CLI</code> (командная строка) и <code>GUI</code>. Для автоматизации используем <code>CLI</code>:</p>
+
+<ul>
+  <li>📌 <strong>Подключение к устройству</strong>:
+  <pre><code>STM32_Programmer_CLI -c port=SWD -c connect</code></pre>
+  </li>
+  <li>📤 <strong>Прошивка файла</strong> (например, <code>firmware.hex</code>):
+  <pre><code>STM32_Programmer_CLI -c port=SWD -c connect -w "firmware.hex" 0x08000000 -v -r</code></pre>
+  <em>Флаги</em>:
+  <ul>
+    <li><code>-w</code> — запись файла по адресу <code>0x08000000</code> (начало Flash).</li>
+    <li><code>-v</code> — верификация после записи.</li>
+    <li><code>-r</code> — сброс микроконтроллера после прошивки.</li>
+  </ul>
+  </li>
+  <li>🔍 <strong>Чтение памяти</strong> (например, первых 256 байт Flash):
+  <pre><code>STM32_Programmer_CLI -c port=SWD -c connect -r32 0x08000000 0x100 -d "dump.bin"</code></pre>
+  </li>
+</ul>
+
+<h3>3.2. OpenOCD</h3>
+<p><em>OpenOCD</em> требует конфигурационного файла (<code>.cfg</code>) для работы с <em>STM32</em>. Пример для <em>ST-Link v2</em>:</p>
+<pre><code># stm32f4_discovery.cfg
+<p>source [find interface/stlink-v2.cfg]</p>
+<p>source [find target/stm32f4x.cfg]</p>
+<p>reset_config srst_only</code></pre></p>
+
+<p>Основные команды:</p>
+<ul>
+  <li>🔌 <strong>Запуск сервера</strong>:
+  <pre><code>openocd -f stm32f4_discovery.cfg</code></pre>
+  </li>
+  <li>📤 <strong>Прошивка через Telnet</strong> (в другом терминале):
+  <pre><code>telnet localhost 4444
+<p>> reset halt</p>
+<p>> flash write_image erase firmware.bin 0x08000000</p>
+<p>> reset run</p>
+<p>> exit</code></pre></p>
+  </li>
+</ul>
+
+<h3>3.3. st-flash</h3>
+<p>Самый простой синтаксис среди всех утилит:</p>
+<pre><code># Прошивка файла .bin
+<p>st-flash write firmware.bin 0x08000000</p>
+
+<p># Чтение Flash в файл</p>
+<p>st-flash read dump.bin 0x08000000 0x10000</p>
+
+<p># Стирание всего чипа</p>
+<p>st-flash erase</code></pre></p>
+
+<p><strong>Нюанс</strong>: <em>st-flash</em> не поддерживает формат <code>.hex</code> — только <code>.bin</code>. Для конвертации используйте <code>objcopy</code>:</p>
+<pre><code>arm-none-eabi-objcopy -O binary firmware.elf firmware.bin</code></pre>
+
+
+<p>Убедитесь, что ST-Link обнаружен (<code>st-info --probe</code>)|Проверьте формат файла (для st-flash только .bin)|Отключите защиту Flash (если есть) через <code>STM32_Programmer_CLI -c ob rdp=0</code>|Сохраните резервную копию текущей прошивки--></p>
+
+<h2 id="4-типичные-ошибки-и-их-решения">4. Типичные ошибки и их решения</h2>
+
+<p>Даже опытные разработчики сталкиваются с ошибками при прошивке через CLI. Разберём самые частые и <strong>неочевидные</strong> способы их решения.</p>
+
+<h3>4.1. "Cannot connect to target" / "No ST-Link detected"</h3>
+<p>Причины и решения:</p>
+<ul>
+  <li>🔌 <strong>Отсутствует питание</strong> на плате. Проверьте <code>3.3V</code> или <code>5V</code> на контактах <em>STM32</em>.</li>
+  <li>🖥️ <strong>Конфликт драйверов</strong> (актуально для Windows). Удалите старые драйвера <em>ST-Link</em> через <code>Диспетчер устройств</code> и установите последние с сайта <em>ST</em>.</li>
+  <li>🐧 <strong>Права доступа в Linux</strong>. Добавьте правило для <code>udev</code>:
+  <pre><code>echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="3748", MODE="0666"' | sudo tee /etc/udev/rules.d/99-stlink.rules
+<p>sudo udevadm control --reload-rules</code></pre></p>
+  </li>
+</ul>
+
+<h3>4.2. "Error: failed to erase memory"</h3>
+<p>Ошибка возникает при:</p>
+<ul>
+  <li>🔒 <strong>Включённой защите Flash</strong>. Снимите защиту командой:
+  <pre><code>STM32_Programmer_CLI -c port=SWD -c connect -c ob rdp=0</code></pre>
+  </li>
+  <li>⚡ <strong>Нестабильном питании</strong>. Подключите внешний источник <code>5V/2A</code>.</li>
+  <li>🕳️ <strong>Повреждённых секторах Flash</strong>. Попробуйте прошить другой файл или используйте <code>--force</code> в <em>st-flash</em>.</li>
+</ul>
+
+<blockquote>⚠️ <strong>Внимание</strong>: если после снятия защиты (<code>ob rdp=0</code>) микроконтроллер перестал отвечать, это означает, что ранее был установлен уровень защиты <code>RDP2</code> (необратимое стирание Flash). Восстановить данные невозможно — требуется полная перепрошивка через bootloader.</blockquote>
+
+<h3>4.3. "Verification failed" после прошивки</h3>
+<p>Проблема чаще всего связана с:</p>
+<ul>
+  <li>📡 <strong>Неправильной скоростью SWD</strong>. Уменьшите частоту:
+  <pre><code>STM32_Programmer_CLI -c port=SWD -c freq=4000 -c connect -w firmware.hex 0x08000000</code></pre>
+  </li>
+  <li>🔄 <strong>Конфликтом версий прошивки и конфигурации</strong>. Проверьте, что адрес загрузки (<code>0x08000000</code>) совпадает с вектором сброса в <code>.hex</code>-файле.</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ошибка</th>
+      <th>Вероятная причина</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Error: no device found</code></td>
+      <td>ST-Link не обнаружен или занято другим процессом</td>
+      <td>Проверьте <code>lsusb</code> (Linux) или перезагрузите отладчик</td>
+    </tr>
+    <tr>
+      <td><code>Flash download failed</code></td>
+      <td>Недостаточно места в Flash или повреждённые сектора</td>
+      <td>Проверьте размер файла и выполните <code>st-flash erase</code></td>
+    </tr>
+    <tr>
+      <td><code>Cannot halt target</code></td>
+      <td>Микроконтроллер "завис" в бесконечном цикле</td>
+      <td>Используйте <code>reset halt</code> в OpenOCD или физически сбросьте плату</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="5-оптимизация-скорости-прошивки">5. Оптимизация скорости прошивки</h2>
+
+<p>Скорость прошивки через CLI можно увеличить в 2–3 раза, правильно настроив параметры. Разберём ключевые оптимизации.</p>
+
+<h3>5.1. Выбор протокола и частоты</h3>
+<p>Протокол <code>SWD</code> обычно быстрее <code>JTAG</code>, но для <em>STM32H7</em> или <em>STM32F7</em> разница минимальна. Оптимальные частоты:</p>
+<ul>
+  <li>📈 <strong>ST-Link v2</strong>: до <code>4 MHz</code> (по умолчанию <code>1.8 MHz</code>).</li>
+  <li>📈 <strong>ST-Link v3</strong>: до <code>24 MHz</code> (но стабильно работает до <code>12 MHz</code>).</li>
+</ul>
+
+<p>Пример для <em>STM32CubeProgrammer</em>:</p>
+<pre><code>STM32_Programmer_CLI -c port=SWD -c freq=12000 -c connect -w firmware.hex 0x08000000</code></pre>
+
+<h3>5.2. Параллельное стирание и запись</h3>
+<p><em>STM32CubeProgrammer</em> поддерживает флаг <code>--multi</code> для параллельного стирания и записи секторов. Это ускоряет процесс на 20–30%:</p>
+<pre><code>STM32_Programmer_CLI -c port=SWD -c connect --multi -w firmware.hex 0x08000000</code></pre>
+
+<h3>5.3. Использование буфера</h3>
+<p><em>OpenOCD</em> позволяет настроить размер буфера для передачи данных. Добавьте в конфиг (<code>.cfg</code>):</p>
+<pre><code>adapter driver stlink
+<p>stlink_usb_vid_pid 0x0483 0x3748</p>
+<p>adapter speed 4000</p>
+<p>adapter swd</p>
+<p>transport select swd</p>
+<p>stlink flash_bank stm32f4x 0x08000000 0x100000 0 0 0</code></pre></p>
+
+<p><strong>Результат</strong>: прошивка <code>1 МБ</code> занимает ~10 секунд вместо ~25 при дефолтных настройках.</p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Для максимальной скорости используйте комбинацию: SWD + частота 12 MHz + флаг --multi (STM32CubeProgrammer) или буфер 8 КБ (OpenOCD).</p></div>
+
+<h2 id="6-автоматизация-прошивки-скрипты-и-cicd">6. Автоматизация прошивки: скрипты и CI/CD</h2>
+
+<p>CLI-утилиты идеально подходят для автоматизации — от прошивки партии устройств до интеграции в <code>GitHub Actions</code> или <code>Jenkins</code>.</p>
+
+<h3>6.1. Bash-скрипт для массовой прошивки</h3>
+<p>Пример скрипта для прошивки 10 плат подряд с проверкой:</p>
+<pre><code>#!/bin/bash
+<p>FIRMWARE="firmware.hex"</p>
+<p>LOG_FILE="flash_log.txt"</p>
+
+<p>for i in {1..10}; do</p>
+<p>echo "Прошивка устройства #$i..." | tee -a $LOG_FILE</p>
+<p>STM32_Programmer_CLI -c port=SWD -c connect -w $FIRMWARE 0x08000000 -v >> $LOG_FILE 2>&1</p>
+
+<p>if [ $? -eq 0 ]; then</p>
+<p>echo "Успешно! Сброс..." | tee -a $LOG_FILE</p>
+<p>STM32_Programmer_CLI -c port=SWD -c connect -c reset</p>
+<p>else</p>
+<p>echo "ОШИБКА! Проверьте подключение." | tee -a $LOG_FILE</p>
+<p>exit 1</p>
+<p>fi</p>
+<p>done</code></pre></p>
+
+<h3>6.2. Интеграция с GitHub Actions</h3>
+<p>Пример workflow для автоматической прошивки при пуше в репозиторий:</p>
+<pre><code>name: STM32 Flash CI
+
+<p>on: [push]</p>
+
+<p>jobs:</p>
+<p>build-and-flash:</p>
+<p>runs-on: ubuntu-latest</p>
+<p>steps:</p>
+<p>- uses: actions/checkout@v4</p>
+<p>- name: Установка STM32CubeProgrammer</p>
+<p>run: |</p>
+<p>wget https://www.st.com/content/ccc/resource/technical/software/sw_development_suite/group0/5a/6a/9f/6d/55/1e/47/94/stm32cubeprog_v2-15-0_linux.zip/jcr:content/translations/en.stm32cubeprog_v2-15-0_linux.zip</p>
+<p>unzip stm32cubeprog*.zip</p>
+<p>sudo ./SetupSTM32CubeProgrammer-2.15.0.linux --headless</p>
+<p>- name: Сборка прошивки</p>
+<p>run: make</p>
+<p>- name: Прошивка</p>
+<p>run: STM32_Programmer_CLI -c port=SWD -c connect -w firmware.hex 0x08000000 -v</code></pre></p>
+
+<p><strong>Преимущество</strong>: каждый коммит автоматически прошивается на тестовую плату, что исключает регрессии.</p>
+
+<details class="faq-item"><summary>Как обойти ограничение GitHub Actions на USB-устройства?</summary><div class="faq-answer"><p>
+<p>По умолчанию GitHub Actions не предоставляет доступ к USB-портам. Решения:</p>
+<p>1. Использовать self-hosted runner с подключённым ST-Link.</p>
+<p>2. Эмулировать прошивку через QEMU (только для тестирования, без реального железа).</p>
+<p>3. Запускать скрипт на отдельном сервере по SSH из workflow.</p>
+<p></p></div></details></p>
+
+<h2 id="7-восстановление-кирпичей-через-cli">7. Восстановление "кирпичей" через CLI</h2>
+
+<p>Если <em>STM32</em> перестал отвечать на SWD/JTAG (например, из-за неверной прошивки или включённого <code>RDP2</code>), его можно восстановить через встроенный bootloader по <code>UART</code> или <code>USB DFU</code>.</p>
+
+<h3>7.1. Восстановление через UART</h3>
+<p>Потребуется: <em>STM32CubeProgrammer</em>, USB-UART адаптер (например, <em>FT232</em>) и правильное подключение:</p>
+<ul>
+  <li>🔌 Подключите <code>PA9 (TX)</code> и <code>PA10 (RX)</code> к адаптеру.</li>
+  <li>🔄 Замкните <code>BOOT0</code> на <code>3.3V</code> и сбросьте плату.</li>
+  <li>📤 Запустите прошивку:
+  <pre><code>STM32_Programmer_CLI -c port=UART -c connect -w firmware.hex 0x08000000 -v</code></pre>
+  </li>
+</ul>
+
+<h3>7.2. Восстановление через USB DFU</h3>
+<p>Если ваш <em>STM32</em> поддерживает <code>USB DFU</code> (например, <em>STM32F103</em> или <em>STM32F4</em>), используйте:</p>
+<pre><code># Перевод в режим DFU (BOOT0=1, сброс)
+<p>dfu-util -a 0 -D firmware.bin --dfuse-address 0x08000000:leave</code></pre></p>
+
+<blockquote>⚠️ <strong>Внимание</strong>: если был активирован уровень защиты <code>RDP2</code> (необратимое стирание), восстановление данных невозможно. Единственный выход — полная перепрошивка через bootloader с потерей всех данных во Flash.</blockquote>
+
+<h2 id="8-продвинутые-техники-отладка-и-работа-с-памятью">8. Продвинутые техники: отладка и работа с памятью</h2>
+
+<p>CLI-утилиты позволяют не только прошивать, но и отлаживать <em>STM32</em> на низком уровне — от чтения регистров до дампа памяти.</p>
+
+<h3>8.1. Чтение и запись памяти через OpenOCD</h3>
+<p>Примеры команд для отладки:</p>
+<pre><code># Чтение регистра PC (Program Counter)
+<p>telnet localhost 4444</p>
+<p>> reg pc</p>
+<p>pc (/32): 0x08001A4C</p>
+
+<p># Запись в память (например, изменение переменной по адресу 0x20000000)</p>
+<p>> mww 0x20000000 0xDEADBEEF</p>
+
+<p># Дамп памяти</p>
+<p>> dump_image dump.bin 0x08000000 0x1000</code></pre></p>
+
+<h3>8.2. Работа с Option Bytes</h3>
+<p><em>Option Bytes</em> в <em>STM32</em> управляют защитой, тактированием и другими критичными параметрами. Пример чтения и записи через <em>STM32CubeProgrammer</em>:</p>
+<pre><code># Чтение Option Bytes
+<p>STM32_Programmer_CLI -c port=SWD -c connect -ob read</p>
+
+<p># Разблокировка защиты (RDP=0)</p>
+<p>STM32_Programmer_CLI -c port=SWD -c connect -ob rdp=0</p>
+
+<p># Настройка уровня защиты (RDP=1)</p>
+<p>STM32_Programmer_CLI -c port=SWD -c connect -ob rdp=1</code></pre></p>
+
+<p><strong>Предупреждение</strong>: установка <code>RDP=2</code> (полная блокировка) <mark>необратимо стирает Flash</mark> и делает восстановление данных невозможным.</p>
+
+<h2 id="faq-частые-вопросы-по-stm32-programmer-cli">FAQ: Частые вопросы по STM32 Programmer CLI</h2>
+
+<details>
+  <summary>Можно ли прошивать STM32 через CLI без отладчика (только по UART)?</summary>
+  <p>Да, но только если в микроконтроллере не повреждён встроенный bootloader. Для этого:</p>
+  <ol>
+    <li>Установите <code>BOOT0=1</code> и сбросьте плату.</li>
+    <li>Используйте <em>STM32CubeProgrammer</em> с флагом <code>-c port=UART</code>.</li>
+  </ol>
+  <p>Скорость прошивки по UART ниже (~5–10 КБ/с), но метод работает даже если SWD/JTAG недоступны.</p>
+</details>
+
+<details>
+  <summary>Как прошить STM32H7, если STM32CubeProgrammer выдаёт ошибку "Unknown device"?</summary>
+  <p>Проблема典型чна для новых семейств (<em>STM32H7</em>, <em>STM32G4</em>). Решения:</p>
+  <ul>
+    <li>Обновите <em>STM32CubeProgrammer</em> до последней версии (например, <code>v2.15.0+</code>).</li>
+    <li>Укажите семейство вручную:
+    <pre><code>STM32_Programmer_CLI -c port=SWD -c connect -c device=STM32H743xx</code></pre>
+    </li>
+    <li>Если ошибка остаётся, используйте <em>OpenOCD</em> с актуальным конфигом для <em>STM32H7</em>.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Почему st-flash прошивает быстрее STM32CubeProgrammer?</summary>
+  <p><em>st-flash</em> использует оптимизированный протокол обмена с <em>ST-Link</em>, минимизируя накладные расходы на проверки. <em>STM32CubeProgrammer</em> тратит время на:</p>
+  <ul>
+    <li>Верификацию каждого сектора.</li>
+    <li>Логирование (даже в тихом режиме).</li>
+    <li>Поддержку дополнительных протоколов (UART, I2C).</li>
+  </ul>
+  <p>Для максимальной скорости в <em>st-flash</em> используйте флаг <code>--reset</code> вместо отдельной команды сброса.</p>
+</details>
+
+<details>
+  <summary>Как прошить STM32 через CLI на macOS?</summary>
+  <p>На macOS процесс аналогичен Linux, но есть нюансы:</p>
+  <ol>
+    <li>Установите <em>STM32CubeProgrammer</em> или <em>OpenOCD</em> через <code>Homebrew</code>:
+    <pre><code>brew install stm32flash openocd</code></pre>
+    </li>
+    <li>Для <em>ST-Link</em> может потребоваться драйвер <a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers" target="_blank">CP210x</a> (если используется клон).</li>
+    <li>Права доступа настраиваются через <code>udev</code>-правила (как в Linux).</li>
+  </ol>
+  <p>Пример команды для прошивки через <em>st-flash</em>:
+  <pre><code>st-flash --reset write firmware.bin 0x08000000</code></pre>
+  </p>
+</details>
+
+<details>
+  <summary>Можно ли прошивать STM32 через CLI по сети (например, по SSH)?</summary>
+  <p>Да, это стандартная практика для удалённого управления. Пример:</p>
+  <ol>
+    <li>На целевом устройстве (например, <em>Raspberry Pi</em> с подключённым <em>ST-Link</em>) установите <em>STM32CubeProgrammer</em>.</li>
+    <li>Подключитесь по SSH и запустите прошивку:
+    <pre><code>ssh user@raspberrypi "STM32_Programmer_CLI -c port=SWD -c connect -w firmware.hex 0x08000000"</code></pre>
+    </li>
+    <li>Для автоматизации используйте <code>sshpass</code> или ключи авторизации.</li></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#1-выбор-инструмента-stm32cubeprogrammer-vs-openocd-vs-st-flash">1. Выбор инструмента: STM32CubeProgrammer vs OpenOCD vs st-flash</a></li><li><a href="#2-установка-и-настройка-инструментов">2. Установка и настройка инструментов</a></li><li><a href="#3-основные-команды-для-прошивки">3. Основные команды для прошивки</a></li><li><a href="#4-типичные-ошибки-и-их-решения">4. Типичные ошибки и их решения</a></li><li><a href="#5-оптимизация-скорости-прошивки">5. Оптимизация скорости прошивки</a></li><li><a href="#6-автоматизация-прошивки-скрипты-и-cicd">6. Автоматизация прошивки: скрипты и CI/CD</a></li><li><a href="#7-восстановление-кирпичей-через-cli">7. Восстановление "кирпичей" через CLI</a></li><li><a href="#8-продвинутые-техники-отладка-и-работа-с-памятью">8. Продвинутые техники: отладка и работа с памятью</a></li><li><a href="#faq-частые-вопросы-по-stm32-programmer-cli">FAQ: Частые вопросы по STM32 Programmer CLI</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/m/me/mersedes-s-klass-2010.html" class="related-card">Mercedes S-Class 2010: характеристики, проблемы и советы по выбору</a></li><li><a href="/articles/g/ga/gabarity-mersedes-s-klassa.html" class="related-card">Габариты Mercedes-Benz S-Class: размеры кузова, колесная база, клиренс</a></li><li><a href="/articles/k/ka/kak-otkryt-mersedes-221-esli-sel-akkumulyator.html" class="related-card">Как открыть Mercedes 221 если сел аккумулятор: все способы</a></li><li><a href="/articles/t/te/test-drajv-mersedes-s-klass.html" class="related-card">Тест-драйв Мерседес S Класс: обзор флагмана 2026</a></li><li><a href="/articles/m/me/mersedes-v-115.html" class="related-card">Mercedes W115: История легендарного «Штутгартского Барокко»</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/m/me/mersedes-s-klass-2010.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes S-Class 2010: характеристики, проблемы и советы по выбору</span><span class="related-bottom-desc">Подробный обзор Mercedes-Benz S-Class (W221) 2010 года: технические данные, слабые места, цены на ры</span></a><a href="/articles/g/ga/gabarity-mersedes-s-klassa.html" class="related-bottom-card"><span class="related-bottom-title">Габариты Mercedes-Benz S-Class: размеры кузова, колесная база, клиренс</span><span class="related-bottom-desc">Подробные габариты Mercedes S-Class всех поколений: длина, ширина, высота, колесная база, дорожный п</span></a><a href="/articles/k/ka/kak-otkryt-mersedes-221-esli-sel-akkumulyator.html" class="related-bottom-card"><span class="related-bottom-title">Как открыть Mercedes 221 если сел аккумулятор: все способы</span><span class="related-bottom-desc">Подробная инструкция по вскрытию Mercedes S-Class W221 при разряженном аккумуляторе. Методы с ключом</span></a><a href="/articles/t/te/test-drajv-mersedes-s-klass.html" class="related-bottom-card"><span class="related-bottom-title">Тест-драйв Мерседес S Класс: обзор флагмана 2026</span><span class="related-bottom-desc">Полный тест-драйв Мерседес S Класс. Детальный анализ интерьера, управляемости и технологий нового S </span></a><a href="/articles/m/me/mersedes-v-115.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes W115: История легендарного «Штутгартского Барокко»</span><span class="related-bottom-desc">Полный обзор Mercedes W115: технические характеристики, слабые места кузова, особенности двигателей </span></a><a href="/articles/m/me/mercedes-benz-s-320.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes-Benz S 320: характеристики, особенности и отзывы владельцев</span><span class="related-bottom-desc">Подробный обзор Mercedes-Benz S 320: технические данные, преимущества, слабые места, советы по выбор</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>

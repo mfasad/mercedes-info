@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🚗</text></svg>">
+    <title>Ошибка VM: «Сессия закрыта до включения» — причины и решения — Мерседес Инфо</title>
+    <meta name="description" content="Разбираем ошибку «The VM session was closed before any attempt to power it on»: почему виртуальная машина не запускается, как исправить в VirtualBox, VMware, Hyper-V. Пошаговые инструкции для Windows, Linux, macOS.">
+    <link rel="canonical" href="https://mercedes-info.vercel.app/articles/t/th/the-vm-session-was-closed-before-any-attempt-to-power-it-on.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Ошибка VM: «Сессия закрыта до включения» — причины и решения">
+    <meta property="og:description" content="Разбираем ошибку «The VM session was closed before any attempt to power it on»: почему виртуальная машина не запускается, как исправить в VirtualBox, VMware, Hyper-V. Пошаговые инструкции для Windows, Linux, macOS.">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=1776151996">
+    <style>
+    .site-footer-premium {
+        margin-top: 60px; padding: 40px 0 0; background: #1e293b; color: #94a3b8;
+    }
+    .footer-grid {
+        display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        padding-bottom: 32px; border-bottom: 1px solid #334155;
+    }
+    .footer-brand { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; }
+    .footer-about { font-size: 0.9rem; line-height: 1.6; margin-bottom: 8px; }
+    .footer-updated { font-size: 0.8rem; color: #64748b; }
+    .footer-col h4 { color: #f1f5f9; font-size: 0.95rem; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { color: #94a3b8; font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: #60a5fa; }
+    .footer-bottom { padding: 20px 0; text-align: center; font-size: 0.85rem; }
+    @media (max-width: 640px) {
+        .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+    .cookie-popup {
+        position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; color: #fff;
+        padding: 16px; transition: transform 0.5s ease; z-index: 9999; border-top: 2px solid #2563eb;
+        transform: translateY(100%);
+    }
+    .cookie-popup.visible { transform: translateY(0); }
+    .cookie-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; }
+    .cookie-btn { background: #2563eb; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .cookie-btn:hover { background: #1d4ed8; }
+    @media (max-width: 640px) {
+        .cookie-inner { flex-direction: column; text-align: center; }
+    }
+</style>
+    
+    <!--#include virtual="/ssi/head.html" -->
+</head>
+<body>
+        <!--#include virtual="/ssi/body_top.html" -->
+    <style>
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-toggle {
+        background: none; border: none; cursor: pointer;
+        font: inherit; color: inherit; padding: 8px 12px;
+        border-radius: 8px; transition: background 0.2s;
+    }
+    .dropdown-toggle:hover { background: rgba(0,0,0,0.05); }
+    .dropdown-menu {
+        display: none; position: absolute; right: 0; top: 100%;
+        min-width: 240px; max-height: 70vh; overflow-y: auto;
+        background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb);
+        border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        padding: 8px 0; z-index: 1000;
+    }
+    .nav-dropdown::after {
+        content: ''; position: absolute; left: 0; right: 0;
+        top: 100%; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu { display: block; }
+    .dropdown-item {
+        display: block; padding: 10px 20px; color: var(--text, #1f2937);
+        text-decoration: none; font-size: 0.95rem; transition: background 0.15s;
+        white-space: nowrap;
+    }
+    .dropdown-item:hover { background: rgba(37,99,235,0.06); color: var(--primary, #2563eb); }
+    @media (max-width: 768px) {
+        .main-nav > .nav-link { display: none; }
+        .dropdown-toggle { display: none; }
+        .dropdown-menu {
+            display: block !important; position: static;
+            box-shadow: none; border: none; border-radius: 0;
+            min-width: auto; max-height: none; padding: 0;
+            background: transparent;
+        }
+        .dropdown-item {
+            padding: 8px 0; font-size: 1rem;
+        }
+    }
+    </style>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🚗</span>
+                <span>Мерседес Инфо</span>
+            </a>
+            <button class="mobile-menu-btn" aria-label="Меню" id="menuBtn">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <a href="/category/e-class/" class="nav-link">📁 E Class</a>
+<a href="/category/s-class/" class="nav-link">📁 S Class</a>
+<a href="/category/c-class/" class="nav-link">📁 C Class</a>
+<a href="/category/sprinter/" class="nav-link">📁 Sprinter</a>
+<div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">📂 Все разделы ▾</button>
+            <div class="dropdown-menu"><a href="/category/e-class/" class="dropdown-item">📁 E Class</a>
+<a href="/category/s-class/" class="dropdown-item">📁 S Class</a>
+<a href="/category/c-class/" class="dropdown-item">📁 C Class</a>
+<a href="/category/sprinter/" class="dropdown-item">📁 Sprinter</a>
+<a href="/category/gle/" class="dropdown-item">📁 Gle</a>
+<a href="/category/g-class-(гелендваген)/" class="dropdown-item">📁 G Class (Гелендваген)</a>
+<a href="/category/a-class/" class="dropdown-item">📁 A Class</a>
+<a href="/category/cls/" class="dropdown-item">📁 Cls</a>
+<a href="/category/g-class/" class="dropdown-item">📁 G Class</a>
+<a href="/category/amg-gt/" class="dropdown-item">📁 Amg Gt</a>
+<a href="/category/gls/" class="dropdown-item">📁 Gls</a>
+<a href="/category/vito/" class="dropdown-item">📁 Vito</a>
+<a href="/category/glc/" class="dropdown-item">📁 Glc</a>
+<a href="/category/v-class-(viano)/" class="dropdown-item">📁 V Class (Viano)</a>
+<a href="/category/b-class/" class="dropdown-item">📁 B Class</a>
+<a href="/category/sl/" class="dropdown-item">📁 Sl</a>
+<a href="/category/maybach/" class="dropdown-item">📁 Maybach</a>
+<a href="/category/cla/" class="dropdown-item">📁 Cla</a>
+<a href="/category/gla/" class="dropdown-item">📁 Gla</a>
+<a href="/category/glk/" class="dropdown-item">📁 Glk</a>
+<a href="/category/slc-(slk)/" class="dropdown-item">📁 Slc (Slk)</a>
+<a href="/category/m-class/" class="dropdown-item">📁 M Class</a>
+<a href="/category/190/" class="dropdown-item">📁 190</a>
+<a href="/category/eqs/" class="dropdown-item">📁 Eqs</a>
+<a href="/category/x-class/" class="dropdown-item">📁 X Class</a>
+<a href="/category/glb/" class="dropdown-item">📁 Glb</a>
+<a href="/category/clk/" class="dropdown-item">📁 Clk</a>
+<a href="/category/cl-class/" class="dropdown-item">📁 Cl Class</a>
+<a href="/category/gl-class/" class="dropdown-item">📁 Gl Class</a>
+<a href="/category/124/" class="dropdown-item">📁 124</a>
+<a href="/category/v-class/" class="dropdown-item">📁 V Class</a>
+<a href="/category/190-(w201)/" class="dropdown-item">📁 190 (W201)</a>
+<a href="/category/eqc/" class="dropdown-item">📁 Eqc</a>
+<a href="/category/eqe/" class="dropdown-item">📁 Eqe</a>
+<a href="/category/ml-class/" class="dropdown-item">📁 Ml Class</a>
+<a href="/category/r-class/" class="dropdown-item">📁 R Class</a>
+<a href="/category/eqa/" class="dropdown-item">📁 Eqa</a>
+<a href="/category/drugoe/" class="dropdown-item">📁 Полезное</a></div>
+        </div>
+            </nav>
+        </div>
+    </header>
+
+    <nav class="breadcrumbs" aria-label="Навигация">
+        <div class="container"><a href="/">Главная</a><span class="breadcrumb-sep">›</span><a href="/category/drugoe/">Полезное</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">Ошибка VM: «Сессия закрыта до включения» — причины и решения</span></div>
+    </nav>
+
+    <main class="site-main">
+        <div class="container">
+            <div class="article-layout">
+                <article class="article-main">
+                    
+                    <h1>«The VM session was closed before any attempt to power it on»: почему виртуальная машина не стартует и как это исправить</h1>
+                    <nav class="mobile-toc"><details><summary>📋 Содержание</summary><ul><li><a href="#что-означает-ошибка-и-почему-она-появляется">Что означает ошибка и почему она появляется</a></li><li><a href="#проверка-базовых-настроек-хост-системы">Проверка базовых настроек хост-системы</a></li><li><a href="#диагностика-и-исправление-ошибок-в-virtualbox">Диагностика и исправление ошибок в VirtualBox</a></li><li><a href="#решение-проблемы-в-vmware-workstationplayer">Решение проблемы в VMware Workstation/Player</a></li><li><a href="#особенности-решения-для-hyper-v-и-windows-sandbox">Особенности решения для Hyper-V и Windows Sandbox</a></li><li><a href="#продвинутая-диагностика-логи-дампы-и-альтернативные-методы">Продвинутая диагностика: логи, дампы и альтернативные методы</a></li><li><a href="#профилактика-как-избежать-ошибки-в-будущем">Профилактика: как избежать ошибки в будущем</a></li><li><a href="#faq-частые-вопросы-по-ошибке-vm">FAQ: Частые вопросы по ошибке VM</a></li></ul></details></nav>
+                    <!--#include virtual="/ssi/article_before.html" -->
+                    <div class="article-body"><p>Ошибка <strong>«The VM session was closed before any attempt to power it on»** — одна из самых раздражающих проблем при работе с виртуальными машинами. Вы нажимаете «Запустить», а вместо загрузки ОС получаете лаконичное сообщение о том, что сессия VM была закрыта <em>до</em> попытки включения. Ни логов, ни подробностей — только тупик. В чём дело: сбой конфигурации, конфликт драйверов, ошибка гипервизора или что-то ещё?</p>
+
+<p>Эта ошибка возникает в <em>VirtualBox</em>, <em>VMware Workstation/Player</em>, <em>Hyper-V</em> и даже в облачных решениях типа <em>Proxmox</em> или <em>ESXi</strong>. Причины могут быть как тривиальными (нехватка прав), так и глубокими (повреждение файлов виртуальной машины). В этой статье мы разберём <strong>все возможные сценарии</strong>, от базовых проверок до продвинутых методов диагностики, а также дадим чёткие инструкции по устранению проблемы для разных гипервизоров.</p>
+
+<h2 id="что-означает-ошибка-и-почему-она-появляется">Что означает ошибка и почему она появляется</h2>
+
+<p>Сообщение <mark>«The VM session was closed before any attempt to power it on»</mark> указывает на то, что процесс запуска виртуальной машины был прерван на самом раннем этапе — ещё до инициализации аппаратных ресурсов. Это не ошибка загрузки ОС (как, например, <code>Kernel panic</code> в Linux), а сбой на уровне гипервизора.</p>
+
+<p>Основные причины:</p>
+<ul>
+  <li>🔧 <strong>Конфликт с хост-системой</em>: драйвера виртуализации (например, <em>Hyper-V</em> или <em>VT-x</em>) отключены или заблокированы другим ПО (антивирусы, VPN, программы для чистки реестра).</li>
+  <li>📁 <strong>Повреждение файлов VM</strong>: конфигурационные файлы (например, <code>.vbox</code> или <code>.vmx</code>) содержат некорректные параметры или были изменены вручную.</li>
+  <li>🚫 <strong>Нехватка ресурсов</strong>: гипервизор не может выделить запрашиваемую память/CPU из-за ограничений хост-системы (например, в <em>Windows 10/11 Home</em> без <em>Hyper-V</em>).</li>
+  <li>🔄 <strong>Конфликт версий</strong>: несовместимость между версией гипервизора и гостевой ОС (например, старая <em>VirtualBox 6.x</em> и новая <em>Ubuntu 22.04</em>).</li>
+</ul>
+
+<p>Особенно часто ошибка возникает после:</p>
+<ul>
+  <li>🔄 Обновления хост-системы (например, переход с <em>Windows 10</em> на <em>11</em>).</li>
+  <li>🛠️ Установки нового ПО (антивирусы, драйвера для видеокарт).</li>
+  <li>💾 Переноса виртуальной машины на другой компьютер.</li>
+  <li>⚡ Изменения настроек BIOS/UEFI (включение/отключение <em>VT-x/AMD-V</em>).</li>
+</ul>
+
+<div class="attention-box attention-info"><div><strong>📊 Какой гипервизор вы используете?</strong><ul><li>VirtualBox</li><li>VMware Workstation/Player</li><li>Hyper-V</li><li>Proxmox/ESXi</li><li>Другой</li></ul></div></div>
+
+<h2 id="проверка-базовых-настроек-хост-системы">Проверка базовых настроек хост-системы</h2>
+
+<p>Прежде чем копать глубже, убедитесь, что хост-система готова к виртуализации. Часто проблема решается буквально в два клика.</p>
+
+<h3>1. Включение виртуализации в BIOS/UEFI</h3>
+<p>Без аппаратной поддержки (<em>Intel VT-x</em> или <em>AMD-V</em>) большинство гипервизоров откажутся запускать VM. Как проверить:</p>
+<ul>
+  <li>🔧 Перезагрузите компьютер и войдите в BIOS/UEFI (обычно клавиша <code>Del</code>, <code>F2</code> или <code>Esc</code>).</li>
+  <li>🔍 Найдите раздел <code>Advanced → CPU Configuration</code> (название может отличаться).</li>
+  <li>☑️ Убедитесь, что опции <code>Intel Virtualization Technology</code> или <code>AMD-V</code> включены (<code>Enabled</code>).</li>
+  <li>💾 Сохраните настройки (<code>F10</code>) и перезагрузитесь.</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если в BIOS нет опции виртуализации, обновите прошивку материнской платы. На сайте производителя (ASUS, Gigabyte, MSI и др.) ищите раздел «Support → BIOS & Firmware».</p></div>
+
+<h3>2. Проверка поддержки виртуализации в Windows</h3>
+<p>Даже если VT-x включён в BIOS, его может блокировать хост-система. В <em>Windows</em> выполните:</p>
+<ol>
+  <li>Откройте <code>Диспетчер задач</code> (<code>Ctrl+Shift+Esc</code>).</li>
+  <li>Перейдите на вкладку <code>Производительность → CPU</code>.</li>
+  <li>Проверьте строку <code>Виртуализация</code>: должно быть <code>Включено</code>.</li>
+</ol>
+<p>Если виртуализация отключена, выполните в <code>Командной строке (администратор)</code>:</p>
+<pre><code>bcdedit /set hypervisorlaunchtype auto</code></pre>
+<p>Затем перезагрузите ПК.</p>
+
+<h3>3. Конфликт с Hyper-V (для VirtualBox/VMware)</h3>
+<p><em>Hyper-V</em> в <em>Windows 10/11 Pro</em> может блокировать другие гипервизоры. Чтобы отключить его:</p>
+<ul>
+  <li>🔧 Откройте <code>Панель управления → Программы и компоненты → Включение или отключение компонентов Windows</code>.</li>
+  <li>☑️ Снимите галочку с <code>Hyper-V</code> и перезагрузитесь.</li>
+  <li>🔄 Альтернатива: в <code>Командной строке (администратор)</code> выполните:
+    <pre><code>dism.exe /Online /Disable-Feature:Microsoft-Hyper-V-All</code></pre>
+  </li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если вы используете <em>Windows 11</em> с <em>WSL 2</em>, отключение <em>Hyper-V</em> приведёт к неработоспособности подсистемы Linux. В этом случае лучше настроить совместимость гипервизоров.</p></div>
+
+<h2 id="диагностика-и-исправление-ошибок-в-virtualbox">Диагностика и исправление ошибок в VirtualBox</h2>
+
+<p><em>Oracle VirtualBox</em> — самый популярный гипервизор для домашнего использования, но и самый капризный. Ошибка сессии часто связана с повреждением конфигурации VM или конфликтом с хост-системой.</p>
+
+<h3>1. Сброс настроек виртуальной машины</h3>
+<p>Конфигурационные файлы VM (<code>.vbox</code>) могут содержать некорректные параметры. Чтобы сбросить их:</p>
+<ol>
+  <li>Закройте <em>VirtualBox</em>.</li>
+  <li>Перейдите в папку с виртуальной машиной (обычно <code>C:\Users\Ваше_имя\VirtualBox VMs\Имя_VM</code>).</li>
+  <li>Удалите файл <code>Имя_VM.vbox</code> (или переименуйте его в <code>Имя_VM.vbox.bak</code>).</li>
+  <li>Запустите <em>VirtualBox</em> — программа восстановит конфиг по умолчанию.</li>
+</ol>
+
+<h3>2. Проверка логов VirtualBox</h3>
+<p>Логи содержат подробности о сбое. Чтобы их найти:</p>
+<ul>
+  <li>📁 Откройте папку <code>C:\Users\Ваше_имя\VirtualBox VMs\Имя_VM\Logs</code>.</li>
+  <li>🔍 Ищите последний файл по дате (например, <code>VBox.log</code>).</li>
+  <li>📋 Откройте его в <em>Блокноте</em> и найдите строки с <code>ERROR</code> или <code>FAILED</code>.</li>
+</ul>
+
+<p>Типичные ошибки в логах:</p>
+<table>
+  <thead>
+    <tr><th>Ошибка в логе</th><th>Причина</th><th>Решение</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>VT-x is not available</code></td><td>Виртуализация отключена в BIOS или заблокирована хостом</td><td>Включите VT-x в BIOS и отключите <em>Hyper-V</em></td></tr>
+    <tr><td><code>NS_ERROR_FAILURE (0x80004005)</code></td><td>Повреждение файлов VM или конфликт с антивирусом</td><td>Сбросьте настройки VM или добавьте исключение в антивирус</td></tr>
+    <tr><td><code>E_FAIL (0x80004005)</code></td><td>Нехватка памяти или несовместимость с хост-системой</td><td>Увеличьте выделенную RAM или обновите <em>VirtualBox</em></td></tr>
+    <tr><td><code>VERR_NEM_VM_CREATE_FAILED</code></td><td>Конфликт с <em>Hyper-V</em> или <em>WSL 2</em></td><td>Отключите <em>Hyper-V</em> или используйте <code>bcdedit /set hypervisorlaunchtype off</code></td></tr>
+  </tbody>
+</table>
+
+<h3>3. Пересоздание виртуальной машины</h3>
+<p>Если сброс настроек не помог, создайте новую VM и подключите к ней старый виртуальный диск (<code>.vdi</code> или <code>.vmdk</code>):</p>
+<ol>
+  <li>В <em>VirtualBox</em> выберите <code>Машина → Создать</code>.</li>
+  <li>Укажите те же параметры (ОС, версия, RAM, CPU), что и у проблемной VM.</li>
+  <li>На этапе создания диска выберите <code>Использовать существующий виртуальный жёсткий диск</code> и укажите путь к старому <code>.vdi</code>.</li>
+  <li>Запустите новую VM.</li>
+</ol>
+
+<details class="faq-item"><summary>Что делать, если VirtualBox не видит старый диск?</summary><div class="faq-answer"><p>Если при подключении <code>.vdi</code> возникает ошибка, попробуйте конвертировать его в другой формат через команду:
+<pre><code>VBoxManage clonemedium "путь\к\диску.vdi" "новый_диск.vmdk" --format VMDK</code></pre>
+<p>Или воспользуйтесь утилитой <em>qemu-img</em> (входит в состав <em>QEMU</em>).</p></div></details></p>
+
+<h2 id="решение-проблемы-в-vmware-workstationplayer">Решение проблемы в VMware Workstation/Player</h2>
+
+<p><em>VMware</em> более стабилен, чем <em>VirtualBox</em>, но и здесь возможны сбои с закрытием сессии. Основные причины:</p>
+<ul>
+  <li>🔧 Конфликт с <em>Hyper-V</em> или <em>Device Guard</em> в <em>Windows</em>.</li>
+  <li>📁 Повреждение файлов <code>.vmx</code> или <code>.vmdk</code>.</li>
+  <li>🚫 Нехватка прав на доступ к файлам VM.</li>
+</ul>
+
+<h3>1. Восстановление файла конфигурации (.vmx)</h3>
+<p>Файл <code>.vmx</code> хранит все настройки VM. Если он повреждён:</p>
+<ol>
+  <li>Закройте <em>VMware</em>.</li>
+  <li>Перейдите в папку с VM и найдите файл <code>Имя_VM.vmx</code>.</li>
+  <li>Сделайте его резервную копию.</li>
+  <li>Откройте оригинал в <em>Блокноте</em> и удалите строки, которые начинаются с:
+    <pre><code>ethernet0.generatedAddress =
+<p>uuid.bios =</p>
+<p>uuid.location =</code></pre></p>
+  </li>
+  <li>Сохраните файл и попробуйте запустить VM.</li>
+</ol>
+
+<h3>2. Проверка целостности виртуального диска</h3>
+<p>Если диск (<code>.vmdk</code>) повреждён, VMware не сможет его смонтировать. Для проверки:</p>
+<ol>
+  <li>Откройте <code>Командную строку</code> от имени администратора.</li>
+  <li>Перейдите в папку с <em>VMware</em> (обычно <code>C:\Program Files (x86)\VMware\VMware Workstation</code>).</li>
+  <li>Выполните команду:
+    <pre><code>vmware-vdiskmanager -R "путь\к\диску.vmdk"</code></pre>
+<p>(где <code>-R</code> — опция восстановления).</p>
+  </li>
+</ol>
+
+<h3>3. Отключение Device Guard в Windows</h3>
+<p><em>Device Guard</em> (или <em>Credential Guard</em>) может блокировать запуск VM. Чтобы отключить:</p>
+<ol>
+  <li>Откройте <code>gpedit.msc</code> (Редактор локальной групповой политики).</li>
+  <li>Перейдите по пути:
+    <code>Конфигурация компьютера → Административные шаблоны → Система → Device Guard</code>.
+  </li>
+  <li>Отключите политики <code>Turn On Virtualization Based Security</code>.</li>
+  <li>Перезагрузите ПК.</li>
+</ol>
+
+
+<p>Проверьте включение VT-x в BIOS|Отключите Hyper-V и Device Guard|Убедитесь, что файл .vmx не повреждён|Выполните восстановление диска (.vmdk) через vmware-vdiskmanager|Запустите VMware от имени администратора--></p>
+
+<h2 id="особенности-решения-для-hyper-v-и-windows-sandbox">Особенности решения для Hyper-V и Windows Sandbox</h2>
+
+<p><em>Hyper-V</em> интегрирован в <em>Windows 10/11 Pro/Enterprise</em>, но его ошибки часто маскируются под общие сбои. Если VM не запускается с сообщением о закрытой сессии, проверьте:</p>
+
+<h3>1. Состояние служб Hyper-V</h3>
+<p>Откройте <code>services.msc</code> и убедитесь, что запущены:</p>
+<ul>
+  <li>🔄 <code>Служба виртуальных дисков Hyper-V</code> (<code>vhdsvc</code>).</li>
+  <li>🔄 <code>Служба управления виртуальными машинами Hyper-V</code> (<code>vmms</code>).</li>
+  <li>🔄 <code>Служба виртуальной машины Hyper-V</code> (<code>vmwp</code>).</li>
+</ul>
+<p>Если службы отключены, запустите их вручную и установите тип запуска <code>Автоматически</code>.</p>
+
+<h3>2. Проверка совместимости с Windows Sandbox</h3>
+<p><em>Windows Sandbox</em> использует те же компоненты, что и <em>Hyper-V</em>. Если Sandbox работает, а ваша VM — нет, проблема в конфигурации самой VM. Попробуйте:</p>
+<ul>
+  <li>🔧 Создать новую VM через <code>Hyper-V Manager</code>.</li>
+  <li>📁 Подключить к ней старый виртуальный диск (<code>.vhdx</code>).</li>
+  <li>🔄 Убедиться, что в настройках VM включён <code>Secure Boot</code> (если гостевая ОС — <em>Windows 10/11</em>).</li>
+</ul>
+
+<h3>3. Сброс конфигурации Hyper-V</h3>
+<p>Если VM по-прежнему не запускается, сбросьте настройки <em>Hyper-V</em> через <code>PowerShell (администратор)</code>:</p>
+<pre><code>Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All
+<p>Restart-Computer</p>
+<p>Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All</p>
+<p>Restart-Computer</code></pre></p>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>В <em>Windows 11</em> для работы <em>Hyper-V</em> требуется <em>TPM 2.0</em> и <em>Secure Boot</em>. Если они отключены в BIOS, VM не запустятся.</p></div>
+
+<h2 id="продвинутая-диагностика-логи-дампы-и-альтернативные-методы">Продвинутая диагностика: логи, дампы и альтернативные методы</h2>
+
+<p>Если базовые методы не помогли, придётся погрузиться в глубокую диагностику. Здесь пригодятся логи, дампы памяти и инструменты вроде <em>Process Monitor</em>.</p>
+
+<h3>1. Анализ дампов памяти</h3>
+<p>При сбое VM гипервизор может создавать дампы. В <em>VirtualBox</em> они хранятся в:</p>
+<ul>
+  <li><code>C:\Users\Ваше_имя\VirtualBox VMs\Имя_VM\Snapshots</code> (файлы <code>.sav</code>).</li>
+  <li><code>C:\ProgramData\Microsoft\Windows\WER\ReportArchive</code> (для <em>Hyper-V</em>).</li>
+</ul>
+<p>Для анализа дампов используйте:</p>
+<ul>
+  <li>🔍 <em>WinDbg</em> (для <em>Windows</em>).</li>
+  <li>🐧 <code>crash</code> или <code>kdump</code> (для <em>Linux</em>).</li>
+</ul>
+
+<h3>2. Мониторинг системных вызовов с Process Monitor</h3>
+<p><em>Process Monitor</em> от <em>Microsoft</em> покажет, какие файлы и реестры пытается открыть гипервизор перед сбоем:</p>
+<ol>
+  <li>Скачайте <em>Process Monitor</em> с сайта <a href="https://learn.microsoft.com/en-us/sysinternals/" target="_blank">Sysinternals</a>.</li>
+  <li>Запустите его с фильтром по имени процесса (<code>VirtualBoxVM.exe</code>, <code>vmware-vmx.exe</code> или <code>vmwp.exe</code>).</li>
+  <li>Попробуйте запустить VM и посмотрите, на каком системном вызове происходит сбой.</li>
+</ol>
+
+<h3>3. Альтернативные гипервизоры для тестирования</h3>
+<p>Если VM не запускается ни в одном гипервизоре, попробуйте:</p>
+<ul>
+  <li>🔧 <em>QEMU</em> (кроссплатформенный, но требует ручной настройки).</li>
+  <li>🐧 <em>UTM</em> (для <em>macOS</em>).</li>
+  <li>☁️ <em>Google Cloud Shell</em> или <em>AWS EC2</em> (для тестирования образа VM в облаке).</li>
+</ul>
+
+<details class="faq-item"><summary>Как запустить VM в QEMU без графического интерфейса?</summary><div class="faq-answer"><p>
+<p>Используйте команду:</p>
+<pre><code>qemu-system-x86_64 -m 4G -hda путь\к\диску.qcow2 -enable-kvm -boot order=c</code></pre>
+<p>Где:</p>
+<p>- <code>-m 4G</code> — выделение 4 ГБ RAM.</p>
+<p>- <code>-enable-kvm</code> — ускорение через KVM (аналог VT-x).</p>
+<p>- <code>-hda</code> — путь к виртуальному диску.</p>
+<p></p></div></details></p>
+
+<h2 id="профилактика-как-избежать-ошибки-в-будущем">Профилактика: как избежать ошибки в будущем</h2>
+
+<p>Чтобы ошибка <strong>«The VM session was closed before any attempt to power it on»** не повторялась, следуйте этим правилам:</strong></p>
+
+<ul>
+  <li>🔄 <strong>Регулярно обновляйте гипервизор</strong>: в новых версиях исправляются баги совместимости с хост-системами.</li>
+  <li>📁 <strong>Делайте бэкапы VM</strong>: экспортируйте VM в <code>.ova</code> (для <em>VirtualBox</em>) или <code>.ovf</code> (для <em>VMware</em>) перед обновлением хост-системы.</li>
+  <li>🛡️ <strong>Исключите файлы VM из антивируса</strong>: добавьте папки с VM в исключения <em>Windows Defender</em>, <em>Kaspersky</em>, <em>Avast</em> и др.</li>
+  <li>🔧 <strong>Не редактируйте файлы конфигурации вручную</strong>: <code>.vbox</code>, <code>.vmx</code> и другие конфиги чувствительны к синтаксису.</li>
+  <li>💾 <strong>Используйте SSD для хранения VM</strong>: медленные HDD могут вызывать таймауты при инициализации.</li>
+</ul>
+
+<p>Для <em>VirtualBox</em> также полезно:</p>
+<ul>
+  <li>🔄 Отключить <code>3D-ускорение</code> в настройках VM, если гостевая ОС не требует его.</li>
+  <li>📋 Установить <em>VirtualBox Guest Additions</em> (для <em>Windows/Linux</em> гостевых ОС).</li>
+  <li>🚫 Избегать использования <code>Snapshots</code> (снимков) — они часто становятся источником ошибок.</li>
+</ul>
+
+<div class="attention-box attention-tip"><span class="attention-icon">💡</span><p>Если вы часто переносите VM между компьютерами, используйте формат диска <code>VMDK</code> — он лучше поддерживается разными гипервизорами, чем <code>VDI</code> или <code>QCOW2</code>.</p></div>
+
+<blockquote>⚠️ <strong>Внимание:</strong> Если вы используете <em>Windows 11</em> с <em>TPM 2.0</em>, отключение <em>Secure Boot</em> в BIOS может привести к невозможности загрузки хост-системы. Перед изменениями настроек BIOS создайте точку восстановления Windows.</blockquote>
+
+<h2 id="faq-частые-вопросы-по-ошибке-vm">FAQ: Частые вопросы по ошибке VM</h2>
+
+<details>
+  <summary>Можно ли восстановить данные с виртуального диска, если VM не запускается?</summary>
+  <p>Да. Подключите диск (<code>.vdi</code>, <code>.vmdk</code>, <code>.qcow2</code>) к другой VM или используйте утилиты вроде <em>7-Zip</em> (для <code>.vdi</code>) или <em>qemu-nbd</em> (для <code>.qcow2</code>). Например, в Linux:</p>
+  <pre><code>sudo modprobe nbd max_part=8
+<p>sudo qemu-nbd -c /dev/nbd0 путь/к/диску.qcow2</p>
+<p>mount /dev/nbd0p1 /mnt</code></pre></p>
+  <p>После копирования данных размонтируйте диск:</p>
+  <pre><code>umount /mnt
+<p>qemu-nbd -d /dev/nbd0</code></pre></p>
+</details>
+
+<details>
+  <summary>Почему ошибка появляется только на одном компьютере, а на другом VM запускается?</summary>
+  <p>Скорее всего, проблема в:</p>
+  <ul>
+    <li>🔧 Отсутствии поддержки <em>VT-x/AMD-V</em> на проблемном ПК (проверьте в BIOS).</li>
+    <li>🚫 Конфликте с ПО (антивирус, <em>Hyper-V</em>, <em>WSL 2</em>).</li>
+    <li>📋 Разных версиях гипервизора (обновите <em>VirtualBox/VMware</em> на обоих ПК).</li>
+  </ul>
+  <p>Также проверьте, не блокирует ли <em>Windows Defender</em> запуск VM (в <code>Журнале Windows</code> ищите события с кодом <code>10016</code>).</p>
+</details>
+
+<details>
+  <summary>Как перенести VM с одного гипервизора на другой (например, с VirtualBox на VMware)?</summary>
+  <p>Используйте утилиту <em>qemu-img</em> для конвертации диска:</p>
+  <pre><code>qemu-img convert -f vdi -O vmdk входной_файл.vdi выходной_файл.vmdk</code></pre>
+  <p>Затем создайте новую VM в <em>VMware</em> и подключите конвертированный диск. Для конфигурации VM (<code>.vmx</code>) может потребоваться ручная правка (например, указание правильного пути к диску).</p>
+</details>
+
+<details>
+  <summary>Может ли ошибка быть связана с антивирусом?</summary>
+  <p>Да, особенно если антивирус сканирует файлы VM в реальном времени. <em>Kaspersky</em>, <em>Avast</em> и <em>Bitdefender</em> известны блокировкой процессов гипервизоров. Решения:</p>
+  <ul>
+    <li>🛡️ Добавьте папку с VM в исключения антивируса.</li>
+    <li>🔧 Временно отключите защиту при запуске VM.</li>
+    <li>📋 Проверьте логи антивируса на предмет блокировки файлов <code>VirtualBoxVM.exe</code> или <code>vmware-vmx.exe</code>.</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Что делать, если ошибка появляется только при запуске конкретной VM, а другие работают нормально?</summary>
+  <p>Проблема локализована в конфигурации этой VM. Попробуйте:</p>
+  <ol>
+    <li>Удалить все снимки (<code>Snapshots</code>) в настройках VM.</li>
+    <li>Сбросить настройки сети (в <em>VirtualBox</em>: <code>Настройки → Сеть → Тип подключения: NAT</code>).</li>
+    <li>Пересоздать VM с нуля, подключив старый диск.</li>
+    <li>Проверьте логи VM на предмет ошибок с <code>UUID</code> или <code>MAC-адресом</code> (они могут конфликтовать с другими VM).</li>
+  </ol>
+</details></div>
+                    <!--#include virtual="/ssi/article_after.html" -->
+
+                </article>
+                <aside class="article-sidebar"><!--#include virtual="/ssi/sidebar_top.html" --><nav class="sidebar-search"><div class="sidebar-search-box"><input type="text" id="globalSearchInput" placeholder="🔍 Поиск статей..." autocomplete="off"><div class="search-dropdown" id="globalSearchDropdown"></div></div></nav><!--#include virtual="/ssi/sidebar_before_toc.html" --><nav class="sidebar-toc" id="sidebarToc"><h3>Содержание</h3><ul><li><a href="#что-означает-ошибка-и-почему-она-появляется">Что означает ошибка и почему она появляется</a></li><li><a href="#проверка-базовых-настроек-хост-системы">Проверка базовых настроек хост-системы</a></li><li><a href="#диагностика-и-исправление-ошибок-в-virtualbox">Диагностика и исправление ошибок в VirtualBox</a></li><li><a href="#решение-проблемы-в-vmware-workstationplayer">Решение проблемы в VMware Workstation/Player</a></li><li><a href="#особенности-решения-для-hyper-v-и-windows-sandbox">Особенности решения для Hyper-V и Windows Sandbox</a></li><li><a href="#продвинутая-диагностика-логи-дампы-и-альтернативные-методы">Продвинутая диагностика: логи, дампы и альтернативные методы</a></li><li><a href="#профилактика-как-избежать-ошибки-в-будущем">Профилактика: как избежать ошибки в будущем</a></li><li><a href="#faq-частые-вопросы-по-ошибке-vm">FAQ: Частые вопросы по ошибке VM</a></li></ul></nav><!--#include virtual="/ssi/sidebar_before_related.html" --><nav class="sidebar-related"><h3>Похожие статьи</h3><ul><li><a href="/articles/n/ni/nissan-80w90-gl-5.html" class="related-card">Масло Nissan 80W90 GL-5: характеристики, аналоги, отзывы и где купить</a></li><li><a href="/articles/h/ht/https-sl-aliexpress-ru-p-key-r4u5rtf.html" class="related-card">AliExpress R4U5RTF: что это за код и как его использовать в 2026 году</a></li><li><a href="/articles/k/ko/komu-prinadlezhit-mersedes-kontsern.html" class="related-card">Кому принадлежит Mercedes-Benz: структура концерна Daimler AG в 2026 году</a></li><li><a href="/articles/m/me/mersedes-matik-4-foto.html" class="related-card">Mercedes MATIC 4: фото, особенности и отличия от других систем</a></li><li><a href="/articles/h/ho/honda-gl1800-gold-wing.html" class="related-card">Honda Gold Wing GL1800: обзор, цены, характеристики и отзывы 2026</a></li></ul></nav><!--#include virtual="/ssi/sidebar_after_related.html" --></aside>
+            </div>
+        </div>
+    </main>
+
+    <!--#include virtual="/ssi/before_related_bottom.html" -->
+    <section class="related-bottom">
+        <div class="container">
+            <h2 class="related-bottom-heading">📖 Читайте также</h2>
+            <div class="related-bottom-grid"><a href="/articles/n/ni/nissan-80w90-gl-5.html" class="related-bottom-card"><span class="related-bottom-title">Масло Nissan 80W90 GL-5: характеристики, аналоги, отзывы и где купить</span><span class="related-bottom-desc">Подробный обзор трансмиссионного масла Nissan 80W90 GL-5: технические параметры, совместимость с КПП</span></a><a href="/articles/h/ht/https-sl-aliexpress-ru-p-key-r4u5rtf.html" class="related-bottom-card"><span class="related-bottom-title">AliExpress R4U5RTF: что это за код и как его использовать в 2026 году</span><span class="related-bottom-desc">Разбираемся, что скрывает ссылка https://sl.aliexpress.ru/p/key/r4u5rtf: промокоды, скрытые скидки и</span></a><a href="/articles/k/ko/komu-prinadlezhit-mersedes-kontsern.html" class="related-bottom-card"><span class="related-bottom-title">Кому принадлежит Mercedes-Benz: структура концерна Daimler AG в 2026 году</span><span class="related-bottom-desc">Разбираемся, кто владеет Mercedes-Benz сегодня: от истории Daimler-Benz до современной структуры Mer</span></a><a href="/articles/m/me/mersedes-matik-4-foto.html" class="related-bottom-card"><span class="related-bottom-title">Mercedes MATIC 4: фото, особенности и отличия от других систем</span><span class="related-bottom-desc">Подробный разбор системы полного привода &lt;em&gt;4MATIC&lt;/em&gt; от &lt;em&gt;Mercedes-Benz&lt;/em&gt; с фото, техническ</span></a><a href="/articles/h/ho/honda-gl1800-gold-wing.html" class="related-bottom-card"><span class="related-bottom-title">Honda Gold Wing GL1800: обзор, цены, характеристики и отзывы 2026</span><span class="related-bottom-desc">Полный гайд по флагманскому туреру Honda GL1800 Gold Wing: технические параметры, сравнение с конкур</span></a><a href="/articles/o/ob/obzor-tesla-model-x.html" class="related-bottom-card"><span class="related-bottom-title">Tesla Model X: Полный обзор электрокроссовера 2026</span><span class="related-bottom-desc">Подробный обзор Tesla Model X: разгон до 100 км/ч за 2.6 сек, запас хода 560 км, крылья чайки и авто</span></a></div>
+        </div>
+    </section>
+    <!--#include virtual="/ssi/after_related_bottom.html" -->
+
+    <footer class="site-footer-premium">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">🚗 Мерседес Инфо</div>
+                    <p class="footer-about">Полный гид по техобслуживанию, ремонту и эксплуатации автомобилей Mercedes-Benz</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Разделы</h4>
+                    <ul><li><a href="/category/e-class/">📁 E Class</a></li>
+<li><a href="/category/s-class/">📁 S Class</a></li>
+<li><a href="/category/c-class/">📁 C Class</a></li>
+<li><a href="/category/sprinter/">📁 Sprinter</a></li>
+<li><a href="/category/gle/">📁 Gle</a></li>
+<li><a href="/category/g-class-(гелендваген)/">📁 G Class (Гелендваген)</a></li></ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="/">Главная</a></li>
+                        <li><a href="/about.html">О проекте</a></li>
+                        <li><a href="/categories.html">Все разделы</a></li>
+                        <li><a href="/contact.html">Контакты</a></li>
+                        <li><a href="/privacy.html">Конфиденциальность</a></li>
+                        <li><a href="/sitemap.xml">Карта сайта</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Мерседес Инфо. Все права защищены.</p>
+                <!--LiveInternet counter--><div style="margin-top:10px;"><a href="https://www.liveinternet.ru/click"
+                target="_blank"><img id="licnt06C4" width="88" height="15" style="border:0" 
+                title="LiveInternet: показано число посетителей за сегодня"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                alt=""/></a><script>(function(d,s){d.getElementById("licnt06C4").src=
+                "https://counter.yadro.ru/hit?t26.5;r"+escape(d.referrer)+
+                ((typeof(s)=="undefined")?"":";s"+s.width+"*"+s.height+"*"+
+                (s.colorDepth?s.colorDepth:s.pixelDepth))+";u"+escape(d.URL)+
+                ";h"+escape(d.title.substring(0,150))+";"+Math.random()})(document,screen)</script></div><!--/LiveInternet-->
+            </div>
+        </div>
+    </footer>
+    <div id="cookie-consent" class="cookie-popup">
+        <div class="cookie-inner">
+            <span>🍪 Мы используем файлы cookie для улучшения работы сайта.</span>
+            <button id="cookie-accept" class="cookie-btn">Принять</button>
+        </div>
+    </div>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function() {
+        const popup = document.getElementById('cookie-consent');
+        const btn = document.getElementById('cookie-accept');
+        if (popup && btn && !localStorage.getItem('cookie-accepted')) {
+            popup.classList.add('visible');
+            btn.onclick = () => {
+                localStorage.setItem('cookie-accepted', 'true');
+                popup.classList.remove('visible');
+            };
+        }
+    })();
+    </script>
+    <!--#include virtual="/ssi/body_bottom.html" -->
+    <script src="/static/js/inject.js" defer></script>
+</body>
+</html>
